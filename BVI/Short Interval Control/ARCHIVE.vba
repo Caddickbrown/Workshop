@@ -1,9 +1,9 @@
 Sub Archive()
     'bits to speed up macro
-   Application.Calculation = xlManual
-   Application.ScreenUpdating = False
-   Application.DisplayStatusBar = False
-   Application.EnableEvents = False
+    Application.Calculation = xlManual
+    Application.ScreenUpdating = False
+    Application.DisplayStatusBar = False
+    Application.EnableEvents = False
    
     Dim Home As Workbook
     Set Home = ThisWorkbook

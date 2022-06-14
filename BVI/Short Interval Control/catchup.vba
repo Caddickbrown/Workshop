@@ -210,8 +210,8 @@ present:
     Home.Save
     
     
-     Application.EnableEvents = True
-   Application.DisplayStatusBar = True
-   Application.ScreenUpdating = True
-   Application.Calculation = xlAutomatic
+    Application.EnableEvents = True
+    Application.DisplayStatusBar = True
+    Application.ScreenUpdating = True
+    Application.Calculation = xlAutomatic
 End Sub
