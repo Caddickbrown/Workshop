@@ -1,4 +1,8 @@
 
+Need to convert the below to PowerQuery of something of the sort
+
+Array formulas are not suitable for largish amounts of data, but there are suitable alternatives: changing to VBA won't speed up the process if you still use array formulas - they are structurally always going to be very slow for large amounts of data. Instead of array formulas, use efficient database type functionality. Maybe pivot tables or query tables or (via VBA) recordsets. These don't use worksheet formulas. There are examples in old threads where array formulas took more then an hour but database type approaches a fraction of a second.
+
 ## Part No (Array)
 =TRIM(SORT(UNIQUE(FILTER('SO Reqs'!C2:C1048576,'SO Reqs'!C2:C1048576<>""),0,0),,1))
 
