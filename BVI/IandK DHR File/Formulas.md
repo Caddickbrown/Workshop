@@ -3,6 +3,8 @@ Need to convert the below to PowerQuery of something of the sort
 
 Array formulas are not suitable for largish amounts of data, but there are suitable alternatives: changing to VBA won't speed up the process if you still use array formulas - they are structurally always going to be very slow for large amounts of data. Instead of array formulas, use efficient database type functionality. Maybe pivot tables or query tables or (via VBA) recordsets. These don't use worksheet formulas. There are examples in old threads where array formulas took more then an hour but database type approaches a fraction of a second.
 
+## Variable Column Lookup
+
 ## Part No (Array) Variable Lookup
 =TRIM(SORT(UNIQUE(FILTER(INDEX('SO Reqs'!A:DZ,0,MATCH("Part No",'SO Reqs'!A$1:DZ$1,0)),OR(INDEX('SO Reqs'!A:DZ,0,MATCH("Part No",'SO Reqs'!A$1:DZ$1,0))<>"",INDEX('SO Reqs'!A:DZ,0,MATCH("Part No",'SO Reqs'!A$1:DZ$1,0))<>"Part No")),0,0),,1))
 
