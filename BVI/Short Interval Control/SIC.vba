@@ -9,17 +9,17 @@ skip:
 
     ' Defines all required workbooks & worksheet variables and assigns the set ones.
     Dim Home As Workbook, temp As Worksheet, SIC As Worksheet, data As Worksheet, xWorkbook As Workbook, sht As Worksheet
-    Set Home = ThisWorkbook
-    Set temp = Worksheets("Template")
+    Set Home = ThisWorkbook ' Sets Home as ThisWorkbook
+    Set temp = Worksheets("Template") ' Sets temp as The Worksheet "Template"
         
-    'Defines the days to look at
-    Dim Today As Date, yesterday As Date
-    Today = Date
-    yesterday = Today - 1
+    ' Defines the days to look at
+    Dim Today As Date, yesterday As Date ' Define "Today" and "yesterday" as a Date Variable
+    Today = Date ' Set variable "Today" as Today's date
+    yesterday = Today - 1' Set variable "yesterday" as yesterday's date
     
     ' Defines required variables
     Dim test As String, SheetName As String
-    test = Format(Today, "ddmmmyy")
+    test = Format(Today, "ddmmmyy") ' Sets the variable "test" as a String of today's date
     SheetName = "OverviewInventoryTransactionHis"
     Dim colum_count As Integer, i As Integer, j As Integer, k As Integer, bay As Integer, rowcount As Integer, CreateTime As Integer, Create As Integer
     Dim clock ' no set stype because this needs to be a time which is Date & Time
@@ -27,23 +27,23 @@ skip:
     Dim Picks As Integer, Picker() As String, pickers As Integer, outputrow As Integer, count As Integer, N_pick As Integer, N_Pickers As Double, M_Pick As Integer, M_Pickers As Double, A_pick As Integer, A_Pickers As Double, previous As String, Short As Integer
     Dim Date_present As Boolean
     
-    ' checks if workbook is read only
+    ' checks if workbook is read only, if you want to continue then it tells you to save it under a different name. If not - it closes the sheet.
     If Home.ReadOnly Then
         i = MsgBox("SIC sheet is opened as Read Only. Please reopen the file and ensure that it is not Read Only before trying to run. Do you wish to continue?", vbYesNo)
-        If i = 6 Then MsgBox ("Please save file under a different name."): Exit Sub
+        If i = 6 Then MsgBox ("Please save file under a different name."): Exit Sub ' - [ ] Can we add an automatic Save As here?
         If i = 7 Then Home.Close
     End If
     ' checks if both today & yesterday have a sheet
     For i = -1 To 0
         test = Format(Today + i, "ddmmmyy") ' formats the date into the required format for the sheet name
-        For Each sht In Application.ThisWorkbook.Worksheets 'steps through all sheets i the home workbook to identify if any match the date required
+        For Each sht In Application.ThisWorkbook.Worksheets 'steps through all sheets in the home workbook to identify if any match the date required
             If sht.Name = test Then Set SIC = sht: GoTo jump ' if the sheet is present set it to be the worksheet required and dont create a new sheet
         Next sht
         'if the sheet is not found, copy the template sheet to the end of the book
         temp.Copy After:=Sheets(Sheets.count)
-        'set the SIC worksheet as the last sheet in teh workbook
+        'set the SIC worksheet as the last sheet in the workbook
         Set SIC = Sheets(Sheets.count)
-        'rename the SIC sheet with teh required date in correct format
+        'rename the SIC sheet with the required date in correct format
         SIC.Name = test
         ' Put the date into the required cell on the sheet
         SIC.Cells(1, 13) = Today + i
@@ -86,7 +86,7 @@ jump:
     'closes the original data sheet
     xWorkbook.Close SaveChanges:=False
     
-    'creates a date in teh required format
+    'creates a date in the required format
     test = Format(data.Cells(2, Create), "ddmmmyy")
     Set SIC = Sheets(test)
     SIC.Name = test
@@ -120,9 +120,9 @@ jump:
         For j = k To rowcount
             If Hour(data.Cells(j, CreateTime)) > i - 2 Then 'if the time is between the the previous hour and the current then record
             If Hour(data.Cells(j, CreateTime)) < i Then
-                pick = pick + 1 'increase number of picks in teh hour
+                pick = pick + 1 'increase number of picks in the hour
                 If data.Cells(j, bay) = "PK" Then Short = Short + 1
-                For k = 0 To UBound(Picker()) ' cycles through teh number of picker who have picked in teh hour if present jumps to end
+                For k = 0 To UBound(Picker()) ' cycles through the number of picker who have picked in the hour if present jumps to end
                     If data.Cells(j, pickers) = Picker(k) Then GoTo present
                 Next k
                 ReDim Preserve Picker(UBound(Picker()) + 1) 'if not increases the size of array and stores the pickers name
@@ -137,7 +137,7 @@ present:
         SIC.Cells(i + 2, 4) = UBound(Picker()) ' prints the number of pickers who have picked hour
         If i = 2 Or i = 5 Or i = 10 Or i = 13 Or i = 18 Or i = 21 Then SIC.Cells(i + 2, 5) = Sheets("Targets").Cells(2, 2) * 0.75 Else SIC.Cells(i + 2, 5) = Sheets("Targets").Cells(2, 2) ' prints the pick rate required per hour based on when break times are
         If SIC.Cells(i + 2, 4) > 0 Then SIC.Cells(i + 2, 6) = Round(pick / SIC.Cells(i + 2, 4), 2) Else SIC.Cells(i + 2, 6) = 0 ' if picks greater than 0 divides picks by people to get picks per hour else 0
-        If SIC.Cells(i + 2, 6) < SIC.Cells(i + 2, 5) And SIC.Cells(i + 2, 6) > 0 Then SIC.Cells(i + 2, 6).Interior.ColorIndex = 3 Else If SIC.Cells(i + 2, 6) > 0 Then SIC.Cells(i + 2, 6).Interior.ColorIndex = 4 ' colors the picks red or green depnding on if its larger or smaller than teh required rate.
+        If SIC.Cells(i + 2, 6) < SIC.Cells(i + 2, 5) And SIC.Cells(i + 2, 6) > 0 Then SIC.Cells(i + 2, 6).Interior.ColorIndex = 3 Else If SIC.Cells(i + 2, 6) > 0 Then SIC.Cells(i + 2, 6).Interior.ColorIndex = 4 ' colors the picks red or green depnding on if its larger or smaller than the required rate.
         SIC.Cells(i + 2, 7) = Short 'records number of shortages
         'resets all to 0
         pick = 0
@@ -153,12 +153,12 @@ present:
     Sheets(SheetName).Delete 'Deletes sheet
     Application.DisplayAlerts = True 'turns pop-ups back on to stop me doing something silly
     
-    previous = Format(SIC.Cells(1, 13) - 1, "ddmmmyy") ' formats the previous days date in teh required format
+    previous = Format(SIC.Cells(1, 13) - 1, "ddmmmyy") ' formats the previous days date in the required format
     
-    'adds teh picks achieved from 10-11pm & 11pm - midnight to the nightshift total picks & picking hours
+    'adds the picks achieved from 10-11pm & 11pm - midnight to the nightshift total picks & picking hours
     N_pick = Worksheets(previous).Cells(25, 2) + Worksheets(previous).Cells(26, 2)
     N_Pickers = Worksheets(previous).Cells(25, 4) + Worksheets(previous).Cells(26, 4)
-    For i = 3 To SIC.Cells(Rows.count, 4).End(xlUp).Row ' cycles through each hour run and adds the picks and picking hours to teh respective shift N (Night) m (morning) or A (afternoon)
+    For i = 3 To SIC.Cells(Rows.count, 4).End(xlUp).Row ' cycles through each hour run and adds the picks and picking hours to the respective shift N (Night) m (morning) or A (afternoon)
         If i <= 8 Then N_pick = N_pick + SIC.Cells(i, 2): If i = 4 Or i = 7 Then N_Pickers = N_Pickers + SIC.Cells(i, 4) * 0.75 Else N_Pickers = N_Pickers + SIC.Cells(i, 4)
         If i <= 16 And i > 8 Then M_Pick = M_Pick + SIC.Cells(i, 2): If i = 12 Or i = 15 Then M_Pickers = M_Pickers + SIC.Cells(i, 4) * 0.75 Else M_Pickers = M_Pickers + SIC.Cells(i, 4)
         If i <= 24 And i > 16 Then A_pick = A_pick + SIC.Cells(i, 2): If i = 20 Or i = 23 Then A_Pickers = A_Pickers + SIC.Cells(i, 4) * 0.75 Else A_Pickers = A_Pickers + SIC.Cells(i, 4)
@@ -183,7 +183,7 @@ present:
     
     'selects the sheet
     SIC.Select
-    Home.Save 'saves teh workbook
+    Home.Save 'saves the workbook
     
     Application.EnableEvents = True
     Application.DisplayStatusBar = True
