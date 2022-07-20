@@ -26,7 +26,7 @@ Dim out As Worksheet, Week As Worksheet
     
     'FOr start point in data list to end copies across relevant data
     For i = StartLoc To outcount
-        'finds the day and copies across teh date and week number
+        'finds the day and copies across the date and week number
         daycode = Weekday(out.Cells(i, 1), 1)
         shift.Cells(i, 1) = out.Cells(i, 1)
         shift.Cells(i, 2) = out.Cells(i, 2)

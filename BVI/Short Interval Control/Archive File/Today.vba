@@ -14,22 +14,22 @@ Sub Today()
     
     SIC.Activate 'activates SIC workbook
     For Each sht In SIC.Worksheets 'steps through each sheet in workbook
-    sht.Activate 'activates teh sheet
+    sht.Activate 'activates the sheet
     
         If sht.Name Like ("##***##") Then 'checks if the sheet name is right in DDMMMYY format
-            If sht.Cells(1, 13) > Past.Cells(1, 19) Then 'if the date on teh sheet is greater than teh last completed day
+            If sht.Cells(1, 13) > Past.Cells(1, 19) Then 'if the date on the sheet is greater than the last completed day
                 If sht.Cells(26, 2) Like "#*" Then 'if picks achieved in final hour of day is complete
-                    If sht.Cells(15, 13) > 0 Then 'if any picks have been managed in teh day
+                    If sht.Cells(15, 13) > 0 Then 'if any picks have been managed in the day
                         Past.Cells(Past_count, 1) = sht.Cells(1, 13) 'copies the day
-                        Past.Cells(Past_count, 2) = Application.WorksheetFunction.IsoWeekNum(Past.Cells(Past_count, 1)) ' finds teh week number
+                        Past.Cells(Past_count, 2) = Application.WorksheetFunction.IsoWeekNum(Past.Cells(Past_count, 1)) ' finds the week number
                         outcol = 3
-                        For i = 0 To 3 'copies teh 4x3 table of picks, hours& pph into the past data sheet
+                        For i = 0 To 3 'copies the 4x3 table of picks, hours& pph into the past data sheet
                             For j = 0 To 2
                                 Past.Cells(Past_count, outcol) = sht.Cells(12 + i, 13 + j)
                                 outcol = outcol + 1
                             Next j
                         Next i
-                        Past.Cells(1, 19) = Past.Cells(Past_count, 1) ' pastes teh last completed date into last comp cell
+                        Past.Cells(1, 19) = Past.Cells(Past_count, 1) ' pastes the last completed date into last comp cell
                         If Past.Cells(Past_count, 2) Mod 2 = 0 And Past.Cells(Past_count, 11) <> "" Then 'colours either blue or red depending on week/shift
                             For i = 6 To 8
                                 Past.Cells(Past_count, i).Interior.ColorIndex = 3 ' red

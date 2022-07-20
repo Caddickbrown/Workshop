@@ -47,7 +47,7 @@ Sub Archive()
         If days > 5 Then ' if more than 5 days or production move oldest SIC sheets to archive file
             Workbooks.Open (filepath) ' opens the workbook as defined above
             Set Archive = Workbooks(file) ' stores it as archive workboook
-            If Archive.ReadOnly = True Then Exit Sub ' Cancels if the archive has been opened as read only this will result in the program automatically saving a copy to the PC rather than keeping all teh data in teh archive.
+            If Archive.ReadOnly = True Then Exit Sub ' Cancels if the archive has been opened as read only this will result in the program automatically saving a copy to the PC rather than keeping all the data in the archive.
 move:
             Home.Worksheets(Format(oldest, "ddmmmyy")).move After:=Archive.Worksheets(Worksheets.count) 'moves the oldest sheet to archive
             days = days - 1 ' subtracts 1 from day count
@@ -76,6 +76,6 @@ redo:
         If sht.Name = Format(old, "ddmmmyy") Then present = True: Exit Function
     Next sht
     
-    If old < (newest - 5) Then old = old + 1: GoTo redo 'if not present adds 1 to teh date and goes again
+    If old < (newest - 5) Then old = old + 1: GoTo redo 'if not present adds 1 to the date and goes again
 
 End Function

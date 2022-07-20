@@ -1,10 +1,11 @@
 Sub SIC_Catchup()
     Application.Calculation = xlManual
-   Application.ScreenUpdating = False
-   Application.DisplayStatusBar = False
-   Application.EnableEvents = False
+    Application.ScreenUpdating = False
+    Application.DisplayStatusBar = False
+    Application.EnableEvents = False
    
-    ' before i learnt that you could hve more than 1 variable on a line, defines and sets all the variables needed
+    ' before I learnt that you could have more than 1 variable on a line, defines and sets all the variables needed
+    ' You dope... I'm totally leaving this in here as it is
     Dim Home As Workbook
     Set Home = ThisWorkbook
     Dim temp As Worksheet
@@ -78,7 +79,7 @@ Sub SIC_Catchup()
     Next xWorkbook
     'cancels out of the program if there is no open data file.
         If located = False Then MsgBox ("You must download the data from IFS then rerun the program"): Exit Sub
-    'copys in teh data
+    'copys in the data
         xWorkbook.Sheets(SheetName).Copy Before:=Home.Worksheets("Targets")
         Set data = Sheets(SheetName)
     'closes the original IFS download
@@ -107,14 +108,14 @@ Sub SIC_Catchup()
             If sht.Name = test Then Set SIC = sht: GoTo jump 'steps through all workbooks if the required sheet name is present leaves it there, if not creates a new one
         Next sht
         Worksheets("template").Copy After:=Sheets(Sheets.count) 'copies the template
-        Set SIC = Sheets(Sheets.count) 'sets teh sheet to use
+        Set SIC = Sheets(Sheets.count) 'sets the sheet to use
         SIC.Name = test ' sets the sheet name
-        SIC.Cells(1, 13) = step ' copies teh date into the date location
+        SIC.Cells(1, 13) = step ' copies the date into the date location
 jump:
         begin = final 'starts where the previous loop finished ---- i don't actually think this line does anything.....
         final = 0 ' resets final - don't know why i need to as i reset it agin immediately
         located = False
-        For i = 2 To rowcount 'finds the start and end points in teh date set for the current date
+        For i = 2 To rowcount 'finds the start and end points in the date set for the current date
             If data.Cells(i, Create) = step And located = False Then begin = i: located = True
             If data.Cells(i, Create) > step Then final = i - 1: Exit For
         Next i
@@ -127,9 +128,9 @@ jump:
         
         'works through for each hour and records the number of picks and the number of pickers required in each hour.
         For i = 1 To 24
-            If j = 0 Then k = begin Else k = j ' sets start location for the loop each hour, if not 0 sets to where teh previous hour ended
+            If j = 0 Then k = begin Else k = j ' sets start location for the loop each hour, if not 0 sets to where the previous hour ended
             For j = k To final
-                'if created time is in teh correct hour
+                'if created time is in the correct hour
                 If Hour(data.Cells(j, CreateTime)) >= i - 1 Then
                 If Hour(data.Cells(j, CreateTime)) < i Then
                     pick = pick + 1 'adds 1 to pick
@@ -137,8 +138,8 @@ jump:
                     For k = 0 To UBound(Picker()) 'checks if the picker has already picked something this hour
                         If data.Cells(j, pickers) = Picker(k) Then GoTo present
                     Next k
-                    ReDim Preserve Picker(UBound(Picker()) + 1) 'if not increases teh length of the array
-                    Picker(UBound(Picker())) = data.Cells(j, pickers) ' adds teh pickers name to the array
+                    ReDim Preserve Picker(UBound(Picker()) + 1) 'if not increases the length of the array
+                    Picker(UBound(Picker())) = data.Cells(j, pickers) ' adds the pickers name to the array
 present:
                 Else: Exit For
                 End If
@@ -149,9 +150,9 @@ present:
             SIC.Cells(i + 2, 2) = pick 'picks in hour
             SIC.Cells(i + 2, 4) = UBound(Picker()) 'pickers in hour
             If i = 2 Or i = 5 Or i = 10 Or i = 13 Or i = 18 Or i = 21 Then SIC.Cells(i + 2, 5) = Sheets("Targets").Cells(2, 2) * 0.75 Else SIC.Cells(i + 2, 5) = Sheets("Targets").Cells(2, 2) ' target picks per hour
-            If SIC.Cells(i + 2, 4) > 0 Then SIC.Cells(i + 2, 6) = Round(pick / SIC.Cells(i + 2, 4), 2) Else SIC.Cells(i + 2, 6) = 0 ' if picks completed calculates teh pick per person for the hour
+            If SIC.Cells(i + 2, 4) > 0 Then SIC.Cells(i + 2, 6) = Round(pick / SIC.Cells(i + 2, 4), 2) Else SIC.Cells(i + 2, 6) = 0 ' if picks completed calculates the pick per person for the hour
             If SIC.Cells(i + 2, 6) < SIC.Cells(i + 2, 5) And SIC.Cells(i + 2, 6) > 0 Then SIC.Cells(i + 2, 6).Interior.ColorIndex = 3 Else If SIC.Cells(i + 2, 6) > 0 Then SIC.Cells(i + 2, 6).Interior.ColorIndex = 4 'colours red or greendepending ont eh target achievement
-            SIC.Cells(i + 2, 7) = Short ' prints the number of shortages rectified in teh hour
+            SIC.Cells(i + 2, 7) = Short ' prints the number of shortages rectified in the hour
             'resets hourly variables
             pick = 0
             Short = 0
@@ -167,10 +168,10 @@ present:
         
         On Error Resume Next
         
-        'adds teh picks achieved from 10-11pm & 11pm - midnight to the nightshift total picks & picking hours
+        'adds the picks achieved from 10-11pm & 11pm - midnight to the nightshift total picks & picking hours
         N_pick = Worksheets(previous).Cells(25, 2) + Worksheets(previous).Cells(26, 2)
         N_Pickers = Worksheets(previous).Cells(25, 4) + Worksheets(previous).Cells(26, 4)
-        For i = 3 To SIC.Cells(Rows.count, 4).End(xlUp).Row ' cycles through each hour run and adds the picks and picking hours to teh respective shift N (Night) m (morning) or A (afternoon)
+        For i = 3 To SIC.Cells(Rows.count, 4).End(xlUp).Row ' cycles through each hour run and adds the picks and picking hours to the respective shift N (Night) m (morning) or A (afternoon)
             If i <= 8 Then N_pick = N_pick + SIC.Cells(i, 2): If i = 4 Or i = 7 Then N_Pickers = N_Pickers + SIC.Cells(i, 4) * 0.75 Else N_Pickers = N_Pickers + SIC.Cells(i, 4)
             If i <= 16 And i > 8 Then M_Pick = M_Pick + SIC.Cells(i, 2): If i = 12 Or i = 15 Then M_Pickers = M_Pickers + SIC.Cells(i, 4) * 0.75 Else M_Pickers = M_Pickers + SIC.Cells(i, 4)
             If i <= 24 And i > 16 Then A_pick = A_pick + SIC.Cells(i, 2): If i = 20 Or i = 23 Then A_Pickers = A_Pickers + SIC.Cells(i, 4) * 0.75 Else A_Pickers = A_Pickers + SIC.Cells(i, 4)

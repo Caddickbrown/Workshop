@@ -12,19 +12,19 @@ Sub History()
     
     For Each sht In ThisWorkbook.Worksheets
         If sht.Name <> "Past_Data" And sht.Name <> "WeekNo" Then
-            'checks if the date on the individual sheet is greater than teh last completed, if not moves to next sheet
+            'checks if the date on the individual sheet is greater than the last completed, if not moves to next sheet
             If sht.Cells(1, 13) > out.Cells(1, 19) Then
-                out.Cells(outrow, 1) = sht.Cells(1, 13) ' pastes teh date
+                out.Cells(outrow, 1) = sht.Cells(1, 13) ' pastes the date
                 out.Cells(outrow, 2) = Application.WorksheetFunction.IsoWeekNum(out.Cells(outrow, 1)) ' makes use of isoweek function in excel
                 outcol = 3
-                'copies the 3 by 4 table with teh daily summary into the sheet offsetting the location point by 1 cell each time by outcol
+                'copies the 3 by 4 table with the daily summary into the sheet offsetting the location point by 1 cell each time by outcol
                 For i = 0 To 3
                     For j = 0 To 2
                         out.Cells(outrow, outcol) = sht.Cells(12 + i, 13 + j)
                         outcol = outcol + 1
                     Next j
                 Next i
-                'pastes teh completed date into teh last completed
+                'pastes the completed date into the last completed
                 out.Cells(1, 19) = out.Cells(outrow, 1)
                 'alternates blue and red shift based on week to simulate the swapped shifts
                 If out.Cells(outrow, 2) Mod 2 = 0 And out.Cells(outrow, 11) <> "" Then
