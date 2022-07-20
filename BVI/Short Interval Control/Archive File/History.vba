@@ -15,7 +15,7 @@ Sub History()
             'checks if the date on the individual sheet is greater than the last completed, if not moves to next sheet
             If sht.Cells(1, 13) > out.Cells(1, 19) Then
                 out.Cells(outrow, 1) = sht.Cells(1, 13) ' pastes the date
-                out.Cells(outrow, 2) = Application.WorksheetFunction.IsoWeekNum(out.Cells(outrow, 1)) ' makes use of isoweek function in excel
+                out.Cells(outrow, 2) = Application.WorksheetFunction.IsoWeekNum(out.Cells(outrow, 1)) ' makes use of isoweek function in excel to give the isoweek number for the date in Column 1
                 outcol = 3
                 'copies the 3 by 4 table with the daily summary into the sheet offsetting the location point by 1 cell each time by outcol
                 For i = 0 To 3
