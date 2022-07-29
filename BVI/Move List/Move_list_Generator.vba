@@ -57,9 +57,9 @@ restart: ' <----jump point if it needs to be restarted.
     
     Call Run(4, outrow, required, list, box_qty, 4, 7, 8)
     
-    outrow = list.Cells(Rows.Count, 1).End(xlUp).Row + 1
+    outrow = 2
     
-    Call Run(6, outrow, M_Required, list, box_qty, 6, 11, 13)
+    Call Run(4, outrow, M_Required, list, box_qty, 4, 7, 8)
     
     ' consumables check
     boxes = box_qty.UsedRange.Rows.Count
