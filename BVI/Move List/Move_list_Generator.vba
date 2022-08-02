@@ -53,11 +53,11 @@ restart: ' <----jump point if it needs to be restarted.
     Malosa.Close SaveChanges:=False
     Set M_Required = Worksheets(1) ' defines the sheet copied in as required for later calculations
     
-    outrow = 2
+    outrow = 2 ' Starts the loop on row 2 
     
     Call Run(4, outrow, required, list, box_qty, 4, 7, 8)
     
-    outrow = 2
+    outrow = list.Cells(Rows.Count, 1).End(xlUp).Row + 1 ' Selects the next blank line
     
     Call Run(4, outrow, M_Required, list, box_qty, 4, 7, 8)
     
