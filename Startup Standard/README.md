@@ -4,10 +4,12 @@ A selection of standard things I need to sort/install when starting up a new com
 ## Install
 1. [Obsidian](https://obsidian.md/)
 2. [VS Code](https://code.visualstudio.com/)
+3. [SQL Studio Management Studio](https://docs.microsoft.com/en-us/sql/ssms/)
 
 ## Startup Folder
 1. KeepAwake.vbs (Attached)
 2. Outlook Shortcut
+3. ERP System of Choice
 
 ## Download
 1. Scripts Folder (See [link](https://github.com/Caddickbrown/Macros/blob/18f66736556730a727f62e3dd75afe92c00c6479/VBScripts))
