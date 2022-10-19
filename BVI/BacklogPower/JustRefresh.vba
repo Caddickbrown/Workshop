@@ -4,7 +4,7 @@ Sub JustRefresh()
 '
 
 '
-    ActiveWorkbook.RefreshAll
-    Range("A1").Select
+    ActiveWorkbook.RefreshAll ' Refresh PowerQueries
+    Range("A1").Select ' Reset Cursor
 
 End Sub

@@ -1,70 +1,68 @@
 Sub RefreshStats()
-'
-' RefreshStats Macro
-'
 
-'
+   Application.ScreenUpdating = False ' Cleans View up a bit, so it doesn't jump around
 
 ' Make sure you're on the right sheet
-    Sheets("Stats").Select
+    Sheets("Stats").Select ' Reset Sheet
 
 ' Copy yesterdays numbers up to the right field
-    Range("Q4").Copy
-    Range("Q3").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Range("Q4").Copy ' Copy BVI This Week Figure (Which is now yesterdays)
+    Range("Q3").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _ ' Paste as Values in Yesterdays Row
         :=False, Transpose:=False
-    Range("R4").Copy
-    Range("R3").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Range("R4").Copy ' Copy Malosa This Week Figure (Which is now yesterdays)
+    Range("R3").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _ ' Paste as Values in Yesterdays Row
         :=False, Transpose:=False
         
 ' Copy yesterdays numbers up to the right field
-    Range("Q7").Copy
-    Range("Q6").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Range("Q7").Copy ' Copy BVI Next Week Figure (Which is now yesterdays)
+    Range("Q6").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _ ' Paste as Values in Yesterdays Row
         :=False, Transpose:=False
-    Range("R7").Copy
-    Range("R6").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Range("R7").Copy ' Copy Malosa Next Week Figure (Which is now yesterdays)
+    Range("R6").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _ ' Paste as Values in Yesterdays Row
         :=False, Transpose:=False
 
 ' Change to todays date
-    Range("P2").FormulaR1C1 = "=TODAY()"
-    Range("P2").Select
-    Selection.Copy
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Range("P2").FormulaR1C1 = "=TODAY()" ' Update Date to be todays Date
+    Range("P2").Select ' Select cell (Need to for the paste)
+    Selection.Copy ' Copy cell
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _ ' Paste as Values - stopping it from automatically updating tomorrow
         :=False, Transpose:=False
     
 ' Refresh PowerQuerys
     ActiveWorkbook.RefreshAll
     
 ' Copy data to relevant tab (This Weeks Tracker)
-    Range("M23:Q23").Copy
-    Sheets("This Week Tracker").Select
-    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row
-    Cells(lrtarget + 1, 1).Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Range("M23:Q23").Copy ' Copy Todays "This Week" Info
+    Sheets("This Week Tracker").Select ' Move to "This Week Tracker" sheet
+    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
+    Cells(lrtarget + 1, 1).Select ' Select the first cell of the row below the last row
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _ ' Paste as Values
         :=False, Transpose:=False
-    Range("A1").Select
-    Sheets("Stats").Select
+    Range("A1").Select ' Reset Cursor
+    Sheets("Stats").Select ' Reset Sheet
 
 ' Copy data to relevant tab (Daily Tracker)
-    Range("M26:Q26").Copy
-    Sheets("Daily Tracker").Select
-    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row
-    Cells(lrtarget + 1, 1).Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Range("M26:Q26").Copy ' Copy Todays "Daily" Info
+    Sheets("Daily Tracker").Select ' Move to "Daily Tracker" sheet
+    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
+    Cells(lrtarget + 1, 1).Select ' Select the first cell of the row below the last row
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _ ' Paste as Values
         :=False, Transpose:=False
-    Range("A1").Select
-    Sheets("Stats").Select
+    Range("A1").Select ' Reset Cursor
+    Sheets("Stats").Select ' Reset Sheet
 
 ' Copy data to relevant tab (Next Weeks Tracker)
-    Range("M29:Q29").Copy
-    Sheets("Next Week Tracker").Select
-    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row
-    Cells(lrtarget + 1, 1).Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Range("M29:Q29").Copy ' Copy Todays "Next Week" Info
+    Sheets("Next Week Tracker").Select ' Move to "Next Week Tracker" sheet
+    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
+    Cells(lrtarget + 1, 1).Select ' Select the first cell of the row below the last row
+    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _ ' Paste as Values
         :=False, Transpose:=False
-    Range("A1").Select
-    Sheets("Stats").Select
+    Range("A1").Select ' Reset Cursor
+    Sheets("Stats").Select ' Reset Sheet
     
-    Range("A1").Select
+    Range("A1").Select ' Reset Cursor
+    Application.ScreenUpdating = True ' Reset Screen Updating
 
 End Sub
 
