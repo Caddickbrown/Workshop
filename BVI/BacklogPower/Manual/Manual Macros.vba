@@ -1,4 +1,4 @@
-Sub RefreshStats()
+Sub Prep_Sheet()
 
    Application.ScreenUpdating = False ' Cleans View up a bit, so it doesn't jump around
 
@@ -33,7 +33,7 @@ Sub RefreshStats()
 
 End Sub
 
-Sub FillTrackers()
+Sub Archive()
 
    Application.ScreenUpdating = False ' Cleans View up a bit, so it doesn't jump around
 
@@ -41,31 +41,26 @@ Sub FillTrackers()
     Sheets("Stats").Select ' Reset Sheet
 
 ' Copy data to relevant tab (This Week)
-    Range("M23:Q23").Copy
-    Sheets("Archive").Select
+    Range("M23:Q23").Copy ' Copy This Weeks data
+    Sheets("Archive").Select ' Move to "Archive" Tab
     lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget + 1, 1).Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Cells(lrtarget + 1, 1).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
         :=False, Transpose:=False ' Paste as Values
-    Range("A1").Select ' Reset Cursor
     Sheets("Stats").Select ' Reset Sheet
 
 ' Copy data to relevant tab (Daily)
-    Range("N26:Q26").Copy
-    Sheets("Archive").Select
+    Range("N26:Q26").Copy ' Copy Daily data
+    Sheets("Archive").Select ' Move to "Archive" Tab
     lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget, 6).Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Cells(lrtarget, 6).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
         :=False, Transpose:=False ' Paste as Values
-    Range("A1").Select ' Reset Cursor
     Sheets("Stats").Select ' Reset Sheet
 
 ' Copy data to relevant tab (Next Week)
-    Range("N29:Q29").Copy
-    Sheets("Archive").Select
+    Range("N29:Q29").Copy ' Copy Next Weeks data
+    Sheets("Archive").Select ' Move to "Archive" Tab
     lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget, 10).Select
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+    Cells(lrtarget, 10).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
         :=False, Transpose:=False ' Paste as Values
     Range("A1").Select ' Reset Cursor
     Sheets("Stats").Select ' Reset Sheet

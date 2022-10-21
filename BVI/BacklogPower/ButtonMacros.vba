@@ -47,9 +47,8 @@ Sub FillTrackers()
     Range("M23:Q23").Copy ' Copy Todays "This Week" Info
     Sheets("This Week Tracker").Select ' Move to "This Week Tracker" sheet
     lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget + 1, 1).Select ' Select the first cell of the row below the last row
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values
+    Cells(lrtarget + 1, 1).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False ' Paste as Values on next row down
     Range("A1").Select ' Reset Cursor
     Sheets("Stats").Select ' Reset Sheet
 
@@ -57,9 +56,8 @@ Sub FillTrackers()
     Range("M26:Q26").Copy ' Copy Todays "Daily" Info
     Sheets("Daily Tracker").Select ' Move to "Daily Tracker" sheet
     lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget + 1, 1).Select ' Select the first cell of the row below the last row
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values
+    Cells(lrtarget + 1, 1).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False ' Paste as Values on next row down
     Range("A1").Select ' Reset Cursor
     Sheets("Stats").Select ' Reset Sheet
 
@@ -67,9 +65,8 @@ Sub FillTrackers()
     Range("M29:Q29").Copy ' Copy Todays "Next Week" Info
     Sheets("Next Week Tracker").Select ' Move to "Next Week Tracker" sheet
     lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget + 1, 1).Select ' Select the first cell of the row below the last row
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values
+    Cells(lrtarget + 1, 1).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
+        :=False, Transpose:=False ' Paste as Values on next row down
     Range("A1").Select ' Reset Cursor
     Sheets("Stats").Select ' Reset Sheet
     
