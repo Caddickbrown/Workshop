@@ -18,15 +18,16 @@ End Sub
 
 Sub Archive()
 
-' Make sure you're on the right sheet
-    Sheets("Stats").Select ' Reset Sheet
+ 'Prep
+    Sheets("Stats").Select 'Reset Sheet
 
-' Copy data to Archive tab
+ 'Copy data to Archive tab
     lrtarget = ActiveWorkbook.Sheets("Archive").Range("A1", Sheets("Archive").Range("A1").End(xlDown)).Rows.Count 'Count rows on Archive tab 
     Sheets("Archive").Range("A" & lrtarget + 1 & ":E" & lrtarget + 1).Value = Sheets("Stats").Range("M23:Q23").Value 'Pastes in This Week Info
     Sheets("Archive").Range("F" & lrtarget + 1 & ":I" & lrtarget + 1).Value = Sheets("Stats").Range("N26:Q26").Value 'Pastes in Daily Info
     Sheets("Archive").Range("J" & lrtarget + 1 & ":M" & lrtarget + 1).Value = Sheets("Stats").Range("N29:Q29").Value 'Pastes in Next Week Info
-    
-    Range("A1").Select ' Reset Cursor
+
+ 'Cleanup    
+    Range("A1").Select 'Reset Cursor
 
 End Sub

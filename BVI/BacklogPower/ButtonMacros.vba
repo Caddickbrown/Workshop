@@ -1,7 +1,6 @@
 Sub RefreshStats()
 
  'Prep
-    Application.ScreenUpdating = False 'Cleans View up a bit, so it doesn't jump around
     Sheets("Stats").Select 'Reset Sheet
 
  'Copy yesterdays numbers up to the right field
@@ -17,13 +16,12 @@ Sub RefreshStats()
 
  'Clean Up
     Range("A1").Select 'Reset Cursor
-    Application.ScreenUpdating = True 'Reset Screen Updating
 
 End Sub
 
 Sub FillTrackers()
 
- 'Make sure you're on the right sheet
+ 'Prep
     Sheets("Stats").Select 'Reset Sheet
 
  'Copy data to relevant tab (This Weeks Tracker)
@@ -38,13 +36,20 @@ Sub FillTrackers()
     lrtarget = ActiveWorkbook.Sheets("Next Week Tracker").Range("A1", Sheets("Next Week Tracker").Range("A1").End(xlDown)).Rows.Count 'Count rows on Next Week tab
     Sheets("Next Week Tracker").Range("A" & lrtarget + 1 & ":E" & lrtarget + 1).Value = Sheets("Stats").Range("M29:Q29").Value 'Pastes in Next Weeks info
  
-    Range("A1").Select ' Reset Cursor
+ 'Clean Up
+    Range("A1").Select 'Reset Cursor
 
 End Sub
 
 Sub JustRefresh()
 
-    ActiveWorkbook.RefreshAll ' Refresh PowerQueries
-    Range("A1").Select ' Reset Cursor
+ 'Prep
+    Sheets("Stats").Select 'Reset Sheet
+
+ 'Refresh PowerQuerys
+    ActiveWorkbook.RefreshAll
+
+ 'Clean Up
+    Range("A1").Select 'Reset Cursor
 
 End Sub
