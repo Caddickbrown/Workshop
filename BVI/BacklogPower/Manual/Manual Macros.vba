@@ -9,25 +9,26 @@ Sub Prep_Sheet()
 
 'Change Cell to todays date
     Range("P2").FormulaR1C1 = "=TODAY()" 'Update Date to be todays Date
-    Range("P2").Value = Range("P2").Value 'Paste date as values
+    Range("P2").Value = Range("P2").Value
 
 'Clean Up
+    Sheets("Requisitions").Cells.ClearContents 'Clear Out Requisitions Data
+    Sheets("Shop Orders").Cells.ClearContents 'Clear Out Shop Order Data
     Range("A1").Select 'Reset Cursor
 
 End Sub
 
 Sub Archive()
 
- 'Prep
-    Sheets("Stats").Select 'Reset Sheet
+' Make sure you're on the right sheet
+    Sheets("Stats").Select ' Reset Sheet
 
- 'Copy data to Archive tab
-    lrtarget = ActiveWorkbook.Sheets("Archive").Range("A1", Sheets("Archive").Range("A1").End(xlDown)).Rows.Count 'Count rows on Archive tab 
+' Copy data to Archive tab
+    lrtarget = ActiveWorkbook.Sheets("Archive").Range("A1", Sheets("Archive").Range("A1").End(xlDown)).Rows.Count 'Count rows on Archive tab
     Sheets("Archive").Range("A" & lrtarget + 1 & ":E" & lrtarget + 1).Value = Sheets("Stats").Range("M23:Q23").Value 'Pastes in This Week Info
     Sheets("Archive").Range("F" & lrtarget + 1 & ":I" & lrtarget + 1).Value = Sheets("Stats").Range("N26:Q26").Value 'Pastes in Daily Info
     Sheets("Archive").Range("J" & lrtarget + 1 & ":M" & lrtarget + 1).Value = Sheets("Stats").Range("N29:Q29").Value 'Pastes in Next Week Info
-
- 'Cleanup    
-    Range("A1").Select 'Reset Cursor
+    
+    Range("A1").Select ' Reset Cursor
 
 End Sub
