@@ -1,35 +1,20 @@
 Sub Prep_Sheet()
 
-   Application.ScreenUpdating = False ' Cleans View up a bit, so it doesn't jump around
+'Prep
+    Application.ScreenUpdating = False 'Cleans View up a bit, so it doesn't jump around
+    Sheets("Stats").Select 'Reset Sheet
 
-' Make sure you're on the right sheet
-    Sheets("Stats").Select ' Reset Sheet
+'Copy yesterdays numbers up to the right field
+    Range("Q3:R3").Value = Range("Q4:R4").Value 'Overwrite Yesterdays This Week figures
+    Range("Q6:R6").Value = Range("Q7:R7").Value 'Overwrite Yesterdays Next Week figures
 
-' Copy yesterdays numbers up to the right field
-    Range("Q4").Copy ' Copy BVI This Week Figure (Which is now yesterdays)
-    Range("Q3").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values in Yesterdays Row
-    Range("R4").Copy ' Copy Malosa This Week Figure (Which is now yesterdays)
-    Range("R3").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values in Yesterdays Row
-        
-' Copy yesterdays numbers up to the right field
-    Range("Q7").Copy ' Copy BVI Next Week Figure (Which is now yesterdays)
-    Range("Q6").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values in Yesterdays Row
-    Range("R7").Copy ' Copy Malosa Next Week Figure (Which is now yesterdays)
-    Range("R6").PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values in Yesterdays Row
+'Change Cell to todays date
+    Range("P2").FormulaR1C1 = "=TODAY()" 'Update Date to be todays Date
+    Range("P2").Value = Range("P2").Value
 
-' Change to todays date
-    Range("P2").FormulaR1C1 = "=TODAY()" ' Update Date to be todays Date
-    Range("P2").Select ' Select cell (Need to for the paste)
-    Selection.Copy ' Copy cell
-    Selection.PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values - stopping it from automatically updating tomorrow
-
-    Range("A1").Select ' Reset Cursor
-    Application.ScreenUpdating = True ' Reset Screen Updating
+'Clean Up
+    Range("A1").Select 'Reset Cursor
+    Application.ScreenUpdating = True 'Reset Screen Updating
 
 End Sub
 
