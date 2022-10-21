@@ -10,7 +10,7 @@ Sub Prep_Sheet()
 
 'Change Cell to todays date
     Range("P2").FormulaR1C1 = "=TODAY()" 'Update Date to be todays Date
-    Range("P2").Value = Range("P2").Value
+    Range("P2").Value = Range("P2").Value 'Paste date as values
 
 'Clean Up
     Range("A1").Select 'Reset Cursor
