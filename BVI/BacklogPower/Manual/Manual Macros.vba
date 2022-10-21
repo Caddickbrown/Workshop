@@ -20,37 +20,15 @@ End Sub
 
 Sub Archive()
 
-   Application.ScreenUpdating = False ' Cleans View up a bit, so it doesn't jump around
-
 ' Make sure you're on the right sheet
     Sheets("Stats").Select ' Reset Sheet
 
-' Copy data to relevant tab (This Week)
-    Range("M23:Q23").Copy ' Copy This Weeks data
-    Sheets("Archive").Select ' Move to "Archive" Tab
-    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget + 1, 1).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values
-    Sheets("Stats").Select ' Reset Sheet
-
-' Copy data to relevant tab (Daily)
-    Range("N26:Q26").Copy ' Copy Daily data
-    Sheets("Archive").Select ' Move to "Archive" Tab
-    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget, 6).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values
-    Sheets("Stats").Select ' Reset Sheet
-
-' Copy data to relevant tab (Next Week)
-    Range("N29:Q29").Copy ' Copy Next Weeks data
-    Sheets("Archive").Select ' Move to "Archive" Tab
-    lrtarget = Cells.Find("*", Cells(1, 1), xlFormulas, xlPart, xlByRows, xlPrevious, False).Row ' Find the last row on the sheet
-    Cells(lrtarget, 10).PasteSpecial Paste:=xlPasteValues, Operation:=xlNone, SkipBlanks _
-        :=False, Transpose:=False ' Paste as Values
-    Range("A1").Select ' Reset Cursor
-    Sheets("Stats").Select ' Reset Sheet
+' Copy data to Archive tab
+    lrtarget = ActiveWorkbook.Sheets("Archive").Range("A1", Sheets("Archive").Range("A1").End(xlDown)).Rows.Count 'Count rows on Archive tab 
+    Sheets("Archive").Range("A" & lrtarget + 1 & ":E" & lrtarget + 1).Value = Sheets("Stats").Range("M23:Q23").Value 'Pastes in This Week Info
+    Sheets("Archive").Range("F" & lrtarget + 1 & ":I" & lrtarget + 1).Value = Sheets("Stats").Range("N26:Q26").Value 'Pastes in Daily Info
+    Sheets("Archive").Range("J" & lrtarget + 1 & ":M" & lrtarget + 1).Value = Sheets("Stats").Range("N29:Q29").Value 'Pastes in Next Week Info
     
     Range("A1").Select ' Reset Cursor
-    Application.ScreenUpdating = True ' Reset Screen Updating
 
 End Sub
