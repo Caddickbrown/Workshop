@@ -1,7 +1,6 @@
 Sub Prep_Sheet()
 
 'Prep
-    Application.ScreenUpdating = False 'Cleans View up a bit, so it doesn't jump around
     Sheets("Stats").Select 'Reset Sheet
 
 'Copy yesterdays numbers up to the right field
@@ -14,7 +13,6 @@ Sub Prep_Sheet()
 
 'Clean Up
     Range("A1").Select 'Reset Cursor
-    Application.ScreenUpdating = True 'Reset Screen Updating
 
 End Sub
 

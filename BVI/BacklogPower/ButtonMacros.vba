@@ -23,8 +23,6 @@ End Sub
 
 Sub FillTrackers()
 
-   Application.ScreenUpdating = False 'Cleans View up a bit, so it doesn't jump around
-
  'Make sure you're on the right sheet
     Sheets("Stats").Select 'Reset Sheet
 
@@ -41,7 +39,6 @@ Sub FillTrackers()
     Sheets("Next Week Tracker").Range("A" & lrtarget + 1 & ":E" & lrtarget + 1).Value = Sheets("Stats").Range("M29:Q29").Value 'Pastes in Next Weeks info
  
     Range("A1").Select ' Reset Cursor
-    Application.ScreenUpdating = True ' Reset Screen Updating
 
 End Sub
 
