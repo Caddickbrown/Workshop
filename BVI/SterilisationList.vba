@@ -2,6 +2,7 @@
 '- [ ] Will need adding into BID072
 '- [ ] Change sterilistlocation Location
 '- [ ] Adapt for Malosa
+'- [ ] Do we want to automatically save the file?
 
 Sub Generate_Sterilisation_List()
 
