@@ -2,7 +2,6 @@
 '- [ ] Will need adding into BID072
 '- [ ] Change sterilistlocation Location
 '- [ ] Adapt for Malosa
-'- [ ] Sort Formatting
 
 Sub Generate_Sterilisation_List()
 
@@ -26,7 +25,7 @@ Sub Generate_Sterilisation_List()
         Set wsO = wbO.Worksheets(1)
 
         'Save the file
-        .SaveAs Filename:=sterilistlocation & newsheet, FileFormat:=56
+        .SaveAs Filename:=sterilistlocation & newsheet, FileFormat:=52
 
         'Copy the range
         wsI.Range("T21:AC90").Copy
@@ -38,105 +37,60 @@ Sub Generate_Sterilisation_List()
 
 'Header Data
     Range("A1").Value = "BVI " & shipno
-    wsO.Range("B1").Value = wbI.wsI.Range("N4").Value
-    Range("J3").FormulaR1C1 = "=SUM(J4:J71)"
-
-
+    wsO.Range("B1").Value = wsI.Range("N4").Value
+    Range("J3").Formula = "=SUM(J4:J71)"
 
 'Formatting
-
     Range("A1:J71").Select
+    Range("A3:J3").Font.Bold = True
 
     With Selection.Font
         .Name = "Calibri"
         .Size = 16
-        .Strikethrough = False
-        .Superscript = False
-        .Subscript = False
-        .OutlineFont = False
-        .Shadow = False
-        .Underline = xlUnderlineStyleNone
-        .ThemeColor = xlThemeColorLight1
-        .TintAndShade = 0
-        .ThemeFont = xlThemeFontMinor
     End With
 
-    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
-    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
-    With Selection.Borders(xlEdgeLeft)
+    With Selection.Borders
         .LineStyle = xlDouble
-        .ColorIndex = xlAutomatic
-        .TintAndShade = 0
-        .Weight = xlThick
     End With
-    With Selection.Borders(xlEdgeTop)
-        .LineStyle = xlDouble
-        .ColorIndex = xlAutomatic
-        .TintAndShade = 0
-        .Weight = xlThick
-    End With
-    With Selection.Borders(xlEdgeBottom)
-        .LineStyle = xlDouble
-        .ColorIndex = xlAutomatic
-        .TintAndShade = 0
-        .Weight = xlThick
-    End With
-    With Selection.Borders(xlEdgeRight)
-        .LineStyle = xlDouble
-        .ColorIndex = xlAutomatic
-        .TintAndShade = 0
-        .Weight = xlThick
-    End With
-    With Selection.Borders(xlInsideVertical)
-        .LineStyle = xlDouble
-        .ColorIndex = xlAutomatic
-        .TintAndShade = 0
-        .Weight = xlThick
-    End With
-    With Selection.Borders(xlInsideHorizontal)
-        .LineStyle = xlDouble
-        .ColorIndex = xlAutomatic
-        .TintAndShade = 0
-        .Weight = xlThick
-    End With
-
-    Range("A3:J3").Font.Bold = True
 
 'Green
     With Range("A1").Interior
-        .Pattern = xlSolid
-        .PatternColorIndex = xlAutomatic
         .Color = 5296274
-        .TintAndShade = 0
-        .PatternTintAndShade = 0
+    End With
+
+    With Range("C1").Interior
+        .Color = 5296274
     End With
 
 'Yellow
     With Range("B1").Interior
-        .Pattern = xlSolid
-        .PatternColorIndex = xlAutomatic
         .Color = 65535
-        .TintAndShade = 0
-        .PatternTintAndShade = 0
+    End With
+
+    With Range("J3").Interior
+        .Color = 65535
     End With
 
 'LGrey
     With Range("A2:J2").Interior
-        .Pattern = xlSolid
-        .PatternColorIndex = xlAutomatic
-        .ThemeColor = xlThemeColorDark1
         .TintAndShade = -0.149998474074526
-        .PatternTintAndShade = 0
     End With
 
 'DGrey
     With Range("A3:J3").Interior
-        .Pattern = xlSolid
-        .PatternColorIndex = xlAutomatic
-        .ThemeColor = xlThemeColorDark1
         .TintAndShade = -0.249977111117893
-        .PatternTintAndShade = 0
     End With
+
+'Justify
+    With Columns("A:J")
+        .HorizontalAlignment = xlCenter
+        .VerticalAlignment = xlCenter
+    End With
+    Range("A1").Select
+
+    Cells.EntireColumn.AutoFit
+
+
 
 End Sub
 
