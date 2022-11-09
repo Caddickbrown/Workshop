@@ -16,7 +16,6 @@ Sub ManStradBuild()
     Range("G1").Formula = "=TODAY()-WEEKDAY(TODAY(),3)"
     Range("H1:L1").FormulaR1C1 = "=RC[-1]+7"
 
-
     lrtarget = ActiveWorkbook.Sheets("ManStrad").Range("A1", Sheets("ManStrad").Range("A1").End(xlDown)).Rows.Count
 
     Range("D2:D" & lrtarget).FormulaR1C1 = "=SUM(SUMIF('Reqs'!C[-2],RC[-3],'Reqs'!C),SUMIFS('Open Orders'!C[1],'Open Orders'!C[-2],RC[-3],'Open Orders'!C[-1],""Released""))"
