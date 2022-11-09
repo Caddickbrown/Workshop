@@ -52,7 +52,7 @@ Dim ws As Worksheet
   
   '2. Delete Rows
   Application.DisplayAlerts = False
-    ws.Range("B4:G1000").SpecialCells(xlCellTypeVisible).Delete
+    ws.Range("B2:G1000").SpecialCells(xlCellTypeVisible).Delete
   Application.DisplayAlerts = True
   
   '3. Clear Filter
@@ -60,4 +60,46 @@ Dim ws As Worksheet
     ws.ShowAllData
   On Error GoTo 0
 
+End Sub
+
+
+
+
+Sub ManStradBuild()
+
+'Prep
+    If ActiveSheet.AutoFilterMode Then ActiveSheet.ShowAllData
+    Sheets("ManStrad").Cells.ClearContents
+
+'Copy Data Over
+    Sheets("ManStrad").Range("A:D").Value = Sheets("ManStructures").Range("A:D").Value
+    Columns("B:B").Delete Shift:=xlToLeft
+
+'Headers
+    Range("D1:F1").Value = Array("Component Requirement", "Supplier", "Comments")
+    Range("G1").Formula = "=TODAY()-WEEKDAY(TODAY(),3)"
+    Range("H1:L1").FormulaR1C1 = "=RC[-1]+7"
+
+
+    lrtarget = ActiveWorkbook.Sheets("ManStrad").Range("A1", Sheets("ManStrad").Range("A1").End(xlDown)).Rows.Count
+
+    Range("D2:D" & lrtarget).FormulaR1C1 = "=SUM(SUMIF('Reqs'!C[-2],RC[-3],'Reqs'!C),SUMIFS('Open Orders'!C[1],'Open Orders'!C[-2],RC[-3],'Open Orders'!C[-1],""Released""))"
+    Range("E2:E" & lrtarget).FormulaR1C1 = "=VLOOKUP(RC[-3],'Purchase Order Lines'!C[-3]:C[-2],2,FALSE)"
+    Range("G2:G" & lrtarget).FormulaR1C1 = "=SUM(SUMIFS('Reqs'!C4,'Reqs'!C2,RC1,'Reqs'!C3,""<=""&R1C[1]+6),SUMIFS('Open Orders'!C5,'Open Orders'!C2,RC1,'Open Orders'!C4,""<=""&R1C[1]+6,'Open Orders'!C3,""Released""))*RC3"
+    Range("H2:L" & lrtarget).FormulaR1C1 = "=SUM(SUMIFS('Reqs'!C4,'Reqs'!C2,RC1,'Reqs'!C3,""<=""&R1C[1]+6,'Reqs'!C3,"">=""&R1C[1]),SUMIFS('Open Orders'!C5,'Open Orders'!C2,RC1,'Open Orders'!C4,""<=""&R1C[1]+6,'Open Orders'!C3,""Released"",'Open Orders'!C4,"">=""&R1C[1]))*RC3"
+   
+    
+    If Range("A1").AutoFilterMode = True Then
+    Else
+    Range("A1").AutoFilter
+    End If
+    
+    
+    
+    ActiveSheet.Range("$A:$L" & lrtarget).AutoFilter Field:=4, Criteria1:="<1", Operator:=xlAnd
+    Range("$A:$L" & lrtarget).SpecialCells(xlCellTypeVisible).Delete
+    
+'Cleanup
+    Cells.EntireColumn.AutoFit
+    Range("A1").Select
 End Sub
