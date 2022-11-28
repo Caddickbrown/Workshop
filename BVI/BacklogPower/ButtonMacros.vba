@@ -1,21 +1,23 @@
 Sub RefreshStats()
 
- 'Prep
-    Sheets("Stats").Select 'Reset Sheet
-
  'Copy yesterdays numbers up to the right field
-    Range("Q3:R3").Value = Range("Q4:R4").Value 'Overwrite Yesterdays This Week figures
-    Range("Q6:R6").Value = Range("Q7:R7").Value 'Overwrite Yesterdays Next Week figures
+    Sheets("Stats").Range("Q3:R3").Value = Sheets("Stats").Range("Q4:R4").Value 'Overwrite Yesterdays This Week figures
+    Sheets("Stats").Range("Q6:R6").Value = Sheets("Stats").Range("Q7:R7").Value 'Overwrite Yesterdays Next Week figures
 
  'Change Cell to todays date
-    Range("P2").FormulaR1C1 = "=TODAY()" 'Update Date to be todays Date
-    Range("P2").Value = Range("P2").Value 'Pastes todays date as values
+    Sheets("Stats").Range("P2").FormulaR1C1 = "=TODAY()" 'Update Date to be todays Date
+    Sheets("Stats").Range("P2").Value = Sheets("Stats").Range("P2").Value 'Pastes todays date as values
+
+ 'Change Cell to todays date
+    Sheets("HourStats").Range("P2").FormulaR1C1 = "=TODAY()" 'Update Date to be todays Date
+    Sheets("HourStats").Range("P2").Value = Sheets("HourStats").Range("P2").Value 'Pastes todays date as values
 
  'Refresh PowerQuerys
     ActiveWorkbook.RefreshAll
 
  'Clean Up
-    Range("A1").Select 'Reset Cursor
+    Sheets("Stats").Range("A1").Select 'Reset Cursor
+    Sheets("HourStats").Range("A1").Select 'Reset Cursor
 
 End Sub
 
