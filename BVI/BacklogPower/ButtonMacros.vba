@@ -16,14 +16,12 @@ Sub RefreshStats()
     ActiveWorkbook.RefreshAll
 
  'Clean Up
-    Sheets("Stats").Range("A1").Select 'Reset Cursor
+    Sheets("Stats").Select 'Reset Sheet
+    Range("A1").Select 'Reset Cursor
 
 End Sub
 
 Sub FillTrackers()
-
- 'Prep
-    Sheets("Stats").Select 'Reset Sheet
 
  'Copy data to relevant tab (This Weeks Tracker)
     lrtarget = ActiveWorkbook.Sheets("This Week Tracker").Range("A1", Sheets("This Week Tracker").Range("A1").End(xlDown)).Rows.Count 'Count rows on This Weeks tab
@@ -38,28 +36,23 @@ Sub FillTrackers()
     Sheets("Next Week Tracker").Range("A" & lrtarget + 1 & ":E" & lrtarget + 1).Value = Sheets("Stats").Range("M29:Q29").Value 'Pastes in Next Weeks info
  
  'Clean Up
+    Sheets("Stats").Select 'Reset Sheet
     Range("A1").Select 'Reset Cursor
 
 End Sub
 
 Sub JustRefresh()
 
- 'Prep
-    Sheets("Stats").Select 'Reset Sheet
-
  'Refresh PowerQuerys
     ActiveWorkbook.RefreshAll
 
  'Clean Up
+    Sheets("Stats").Select 'Reset Sheet
     Range("A1").Select 'Reset Cursor
 
 End Sub
 
-
 Sub MondayFillTrackers()
-
- 'Prep
-    Sheets("Stats").Select 'Reset Sheet
 
  'Copy data to relevant tab (This Weeks Tracker)
     lrtarget = ActiveWorkbook.Sheets("This Week Tracker").Range("A1", Sheets("This Week Tracker").Range("A1").End(xlDown)).Rows.Count 'Count rows on This Weeks tab
@@ -83,6 +76,7 @@ Sub MondayFillTrackers()
     Sheets("Order Well").Range("L" & lrtarget + 1 & ":N" & lrtarget + 10).Value = Sheets("HourStats").Range("H2:J11").Value 'Malosa Hrs
  
  'Clean Up
+    Sheets("Stats").Select 'Reset Sheet
     Range("A1").Select 'Reset Cursor
 
 End Sub
