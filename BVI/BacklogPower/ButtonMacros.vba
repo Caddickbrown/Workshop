@@ -17,7 +17,6 @@ Sub RefreshStats()
 
  'Clean Up
     Sheets("Stats").Range("A1").Select 'Reset Cursor
-    Sheets("HourStats").Range("A1").Select 'Reset Cursor
 
 End Sub
 
