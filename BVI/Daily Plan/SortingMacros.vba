@@ -66,5 +66,3 @@ Sub MalosaScheduleSort()
     Worksheets("Malosa Main").Protect Password:="baconbutty"
 
 End Sub
-
-
