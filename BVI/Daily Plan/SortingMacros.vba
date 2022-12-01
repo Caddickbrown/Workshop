@@ -29,7 +29,9 @@ Sub ScheduleSort()
         .Apply
     End With
 
-    Worksheets("BVI Main").Protect Password:="baconbutty"
+    With ActiveSheet
+    .Protect Password:="baconbutty", AllowFiltering:=True
+    End With
 
 End Sub
 
@@ -53,7 +55,7 @@ Sub MalosaScheduleSort()
     
     ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Clear
     ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Add2 _
-        Key:=Range("Table6[[#All],[Ship No.]]"), SortOn:=xlSortOnValues, Order:= _
+        Key:=Range("Table6[[#All],[Date]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
     With ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort
         .Header = xlYes
@@ -63,6 +65,10 @@ Sub MalosaScheduleSort()
         .Apply
     End With
 
-    Worksheets("Malosa Main").Protect Password:="baconbutty"
+
+    With ActiveSheet
+    .Protect Password:="baconbutty", AllowFiltering:=True
+    End With
 
 End Sub
+
