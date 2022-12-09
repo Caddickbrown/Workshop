@@ -4,7 +4,7 @@ Sub RefreshStats()
     Sheets("Stats").Range("Q3:R3").Value = Sheets("Stats").Range("Q4:R4").Value 'Overwrite Yesterdays This Week figures
     Sheets("Stats").Range("Q6:R6").Value = Sheets("Stats").Range("Q7:R7").Value 'Overwrite Yesterdays Next Week figures
 
- 'Copy yesterdays numbers up to the right field
+ 'Copy yesterdays Hour numbers up to the right field
     Sheets("HourStats").Range("Q3:R3").Value = Sheets("HourStats").Range("Q4:R4").Value 'Overwrite Yesterdays This Week figures
     Sheets("HourStats").Range("Q6:R6").Value = Sheets("HourStats").Range("Q7:R7").Value 'Overwrite Yesterdays Next Week figures
 
