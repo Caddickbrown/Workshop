@@ -9,3 +9,15 @@ elif num1 < num2:
 else:
 	print("How did you get here?")
 input("Press Enter to exit.")
+
+def addNumbers(num1,num2):
+	sum = num1 + num2
+	print(sum)
+	return
+addNumbers(2,3)
+addNumbers(4,5)
+
+
+
+# Add two numbers together and say if it's higher than 50
+
