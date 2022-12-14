@@ -4,7 +4,7 @@ import time,sys
 chip = 5
 question = "Enter your {} Number: "
 
-def tPrint(text):
+def typingPrint(text):
   for character in text:
     sys.stdout.write(character)
     sys.stdout.flush()
@@ -19,17 +19,17 @@ def tInput(text):
   return value
 
 def errorOut():
-    tPrint("How did you get here?")
+    print("How did you get here?")
     time.sleep(3)
-    tPrint("\nNo, seriously - what the hell did you do!?")
+    print("\nNo, seriously - what the hell did you do!?")
     time.sleep(5)
-    tPrint("\nHow can a number not be equal to, less than, or greater than 50!?")
+    print("\nHow can a number not be equal to, less than, or greater than 50!?")
     time.sleep(5)
-    tPrint("\nThat doesn't even make sense....")
+    print("\nThat doesn't even make sense....")
     time.sleep(5)
-    tPrint("\nWHHHYYYYY!!?!?!?!?!?!?!?!?!??!?!?!")
+    print("\nWHHHYYYYY!!?!?!?!?!?!?!?!?!??!?!?!")
     time.sleep(5)
-    tPrint("\nYeah whatever - move on...")
+    print("\nYeah whatever - move on...")
 
 def sumNumbers(num1,num2):
     sum = num1 + num2
