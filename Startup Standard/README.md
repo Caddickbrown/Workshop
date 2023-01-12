@@ -1,10 +1,12 @@
 # README
 A selection of standard things I need to sort/install when starting up a new computer.
 
+Note: This needs a bit of a change as I’m learning not everything is required/relevant…
+
 ## Install
 1. [Obsidian](https://obsidian.md/)
 2. [VS Code](https://code.visualstudio.com/)
-3. [SQL Studio Management Studio](https://docs.microsoft.com/en-us/sql/ssms/)
+3. [SQL Server Management Studio](https://docs.microsoft.com/en-us/sql/ssms/)
 
 ## Startup Folder
 1. KeepAwake.vbs (Attached)
