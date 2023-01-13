@@ -3,6 +3,8 @@ A selection of standard things I need to sort/install when starting up a new com
 
 Note: This needs a bit of a change as I’m learning not everything is required/relevant…
 
+Also - building an initialise script to cut all of this down and save time
+
 ## Install
 1. [Obsidian](https://obsidian.md/)
 2. [VS Code](https://code.visualstudio.com/)
