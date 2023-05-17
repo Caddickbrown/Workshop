@@ -1,10 +1,11 @@
 # README
 A selection of standard things I need to sort/install when starting up a new computer.
 
-Note: This needs a bit of a change as I’m learning not everything is required/relevant…
+Note: This may need different options for different job roles.
 
 Also - building an initialise script to cut all of this down and save time
 
+# Planning
 ## Install
 1. [Obsidian](https://obsidian.md/)
 2. [VS Code](https://code.visualstudio.com/)
@@ -38,10 +39,11 @@ Also - building an initialise script to cut all of this down and save time
     - Adblock ([link](https://chrome.google.com/webstore/detail/adblock-%E2%80%94-best-ad-blocker/gighmmpiobklfepjocnamgkkbiglidom))
 
 ### Start Bar
-1. Files
-2. Chrome
-3. Calculator
-4. Outlook
-5. Teams (Or Equivalent)
-6. ERP System
+1. Outlook
+2. Teams (Or Equivalent)
+3. Files
+4. Calculator
+5. Notepad
+6. Chrome
 7. Excel
+8. ERP System
