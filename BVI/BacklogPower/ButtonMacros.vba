@@ -65,4 +65,4 @@ End Sub
 
 Sub RefreshQueries()
    ActiveWorkbook.RefreshAll
-EndSub
+End Sub
