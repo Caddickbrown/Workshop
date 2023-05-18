@@ -1,84 +1,68 @@
+'ToDo
+'- [ ] Named Constants
+
 Sub RefreshStats()
 
-'Copy yesterdays numbers up to the right field
-   YesterdayNumbers "Stats" 
-   YesterdayNumbers "HourStats"
+   AdjustPreviousValues "Stats" 
+   AdjustPreviousValues "HourStats"
 
- 'Change Cell to todays date
-   ChangeDate "Stats"
-   ChangeDate "HourStats"
+   UpdateDateToToday "Stats"
+   UpdateDateToToday "HourStats"
 
- 'Refresh PowerQuerys
-    ActiveWorkbook.RefreshAll
-
- 'Clean Up
-    Sheets("Stats").Select 'Reset Sheet
-    Range("A1").Select 'Reset Cursor
+   RefreshQueries
+   ResetView
 
 End Sub
 
-Sub FillTrackers()
+Sub FillOutHistory()
 
-   TrackerFill shtTab3:= "This Week Tracker", tabLoc1:="M23:Q23"
-   TrackerFill shtTab3:= "Daily Tracker", tabLoc1:="M26:Q26"
-   TrackerFill shtTab3:= "Next Week Tracker", tabLoc1:="M29:Q29"
-
- 'Clean Up
-    Sheets("Stats").Select 'Reset Sheet
-    Range("A1").Select 'Reset Cursor
-
-End Sub
-
-Sub JustRefresh()
-
- 'Refresh PowerQuerys
-    ActiveWorkbook.RefreshAll
-
- 'Clean Up
-    Sheets("Stats").Select 'Reset Sheet
-    Range("A1").Select 'Reset Cursor
-
-End Sub
-
-Sub MondayFillTrackers()
-
-   TrackerFill shtTab3:= "This Week Tracker", tabLoc1:="M23:Q23"
-   TrackerFill shtTab3:= "Daily Tracker", tabLoc1:="M26:Q26"
-   TrackerFill shtTab3:= "Next Week Tracker", tabLoc1:="M29:Q29"
+   CopyDataToHistoricalTab DestinationTab:= "This Week Historical", PastingRange:="M23:Q23"
+   CopyDataToHistoricalTab DestinationTab:= "Daily Historical", PastingRange:="M26:Q26"
+   CopyDataToHistoricalTab DestinationTab:= "Next Week Historical", PastingRange:="M29:Q29"
  
- 'Copy data to relevant tab (Next Weeks Tracker)
-   lrtarget = ActiveWorkbook.Sheets("Order Well").Range("A1", Sheets("Order Well").Range("A1").End(xlDown)).Rows.Count 'Count rows on Order Well tab
+   LastUsedRow = ActiveWorkbook.Sheets("Order Well").Range("A1", Sheets("Order Well").Range("A1").End(xlDown)).Rows.Count
    
-   ArchiveData shtTab4:= "Stats", tabLoc2:= "A", tabLoc3:= "A", tabLoc4:= "P2" 'Measured Date
-   ArchiveData shtTab4:= "Stats", tabLoc2:= "B", tabLoc3:= "B", tabLoc4:= "C2:C11" 'Weeks Out
-   ArchiveData shtTab4:= "Stats", tabLoc2:= "C", tabLoc3:= "E", tabLoc4:= "D2:F11" 'BVI Qty
-   ArchiveData shtTab4:= "Stats", tabLoc2:= "F", tabLoc3:= "H", tabLoc4:= "H2:J11" 'Malosa Qty
-   ArchiveData shtTab4:= "HourStats", tabLoc2:= "I", tabLoc3:= "K", tabLoc4:= "D2:F11" 'BVI Hrs
-   ArchiveData shtTab4:= "HourStats", tabLoc2:= "L", tabLoc3:= "N", tabLoc4:= "H2:J11" 'Malosa Hrs
+   ArchiveData SourceDataTab:= "Stats", PastingRangeStart:= "A", PastingRangeEnd:= "A", SourceDataLocation:= "P2" 'Measured Date
+   ArchiveData SourceDataTab:= "Stats", PastingRangeStart:= "B", PastingRangeEnd:= "B", SourceDataLocation:= "C2:C11" 'Weeks Out
+   ArchiveData SourceDataTab:= "Stats", PastingRangeStart:= "C", PastingRangeEnd:= "E", SourceDataLocation:= "D2:F11" 'BVI Qty
+   ArchiveData SourceDataTab:= "Stats", PastingRangeStart:= "F", PastingRangeEnd:= "H", SourceDataLocation:= "H2:J11" 'Malosa Qty
+   ArchiveData SourceDataTab:= "HourStats", PastingRangeStart:= "I", PastingRangeEnd:= "K", SourceDataLocation:= "D2:F11" 'BVI Hrs
+   ArchiveData SourceDataTab:= "HourStats", PastingRangeStart:= "L", PastingRangeEnd:= "N", SourceDataLocation:= "H2:J11" 'Malosa Hrs
  
- 'Clean Up
-    Sheets("Stats").Select 'Reset Sheet
-    Range("A1").Select 'Reset Cursor
+   ResetView
 
 End Sub
 
-Sub YesterdayNumbers (shtTab1 as String)
-'Copy yesterdays numbers or hours up to the right field
-   Sheets(shtTab1).Range("Q3:R3").Value = Sheets(shtTab1).Range("Q4:R4").Value 'Overwrite Yesterdays "This Week" figures
-   Sheets(shtTab1).Range("Q6:R6").Value = Sheets(shtTab1).Range("Q7:R7").Value 'Overwrite Yesterdays "Next Week" figures
+Sub JustRefreshQueries()
+   RefreshQueries
+   ResetView
 End Sub
 
-Sub ChangeDate (shtTab2 as String)
-'Change Cell to todays date
-   Sheets(shtTab2).Range("P2").FormulaR1C1 = "=TODAY()" 'Update Date to be todays Date
-   Sheets(shtTab2).Range("P2").Value = Sheets(shtTab2).Range("P2").Value 'Pastes todays date as values
+
+Sub AdjustPreviousValues (ValuesTargetTab as String)
+   Sheets(ValuesTargetTab).Range("Q3:R3").Value = Sheets(ValuesTargetTab).Range("Q4:R4").Value
+   Sheets(ValuesTargetTab).Range("Q6:R6").Value = Sheets(ValuesTargetTab).Range("Q7:R7").Value
 End Sub
 
-Sub TrackerFill (shtTab3 as String, tabLoc1 as String)
-   lrtarget = ActiveWorkbook.Sheets(shtTab3).Range("A1", Sheets(shtTab3).Range("A1").End(xlDown)).Rows.Count 'Count rows on This Weeks tab
-   Sheets(shtTab3).Range("A" & lrtarget + 1 & ":E" & lrtarget + 1).Value = Sheets("Stats").Range(tabLoc1).Value 'Pastes in This Weeks info 
+Sub UpdateDateToToday (DatesTargetTab as String)
+   Sheets(DatesTargetTab).Range("P2").FormulaR1C1 = "=TODAY()"
+   Sheets(DatesTargetTab).Range("P2").Value = Sheets(DatesTargetTab).Range("P2").Value
 End Sub
 
-Sub ArchiveData (shtTab4 as String, tabLoc2 as String, tabLoc3 as String, tabLoc4 as String)
-   Sheets("Order Well").Range(tabLoc2 & lrtarget + 1 & ":" & tabLoc3 & lrtarget + 10).Value = Sheets(shtTab4).Range(tabLoc4).Value ' Measured Date
+Sub CopyDataToHistoricalTab (DestinationTab as String, PastingRange as String)
+   LastUsedRow = ActiveWorkbook.Sheets(DestinationTab).Range("A1", Sheets(DestinationTab).Range("A1").End(xlDown)).Rows.Count
+   Sheets(DestinationTab).Range("A" & LastUsedRow + 1 & ":E" & LastUsedRow + 1).Value = Sheets("Stats").Range(PastingRange).Value
 End Sub
+
+Sub ArchiveData (SourceDataTab as String, PastingRangeStart as String, PastingRangeEnd as String, SourceDataLocation as String)
+   Sheets("Order Well").Range(PastingRangeStart & LastUsedRow + 1 & ":" & PastingRangeEnd & LastUsedRow + 10).Value = Sheets(SourceDataTab).Range(SourceDataLocation).Value
+End Sub
+
+Sub ResetView()
+    Sheets("Stats").Select
+    Range("A1").Select
+End Sub
+
+Sub RefreshQueries()
+   ActiveWorkbook.RefreshAll
+EndSub
