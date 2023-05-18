@@ -1,5 +1,6 @@
 'ToDo
 '- [ ] Named Constants
+'- [ ] Make Finding Last Row a Function
 
 Sub RefreshStats()
 
@@ -16,19 +17,21 @@ End Sub
 
 Sub FillOutHistory()
 
-   CopyDataToHistoricalTab DestinationTab:= "This Week Historical", PastingRange:="M23:Q23"
-   CopyDataToHistoricalTab DestinationTab:= "Daily Historical", PastingRange:="M26:Q26"
-   CopyDataToHistoricalTab DestinationTab:= "Next Week Historical", PastingRange:="M29:Q29"
- 
-   LastUsedRow = ActiveWorkbook.Sheets("Order Well").Range("A1", Sheets("Order Well").Range("A1").End(xlDown)).Rows.Count
+   Dim LastUsedRow As Long
    
-   ArchiveData SourceDataTab:= "Stats", PastingRangeStart:= "A", PastingRangeEnd:= "A", SourceDataLocation:= "P2" 'Measured Date
-   ArchiveData SourceDataTab:= "Stats", PastingRangeStart:= "B", PastingRangeEnd:= "B", SourceDataLocation:= "C2:C11" 'Weeks Out
-   ArchiveData SourceDataTab:= "Stats", PastingRangeStart:= "C", PastingRangeEnd:= "E", SourceDataLocation:= "D2:F11" 'BVI Qty
-   ArchiveData SourceDataTab:= "Stats", PastingRangeStart:= "F", PastingRangeEnd:= "H", SourceDataLocation:= "H2:J11" 'Malosa Qty
-   ArchiveData SourceDataTab:= "HourStats", PastingRangeStart:= "I", PastingRangeEnd:= "K", SourceDataLocation:= "D2:F11" 'BVI Hrs
-   ArchiveData SourceDataTab:= "HourStats", PastingRangeStart:= "L", PastingRangeEnd:= "N", SourceDataLocation:= "H2:J11" 'Malosa Hrs
- 
+   CopyDataToHistoricalTab DestinationTab:="This Week Historical", PastingRange:="M23:Q23"
+   CopyDataToHistoricalTab DestinationTab:="Daily Historical", PastingRange:="M26:Q26"
+   CopyDataToHistoricalTab DestinationTab:="Next Week Historical", PastingRange:="M29:Q29"
+
+   LastUsedRow = ActiveWorkbook.Sheets("Order Well").Range("A1", Sheets("Order Well").Range("A1").End(xlDown)).Rows.Count
+  
+   ArchiveData SourceDataTab:="Stats", PastingRangeStart:="A", PastingRangeEnd:="A", SourceDataLocation:="P2", LastUsedRow:=LastUsedRow         'Measured Date
+   ArchiveData SourceDataTab:="Stats", PastingRangeStart:="B", PastingRangeEnd:="B", SourceDataLocation:="C2:C11", LastUsedRow:=LastUsedRow     'Weeks Out
+   ArchiveData SourceDataTab:="Stats", PastingRangeStart:="C", PastingRangeEnd:="E", SourceDataLocation:="D2:F11", LastUsedRow:=LastUsedRow     'BVI Qty
+   ArchiveData SourceDataTab:="Stats", PastingRangeStart:="F", PastingRangeEnd:="H", SourceDataLocation:="H2:J11", LastUsedRow:=LastUsedRow     'Malosa Qty
+   ArchiveData SourceDataTab:="HourStats", PastingRangeStart:="I", PastingRangeEnd:="K", SourceDataLocation:="D2:F11", LastUsedRow:=LastUsedRow 'BVI Hrs
+   ArchiveData SourceDataTab:="HourStats", PastingRangeStart:="L", PastingRangeEnd:="N", SourceDataLocation:="H2:J11", LastUsedRow:=LastUsedRow 'Malosa Hrs
+
    ResetView
 
 End Sub
@@ -54,7 +57,7 @@ Sub CopyDataToHistoricalTab (DestinationTab as String, PastingRange as String)
    Sheets(DestinationTab).Range("A" & LastUsedRow + 1 & ":E" & LastUsedRow + 1).Value = Sheets("Stats").Range(PastingRange).Value
 End Sub
 
-Sub ArchiveData (SourceDataTab as String, PastingRangeStart as String, PastingRangeEnd as String, SourceDataLocation as String)
+Sub ArchiveData (SourceDataTab as String, PastingRangeStart as String, PastingRangeEnd as String, SourceDataLocation as String, ByRef LastUsedRow as Long)
    Sheets("Order Well").Range(PastingRangeStart & LastUsedRow + 1 & ":" & PastingRangeEnd & LastUsedRow + 10).Value = Sheets(SourceDataTab).Range(SourceDataLocation).Value
 End Sub
 
