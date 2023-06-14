@@ -1,4 +1,4 @@
-Sub Schwid()
+Sub MalosaInstrumentsDataSort()
 
 Dim Home As Workbook
 Set Home = ThisWorkbook
