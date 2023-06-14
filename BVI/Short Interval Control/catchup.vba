@@ -6,6 +6,7 @@ Sub SIC_Catchup()
    
     ' before I learnt that you could have more than 1 variable on a line, defines and sets all the variables needed
     ' You dope... I'm totally leaving this in here as it is
+    ' Yeah... not sure I really wan't to do that anymore - probably gonna change this at some point...
     Dim Home As Workbook
     Set Home = ThisWorkbook
     Dim temp As Worksheet
