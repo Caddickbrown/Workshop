@@ -1,6 +1,7 @@
 'ToDo
 '- [ ] Named Constants
 '- [ ] Make Finding Last Row a Function
+'- [ ] Looping?
 
 Sub RefreshStats()
 
