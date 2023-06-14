@@ -1,3 +1,14 @@
+' ## To Do
+' - [ ] Check if in correct exported sheet
+' - [ ] Formatting for Spill "Table"
+' - [ ] Column L Width Fix
+' - [ ] Generate "Master Sheet"
+' - [ ] Open Issues Log
+' - [ ] Eventually Obselete with SQL
+' 
+
+
+
 Sub MalosaInstrumentsDataSort()
 
 Dim Home As Workbook
@@ -102,6 +113,8 @@ Dim indx As Integer
     ActiveSheet.PivotTables("PivotTable1").RepeatAllLabels xlRepeatLabels
     ActiveSheet.PivotTables("PivotTable1").PivotFields("Part No").Orientation = xlRowField
     ActiveSheet.PivotTables("PivotTable1").AddDataField ActiveSheet.PivotTables("PivotTable1").PivotFields("Quantity"), "Sum of Quantity", xlSum
+    Sheets(1).Name = "Pivot"
+
     Sheets(2).Select
     Range("A1").Select
 
