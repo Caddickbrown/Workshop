@@ -1,7 +1,7 @@
 ' ## To Do
-' - [ ] Auto Pull Data sheets
+' - [ ] Auto Pull Exported Data sheets
 ' - [ ] Formatting Reset
-' - [ ] 
+' - [ ] Variable Formulas in Arrays
 ' - [ ] 
 ' - [ ] 
 ' - [ ] 
@@ -14,6 +14,22 @@ MainSheetName = "Locations"
 RequisitionsSheetName = "Requisition Demand"
 ReleasedOrdersSheetName = "Released Shop Orders"
 IPISSheetName = "IPIS"
+
+' ## Space for Formulas
+' PartNumberCalc = 
+' TotalRawMaterialQtyCalc
+' AMCOCalc
+' GoodsInCalc
+' InstrumentsAndKnivesCalc
+' CentralStoresCalc
+' B1StockCalc
+' RMMaterialCalc
+' TotalReqForWeekCalc
+' RMShortageCalc
+' B1ShortageCalc
+' QuickReleaseCalc
+' ReleasedSOCalc
+' NetUsableRMCalc
 
 Sheets(MainSheetName).Rows("3:1048576").Delete Shift:=xlUp
 Sheets(RequisitionsSheetName).Rows("2:1048576").ClearContents
