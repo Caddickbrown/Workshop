@@ -4,6 +4,7 @@
 ' - [ ] Column L Width Fix
 ' - [ ] Generate "Master Sheet"
 ' - [ ] Open Issues Log
+' - [ ] Extend Pivot Table
 ' - [ ] Eventually Obselete with SQL
 ' 
 
@@ -70,8 +71,8 @@ Dim indx As Integer
     
     Sheets.Add
     ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, SourceData:= _
-        "Requisitions!R1C1:R339C4", Version:=8).CreatePivotTable _
-        TableDestination:="Sheet1!R3C1", TableName:="PivotTable1", DefaultVersion _
+        "Requisitions!R1C1:R999C8", Version:=8).CreatePivotTable _
+        TableDestination:="Sheet1!R1C1", TableName:="PivotTable1", DefaultVersion _
         :=8
     Sheets("Sheet1").Select
     Cells(3, 1).Select
