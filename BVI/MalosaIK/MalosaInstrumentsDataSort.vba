@@ -1,7 +1,6 @@
 ' ## To Do
 ' - [ ] Check if in correct exported sheet
 ' - [ ] Formatting for Spill "Table"
-' - [ ] Column L Width Fix
 ' - [ ] Generate "Master Sheet"
 ' - [ ] Open Issues Log
 ' - [ ] Extend Pivot Table
@@ -38,11 +37,15 @@ Dim indx As Integer
         End If
     Next indx
 
+    Sheets.Add After:=ActiveSheet
+    Sheets(2).Name = "MPKG"
+    Sheets(1).Select
+
     Range("E:XFD").ClearContents
-    Range("E1:H1").Value = Array("Week", "PC", "Sterile", "Notes")
-    Range("E2:G2").Formula2R1C1 = Array("=IF(RC[-1]<TODAY(),""Overdue"",CONCATENATE(YEAR(RC[-1]),"" - "",TEXT(ISOWEEKNUM(RC[-1]),""00"")))", "", "=IF(RIGHT(RC[-5],1)=""S"",""Sterile"",""Non-Sterile"")")
+    Range("E1:J1").Value = Array("Week", "PC", "MPKG", "RM", "Sterility", "Notes")
+    Range("E2:I2").Formula2 = Array("=IF(D2<TODAY(),""Overdue"",CONCATENATE(YEAR(D2),"" - "",TEXT(ISOWEEKNUM(D2),""00"")))", "", "=IF(COUNTIF(MPKG!A:A,B2)>0,""Issue"",""-"")", "", "=IF(RIGHT(B2,1)=""S"",""Sterile"",""Non-Sterile"")")
     
-    Range("E2:G" & Range("A" & Rows.Count).End(xlUp).Row).FillDown
+    Range("E2:I" & Range("A" & Rows.Count).End(xlUp).Row).FillDown
 
     Range("D1").AutoFilter
     ActiveWorkbook.Worksheets("Requisitions").AutoFilter.Sort. _
@@ -58,23 +61,46 @@ Dim indx As Integer
         .Apply
     End With
 
-    Range("L2:O2").Value = Array("PC", "Sterile", "Non-Sterile", "Total")
-    Range("L3:O3").Formula2 = Array("=IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),"""")", "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$G:$G,M$2)", "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$G:$G,N$2)", "=IF(L3:L100="""","""",MMULT(IF(M3:N100="""",0,M3:N100),TRANSPOSE(SIGN(COLUMN(M2:N2)))))")
+    Range("M1").Value = "Remaining"
+    Range("N1").Formula2 = "=COUNTA(A:A)-COUNTA(H:H)"
+
+    Range("M2:P2").Value = Array("PC", "Sterile", "Non-Sterile", "Total")
+    Range("M3:P3").Formula2 = Array("=IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),"""")", "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$I:$I,N$2)", "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$I:$I,O$2)", "=IF(M3:M100="""","""",MMULT(IF(N3:O100="""",0,N3:O100),TRANSPOSE(SIGN(COLUMN(N2:O2)))))")
     
-    With Columns("L:O")
+    With Columns("C:W")
         .HorizontalAlignment = xlCenter
         .VerticalAlignment = xlCenter
         .NumberFormat = "General"
     End With
     
+    Range("T2:V2").Value = Array("No Issue", "Issue", "Total")
+    Range("S3").Value = Array("To Release")
+    Range("S4").Value = Array("Insufficient RM")
+    Range("S5").Value = Array("Total")
+
+    Range("T3:W3").Formula2 = Array("=SUMIFS($C:$C,$H:$H,$S3,$G:$G,""-"")", "=SUMIFS($C:$C,$H:$H,$S3,$G:$G,U$2)", "=SUM(T3:U3)", "=V3/V5")
+    Range("T4:W4").Formula2 = Array("=SUMIFS($C:$C,$H:$H,$S4,$G:$G,""-"")", "=SUMIFS($C:$C,$H:$H,$S4,$G:$G,U$2)", "=SUM(T4:U4)", "")
+    Range("T5:W5").Formula2 = Array("=SUM(T3:T4)", "=SUM(U3:U4)", "=SUM(V3:V4)", "")
+
+    Range("S10:T10").Value = Array("Week", "Total")
+    Range("S11:T11").Formula2 = Array("=IFERROR(SORT(UNIQUE(FILTER(E2:E942,E2:E942<>""""),FALSE,FALSE)),"""")" ,"=SUMIFS($C:$C,$E:$E,IFERROR(SORT(UNIQUE(FILTER(E2:E942,E2:E942<>""""),FALSE,FALSE)),""""))")
+
     Cells.EntireColumn.AutoFit
-    
+    Range("V3:V5,T5:U5").Activate
+    With Selection.Interior
+        .Pattern = xlSolid
+        .PatternColorIndex = xlAutomatic
+        .ThemeColor = xlThemeColorDark1
+        .TintAndShade = -0.149998474074526
+        .PatternTintAndShade = 0
+    End With
+
     Sheets.Add
     ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, SourceData:= _
-        "Requisitions!R1C1:R999C8", Version:=8).CreatePivotTable _
-        TableDestination:="Sheet1!R1C1", TableName:="PivotTable1", DefaultVersion _
+        "Requisitions!R1C1:R999C10", Version:=8).CreatePivotTable _
+        TableDestination:="Sheet2!R1C1", TableName:="PivotTable1", DefaultVersion _
         :=8
-    Sheets("Sheet1").Select
+    Sheets("Sheet2").Select
     Cells(3, 1).Select
     With ActiveSheet.PivotTables("PivotTable1")
         .ColumnGrand = True
@@ -120,5 +146,3 @@ Dim indx As Integer
     Range("A1").Select
 
 End Sub
-
-
