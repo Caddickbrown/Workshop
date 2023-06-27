@@ -29,6 +29,9 @@ Sub Archive()
     Sheets("Archive").Range("F" & lrtarget + 1 & ":I" & lrtarget + 1).Value = Sheets("Stats").Range("N26:Q26").Value 'Pastes in Daily Info
     Sheets("Archive").Range("J" & lrtarget + 1 & ":M" & lrtarget + 1).Value = Sheets("Stats").Range("N29:Q29").Value 'Pastes in Next Week Info
     
+    lrtarget = ActiveWorkbook.Sheets("Shipment Tracking").Range("A1", Sheets("Shipment Tracking").Range("A1").End(xlDown)).Rows.Count 'Count rows on Shipment Tracking tab
+    Sheets("Shipment Tracking").Range("C" & lrtarget + 1 & ":E" & lrtarget + 1).Value = Sheets("Stats").Range("M32:O32").Value 'Pastes in Shipment Tracking Details
+    
     Range("A1").Select ' Reset Cursor
 
 End Sub
