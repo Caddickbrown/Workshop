@@ -33,6 +33,8 @@ Sub FillOutHistory()
    ArchiveData SourceDataTab:="HourStats", PastingRangeStart:="I", PastingRangeEnd:="K", SourceDataLocation:="D2:F11", LastUsedRow:=LastUsedRow 'BVI Hrs
    ArchiveData SourceDataTab:="HourStats", PastingRangeStart:="L", PastingRangeEnd:="N", SourceDataLocation:="H2:J11", LastUsedRow:=LastUsedRow 'Malosa Hrs
 
+   FillShipmentTracking DestinationTab:="Shipment Tracking", PastingRange:="M32:O32"
+
    ResetView
 
 End Sub
@@ -69,4 +71,9 @@ End Sub
 
 Sub RefreshQueries()
    ActiveWorkbook.RefreshAll
+End Sub
+
+Sub FillShipmentTracking (DestinationTab as String, PastingRange as String)
+   LastUsedRow = ActiveWorkbook.Sheets(DestinationTab).Range("A1", Sheets(DestinationTab).Range("A1").End(xlDown)).Rows.Count
+   Sheets(DestinationTab).Range("C" & LastUsedRow + 1 & ":E" & LastUsedRow + 1).Value = Sheets("Stats").Range(PastingRange).Value
 End Sub
