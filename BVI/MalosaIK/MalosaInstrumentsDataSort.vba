@@ -1,11 +1,11 @@
 ' ## To Do
 ' - [ ] Check if in correct exported sheet
-' - [ ] Formatting for Spill "Table"
+' - [ ] Column Widths
 ' - [ ] Generate "Master Sheet"
 ' - [ ] Open Issues Log
 ' - [ ] Extend Pivot Table
 ' - [ ] Eventually Obselete with SQL
-' 
+' - [ ] Tidy Up code
 
 
 
@@ -72,6 +72,8 @@ Dim indx As Integer
         .VerticalAlignment = xlCenter
         .NumberFormat = "General"
     End With
+    Columns("D:D").NumberFormat = "m/d/yyyy"
+    Range("W3").NumberFormat = "0.00%"
     
     Range("T2:V2").Value = Array("No Issue", "Issue", "Total")
     Range("S3").Value = Array("To Release")
@@ -144,5 +146,11 @@ Dim indx As Integer
 
     Sheets(2).Select
     Range("A1").Select
+
+    With ActiveWindow
+        .SplitColumn = 0
+        .SplitRow = 1
+    End With
+    ActiveWindow.FreezePanes = True
 
 End Sub
