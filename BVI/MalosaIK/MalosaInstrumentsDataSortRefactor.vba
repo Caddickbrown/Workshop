@@ -1,11 +1,8 @@
 ' ## To Do
 ' - [ ] Check if in correct exported sheet
 ' - [ ] Column Widths
-' - [ ] Generate "Master Sheet"
 ' - [ ] Open Issues Log
-' - [ ] Extend Pivot Table
 ' - [ ] Eventually Obselete with SQL
-' - [ ] Tidy Up code
 
 
 
@@ -31,7 +28,7 @@ MPKGSheetName = "MPKG"
 
 'Formulas
 '## Locations
-PartNumberCalc = "='" & RequisitionsSheetName & "'!B2"
+PartNumberCalc = "='" & PivotSheetName & "'!A2"
 TotalRawMaterialQtyCalc = "=SUMIF(INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""Part No""," & IPISSheetName & "!$A$1:$BZ$1,0)),LEFT(A2,8)&""A"",INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""On Hand Qty""," & IPISSheetName & "!$A$1:$BZ$1,0)))"
 AMCOCalc = "=SUMIFS(INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""On Hand Qty""," & IPISSheetName & "!$A$1:$BZ$1,0)),INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""Warehouse""," & IPISSheetName & "!$A$1:$BZ$1,0)),C$1,INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""Part No""," & IPISSheetName & "!$A$1:$BZ$1,0)),LEFT($A2,8)&""A"")"
 B1StockCalc = "=E2+F2"
@@ -70,7 +67,6 @@ NetUsableRMCalc = "=G2-M2"
         .Add().Name = IPISSheetName
         .Add().Name = MPKGSheetName
     End With
-
 
 
 'Fill Out Tabs
@@ -174,10 +170,12 @@ NetUsableRMCalc = "=G2-M2"
     Sheets(LocationSheetName).Range("A2:N2").Formula2 = Array(PartNumberCalc, TotalRawMaterialQtyCalc, AMCOCalc, "", "", "", B1StockCalc, RMMaterialCalc, TotalReqForWeekCalc, RMShortageCalc, B1ShortageCalc, QuickReleaseCalc, ReleasedSOCalc, NetUsableRMCalc)
     Sheets(LocationSheetName).Range("C2").AutoFill Destination:=Range(Cells(2, 3), Cells(2, 6))
 
+    Range("D1").AutoFilter
     Sheets(LocationSheetName).Range("A2").Select
 
 'Shortages
 'CONCATENATE(LEFT(ARRAY,8)&"A")
+
 
 'Formatting
 'Reqs
@@ -266,6 +264,12 @@ NetUsableRMCalc = "=G2-M2"
     End With
 
     Cells.EntireColumn.AutoFit
+
+    With ActiveWindow
+        .SplitColumn = 0
+        .SplitRow = 1
+    End With
+    ActiveWindow.FreezePanes = True
 
     Range("A2").Select
 
