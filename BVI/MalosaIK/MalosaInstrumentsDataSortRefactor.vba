@@ -287,8 +287,6 @@ NetUsableRMCalc = "=G2-M2"
         .TintAndShade = 0.599993896298105
     End With
 
-
-
 'Sheet Order
     Sheets(RequisitionsSheetName).Move Before:=Sheets(1)
     Sheets(LocationSheetName).Move Before:=Sheets(2)
