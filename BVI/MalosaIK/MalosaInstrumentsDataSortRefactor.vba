@@ -3,7 +3,7 @@
 ' - [ ] Column Widths
 ' - [ ] Open Issues Log
 ' - [ ] Eventually Obselete with SQL
-' - [ ] Change MPKG Sheet to "Issue Highlight"
+' - [ ] Variable Sheet Names in Requisitions Calculations
 
 
 
@@ -16,7 +16,7 @@ Dim cnt As Integer
 Dim colOrdr As Variant
 Dim indx As Integer
 
-Dim LocationSheetName As String, RequisitionsSheetName As String, ReleasedOrdersSheetName As String, IPISSheetName As String, PivotSheetName As String, ShortageSheetName As String, MPKGSheetName As String, PartNumberCalc As String, TotalRawMaterialQtyCalc As String, AMCOCalc As String, B1StockCalc As String, RMMaterialCalc As String, TotalReqForWeekCalc As String, RMShortageCalc As String, B1ShortageCalc As String, QuickReleaseCalc As String, ReleasedSOCalc As String, NetUsableRMCalc As String
+Dim LocationSheetName As String, RequisitionsSheetName As String, ReleasedOrdersSheetName As String, IPISSheetName As String, PivotSheetName As String, ShortageSheetName As String, IssueHighlightSheetName As String, PartNumberCalc As String, TotalRawMaterialQtyCalc As String, AMCOCalc As String, B1StockCalc As String, RMMaterialCalc As String, TotalReqForWeekCalc As String, RMShortageCalc As String, B1ShortageCalc As String, QuickReleaseCalc As String, ReleasedSOCalc As String, NetUsableRMCalc As String
 
 'Tab Names
 LocationSheetName = "Locations"
@@ -25,14 +25,14 @@ ReleasedOrdersSheetName = "Released Shop Orders"
 IPISSheetName = "IPIS"
 PivotSheetName = "Requisitions Pivot"
 ShortageSheetName = "Shortages"
-MPKGSheetName = "MPKG"
+IssueHighlightSheetName = "Issue Highlight"
 
 'Formulas
 '## Requisitions
 WeekCalc = "=IF(D2<TODAY(),""Overdue"",CONCATENATE(YEAR(D2),"" - "",TEXT(ISOWEEKNUM(D2),""00"")))"
 PCCalc = ""
-MPKGCalc = "=IF(COUNTIF(MPKG!A:A,B2)>0,""Issue"",""-"")"
-RMCalc = "=IF(C2>VLOOKUP(B2,Locations!A:B,2,FALSE),""Insufficient RM"","""")"
+IssueHighlightCalc = "=IF(COUNTIF(" & IssueHighlightSheetName & "!A:A,B2)>0,""Issue"",""-"")"
+RMCalc = "=IF(C2>VLOOKUP(B2," & LocationSheetName & "!A:B,2,FALSE),""Insufficient RM"","""")"
 SterilityCalc = "=IF(RIGHT(B2,1)=""S"",""Sterile"",""Non-Sterile"")"
 RemainingCalc = "=COUNTA(A:A)-COUNTA(H:H)"
 PCSpillCalc = "=IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),"""")"
@@ -90,7 +90,7 @@ NetUsableRMCalc = "=G2-M2"
         .Add().Name = LocationSheetName
         .Add().Name = ReleasedOrdersSheetName
         .Add().Name = IPISSheetName
-        .Add().Name = MPKGSheetName
+        .Add().Name = IssueHighlightSheetName
     End With
 
 
@@ -99,8 +99,8 @@ NetUsableRMCalc = "=G2-M2"
     Sheets(RequisitionsSheetName).Select
 
     Range("E:XFD").ClearContents
-    Range("E1:J1").Value = Array("Week", "PC", "MPKG", "RM", "Sterility", "Notes")
-    Range("E2:I2").Formula2 = Array(WeekCalc, PCCalc, MPKG, RMCalc, SterilityCalc)
+    Range("E1:J1").Value = Array("Week", "PC", "IssueHighlight", "RM", "Sterility", "Notes")
+    Range("E2:I2").Formula2 = Array(WeekCalc, PCCalc, IssueHighlight, RMCalc, SterilityCalc)
     
     Range("E2:I" & Range("A" & Rows.Count).End(xlUp).Row).FillDown
 
@@ -307,7 +307,7 @@ NetUsableRMCalc = "=G2-M2"
         .ThemeColor = xlThemeColorAccent4
         .TintAndShade = 0.599993896298105
     End With
-    With ActiveWorkbook.Sheets(MPKGSheetName).Tab
+    With ActiveWorkbook.Sheets(IssueHighlightSheetName).Tab
         .ThemeColor = xlThemeColorAccent4
         .TintAndShade = 0.599993896298105
     End With
