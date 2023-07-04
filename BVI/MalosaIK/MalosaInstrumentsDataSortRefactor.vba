@@ -3,6 +3,7 @@
 ' - [ ] Column Widths
 ' - [ ] Open Issues Log
 ' - [ ] Eventually Obselete with SQL
+' - [ ] Change MPKG Sheet to "Issue Highlight"
 
 
 
@@ -27,6 +28,30 @@ ShortageSheetName = "Shortages"
 MPKGSheetName = "MPKG"
 
 'Formulas
+'## Requisitions
+WeekCalc = "=IF(D2<TODAY(),""Overdue"",CONCATENATE(YEAR(D2),"" - "",TEXT(ISOWEEKNUM(D2),""00"")))"
+PCCalc = ""
+MPKGCalc = "=IF(COUNTIF(MPKG!A:A,B2)>0,""Issue"",""-"")"
+RMCalc = "=IF(C2>VLOOKUP(B2,Locations!A:B,2,FALSE),""Insufficient RM"","""")"
+SterilityCalc = "=IF(RIGHT(B2,1)=""S"",""Sterile"",""Non-Sterile"")"
+RemainingCalc = "=COUNTA(A:A)-COUNTA(H:H)"
+PCSpillCalc = "=IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),"""")"
+SterileSpillCalc = "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$I:$I,N$2)"
+NonSterileSpillCalc = "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$I:$I,O$2)"
+TotalSpillCalc = "=IF(M3:M100="""","""",MMULT(IF(N3:O100="""",0,N3:O100),TRANSPOSE(SIGN(COLUMN(N2:O2)))))"
+NoIssueReleaseCalc = "=SUMIFS($C:$C,$H:$H,$S3,$G:$G,""-"")"
+IssueReleaseCalc ="=SUMIFS($C:$C,$H:$H,$S3,$G:$G,U$2)"
+TotalReleaseCalc = "=SUM(T3:U3)"
+PercentageReleaseCalc = "=V3/V5"
+NoIssueNoReleaseCalc = "=SUMIFS($C:$C,$H:$H,$S4,$G:$G,""-"")"
+IssueNoReleaseCalc ="=SUMIFS($C:$C,$H:$H,$S4,$G:$G,U$2)"
+TotalNoReleaseCalc = "=SUM(T4:U4)"
+TotalNoIssueCalc = "=SUM(T3:T4)"
+TotalIssueCalc = "=SUM(U3:U4)"
+TotalTotalCalc = "=SUM(V3:V4)"
+WeekSpillCalc = "=IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:E999<>""""),FALSE,FALSE)),"""")"
+TotalWeekSpillCalc = "=SUMIFS($C:$C,$E:$E,IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:E999<>""""),FALSE,FALSE)),""""))"
+
 '## Locations
 PartNumberCalc = "='" & PivotSheetName & "'!A2"
 TotalRawMaterialQtyCalc = "=SUMIF(INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""Part No""," & IPISSheetName & "!$A$1:$BZ$1,0)),LEFT(A2,8)&""A"",INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""On Hand Qty""," & IPISSheetName & "!$A$1:$BZ$1,0)))"
@@ -75,7 +100,7 @@ NetUsableRMCalc = "=G2-M2"
 
     Range("E:XFD").ClearContents
     Range("E1:J1").Value = Array("Week", "PC", "MPKG", "RM", "Sterility", "Notes")
-    Range("E2:I2").Formula2 = Array("=IF(D2<TODAY(),""Overdue"",CONCATENATE(YEAR(D2),"" - "",TEXT(ISOWEEKNUM(D2),""00"")))", "", "=IF(COUNTIF(MPKG!A:A,B2)>0,""Issue"",""-"")", "", "=IF(RIGHT(B2,1)=""S"",""Sterile"",""Non-Sterile"")")
+    Range("E2:I2").Formula2 = Array(WeekCalc, PCCalc, MPKG, RMCalc, SterilityCalc)
     
     Range("E2:I" & Range("A" & Rows.Count).End(xlUp).Row).FillDown
 
@@ -94,22 +119,22 @@ NetUsableRMCalc = "=G2-M2"
     End With
 
     Range("M1").Value = "Remaining"
-    Range("N1").Formula2 = "=COUNTA(A:A)-COUNTA(H:H)"
+    Range("N1").Formula2 = RemainingCalc
 
     Range("M2:P2").Value = Array("PC", "Sterile", "Non-Sterile", "Total")
-    Range("M3:P3").Formula2 = Array("=IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),"""")", "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$I:$I,N$2)", "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$I:$I,O$2)", "=IF(M3:M100="""","""",MMULT(IF(N3:O100="""",0,N3:O100),TRANSPOSE(SIGN(COLUMN(N2:O2)))))")
+    Range("M3:P3").Formula2 = Array(PCSpillCalc, SterileSpillCalc, NonSterileSpillCalc, TotalSpillCalc)
 
     Range("T2:V2").Value = Array("No Issue", "Issue", "Total")
     Range("S3").Value = "To Release"
     Range("S4").Value = "Insufficient RM"
     Range("S5").Value = "Total"
 
-    Range("T3:W3").Formula2 = Array("=SUMIFS($C:$C,$H:$H,$S3,$G:$G,""-"")", "=SUMIFS($C:$C,$H:$H,$S3,$G:$G,U$2)", "=SUM(T3:U3)", "=V3/V5")
-    Range("T4:V4").Formula2 = Array("=SUMIFS($C:$C,$H:$H,$S4,$G:$G,""-"")", "=SUMIFS($C:$C,$H:$H,$S4,$G:$G,U$2)", "=SUM(T4:U4)")
-    Range("T5:V5").Formula2 = Array("=SUM(T3:T4)", "=SUM(U3:U4)", "=SUM(V3:V4)")
+    Range("T3:W3").Formula2 = Array(NoIssueReleaseCalc, IssueReleaseCalc, TotalReleaseCalc, PercentageReleaseCalc)
+    Range("T4:V4").Formula2 = Array(NoIssueNoReleaseCalc, IssueNoReleaseCalc, TotalNoReleaseCalc)
+    Range("T5:V5").Formula2 = Array(TotalNoIssueCalc, TotalIssueCalc, TotalTotalCalc)
 
     Range("S10:T10").Value = Array("Week", "Total")
-    Range("S11:T11").Formula2 = Array("=IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:E999<>""""),FALSE,FALSE)),"""")", "=SUMIFS($C:$C,$E:$E,IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:E999<>""""),FALSE,FALSE)),""""))")
+    Range("S11:T11").Formula2 = Array(WeekSpillCalc, TotalWeekSpillCalc)
 
 'Pivot
     Range("C13").Select
