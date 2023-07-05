@@ -15,6 +15,7 @@ Dim search As Range
 Dim cnt As Integer
 Dim colOrdr As Variant
 Dim indx As Integer
+Dim rng As Range
 
 Dim LocationSheetName As String, RequisitionsSheetName As String, ReleasedOrdersSheetName As String, IPISSheetName As String, PivotSheetName As String, ShortageSheetName As String, IssueHighlightSheetName As String, PartNumberCalc As String, TotalRawMaterialQtyCalc As String, AMCOCalc As String, B1StockCalc As String, RMMaterialCalc As String, TotalReqForWeekCalc As String, RMShortageCalc As String, B1ShortageCalc As String, QuickReleaseCalc As String, ReleasedSOCalc As String, NetUsableRMCalc As String
 
@@ -31,8 +32,8 @@ IssueHighlightSheetName = "Issue Highlight"
 '## Requisitions
 WeekCalc = "=IF(D2<TODAY(),""Overdue"",CONCATENATE(YEAR(D2),"" - "",TEXT(ISOWEEKNUM(D2),""00"")))"
 PCCalc = ""
-IssueHighlightCalc = "=IF(COUNTIF(" & IssueHighlightSheetName & "!A:A,B2)>0,""Issue"",""-"")"
-RMCalc = "=IF(C2>VLOOKUP(B2," & LocationSheetName & "!A:B,2,FALSE),""Insufficient RM"","""")"
+IssueHighlightCalc = "=IF(COUNTIF('" & IssueHighlightSheetName & "'!A:A,B2)>0,""Issue"",""-"")"
+RMCalc = "=IF(C2>VLOOKUP(B2,'" & LocationSheetName & "'!A:B,2,FALSE),""Insufficient RM"","""")"
 SterilityCalc = "=IF(RIGHT(B2,1)=""S"",""Sterile"",""Non-Sterile"")"
 RemainingCalc = "=COUNTA(A:A)-COUNTA(H:H)"
 PCSpillCalc = "=IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),"""")"
@@ -54,8 +55,8 @@ TotalWeekSpillCalc = "=SUMIFS($C:$C,$E:$E,IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:
 
 '## Locations
 PartNumberCalc = "='" & PivotSheetName & "'!A2"
-TotalRawMaterialQtyCalc = "=SUMIF(INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""Part No""," & IPISSheetName & "!$A$1:$BZ$1,0)),LEFT(A2,8)&""A"",INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""On Hand Qty""," & IPISSheetName & "!$A$1:$BZ$1,0)))"
-AMCOCalc = "=SUMIFS(INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""On Hand Qty""," & IPISSheetName & "!$A$1:$BZ$1,0)),INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""Warehouse""," & IPISSheetName & "!$A$1:$BZ$1,0)),C$1,INDEX(" & IPISSheetName & "!$A:$BZ,0,MATCH(""Part No""," & IPISSheetName & "!$A$1:$BZ$1,0)),LEFT($A2,8)&""A"")"
+TotalRawMaterialQtyCalc = "=SUMIF(INDEX('" & IPISSheetName & "'!$A:$BZ,0,MATCH(""Part No"",'" & IPISSheetName & "'!$A$1:$BZ$1,0)),LEFT(A2,8)&""A"",INDEX('" & IPISSheetName & "'!$A:$BZ,0,MATCH(""On Hand Qty"",'" & IPISSheetName & "'!$A$1:$BZ$1,0)))"
+AMCOCalc = "=SUMIFS(INDEX('" & IPISSheetName & "'!$A:$BZ,0,MATCH(""On Hand Qty"",'" & IPISSheetName & "'!$A$1:$BZ$1,0)),INDEX('" & IPISSheetName & "'!$A:$BZ,0,MATCH(""Warehouse"",'" & IPISSheetName & "'!$A$1:$BZ$1,0)),C$1,INDEX('" & IPISSheetName & "'!$A:$BZ,0,MATCH(""Part No"",'" & IPISSheetName & "'!$A$1:$BZ$1,0)),LEFT($A2,8)&""A"")"
 B1StockCalc = "=E2+F2"
 RMMaterialCalc = "=CONCATENATE(LEFT(A2,8),""A"")"
 TotalReqForWeekCalc = "=SUMIFS('" & RequisitionsSheetName & "'!C:C,'" & RequisitionsSheetName & "'!B:B,A2)"
@@ -99,8 +100,8 @@ NetUsableRMCalc = "=G2-M2"
     Sheets(RequisitionsSheetName).Select
 
     Range("E:XFD").ClearContents
-    Range("E1:J1").Value = Array("Week", "PC", "IssueHighlight", "RM", "Sterility", "Notes")
-    Range("E2:I2").Formula2 = Array(WeekCalc, PCCalc, IssueHighlight, RMCalc, SterilityCalc)
+    Range("E1:J1").Value = Array("Week", "PC", "Issue", "RM", "Sterility", "Notes")
+    Range("E2:I2").Formula2 = Array(WeekCalc, PCCalc, IssueHighlightCalc, RMCalc, SterilityCalc)
     
     Range("E2:I" & Range("A" & Rows.Count).End(xlUp).Row).FillDown
 
@@ -234,44 +235,17 @@ NetUsableRMCalc = "=G2-M2"
 'Locations
     Sheets(LocationSheetName).Select
     Range("A1:N1").Font.Bold = True
-    Range("A1:N2").Select
-    Selection.Borders(xlDiagonalDown).LineStyle = xlNone
-    Selection.Borders(xlDiagonalUp).LineStyle = xlNone
-    With Selection.Borders(xlEdgeLeft)
+    Set rng = Range("A1:N2")
+
+    With rng.Borders
         .LineStyle = xlContinuous
         .ColorIndex = 0
         .TintAndShade = 0
         .Weight = xlThin
-    End With
-    With Selection.Borders(xlEdgeTop)
         .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
-    End With
-    With Selection.Borders(xlEdgeBottom)
-        .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
-    End With
-    With Selection.Borders(xlEdgeRight)
-        .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
-    End With
-    With Selection.Borders(xlInsideVertical)
-        .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
-    End With
-    With Selection.Borders(xlInsideHorizontal)
-        .LineStyle = xlContinuous
-        .ColorIndex = 0
-        .TintAndShade = 0
-        .Weight = xlThin
+    
+        .Item(xlDiagonalDown).LineStyle = xlNone
+        .Item(xlDiagonalUp).LineStyle = xlNone
     End With
 
     With Range("A2,H1:I2").Interior
