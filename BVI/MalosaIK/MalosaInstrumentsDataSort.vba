@@ -9,6 +9,11 @@
 
 Sub MalosaInstrumentsDataSort()
 
+Application.Calculation = xlManual
+Application.ScreenUpdating = False
+Application.DisplayStatusBar = False
+Application.EnableEvents = False
+
 Dim Home As Workbook
 Set Home = ThisWorkbook
 Dim search As Range
@@ -306,5 +311,10 @@ NetUsableRMCalc = "=G2-M2"
 
     Sheets(RequisitionsSheetName).Select
     Range("A1").Select
-    
+
+Application.EnableEvents = True
+Application.DisplayStatusBar = True
+Application.ScreenUpdating = True
+Application.Calculation = xlAutomatic
+
 End Sub
