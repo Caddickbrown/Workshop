@@ -36,20 +36,30 @@ IssueHighlightCalc = "=IF(COUNTIF('" & IssueHighlightSheetName & "'!A:A,B2)>0,""
 RMCalc = "=IF(C2>VLOOKUP(B2,'" & LocationSheetName & "'!A:B,2,FALSE),""Insufficient RM"","""")"
 SterilityCalc = "=IF(RIGHT(B2,1)=""S"",""Sterile"",""Non-Sterile"")"
 RemainingCalc = "=COUNTA(A:A)-COUNTA(H:H)"
+RemainingQtyCalc = "=SUM(C:C)-V6"
 PCSpillCalc = "=IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),"""")"
 SterileSpillCalc = "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$I:$I,N$2)"
 NonSterileSpillCalc = "=SUMIFS($C:$C,$F:$F,IFERROR(SORT(UNIQUE(FILTER(F2:F999,F2:F999<>""""),FALSE,FALSE)),""""),$I:$I,O$2)"
 TotalSpillCalc = "=IF(M3:M100="""","""",MMULT(IF(N3:O100="""",0,N3:O100),TRANSPOSE(SIGN(COLUMN(N2:O2)))))"
-NoIssueReleaseCalc = "=SUMIFS($C:$C,$H:$H,$S3,$G:$G,""-"")"
-IssueReleaseCalc ="=SUMIFS($C:$C,$H:$H,$S3,$G:$G,U$2)"
-TotalReleaseCalc = "=SUM(T3:U3)"
-PercentageReleaseCalc = "=V3/V5"
-NoIssueNoReleaseCalc = "=SUMIFS($C:$C,$H:$H,$S4,$G:$G,""-"")"
-IssueNoReleaseCalc ="=SUMIFS($C:$C,$H:$H,$S4,$G:$G,U$2)"
-TotalNoReleaseCalc = "=SUM(T4:U4)"
-TotalNoIssueCalc = "=SUM(T3:T4)"
-TotalIssueCalc = "=SUM(U3:U4)"
-TotalTotalCalc = "=SUM(V3:V4)"
+
+NoIssueReleasedCalc = "=SUMIFS($C:$C,$H:$H,$S3,$G:$G,""-"")"
+IssueReleasedCalc ="=SUMIFS($C:$C,$H:$H,$S3,$G:$G,U$2)"
+TotalReleasedCalc = "=SUM(T3:U3)"
+PercentageReleasedCalc = "=V3/V6"
+
+NoIssueReleaseCalc = "=SUMIFS($C:$C,$H:$H,$S4,$G:$G,""-"")"
+IssueReleaseCalc ="=SUMIFS($C:$C,$H:$H,$S4,$G:$G,U$2)"
+TotalReleaseCalc = "=SUM(T4:U4)"
+PercentageReleaseCalc = "=V4/V6"
+
+NoIssueNoReleaseCalc = "=SUMIFS($C:$C,$H:$H,$S5,$G:$G,""-"")"
+IssueNoReleaseCalc ="=SUMIFS($C:$C,$H:$H,$S5,$G:$G,U$2)"
+TotalNoReleaseCalc = "=SUM(T5:U5)"
+
+TotalNoIssueCalc = "=SUM(T3:T5)"
+TotalIssueCalc = "=SUM(U3:U5)"
+TotalTotalCalc = "=SUM(V3:V5)"
+
 WeekSpillCalc = "=IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:E999<>""""),FALSE,FALSE)),"""")"
 TotalWeekSpillCalc = "=SUMIFS($C:$C,$E:$E,IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:E999<>""""),FALSE,FALSE)),""""))"
 
@@ -120,19 +130,22 @@ NetUsableRMCalc = "=G2-M2"
     End With
 
     Range("M1").Value = "Remaining"
-    Range("N1").Formula2 = RemainingCalc
+    Range("N1:O1").Formula2 = Array(RemainingCalc,RemainingQtyCalc)
 
     Range("M2:P2").Value = Array("PC", "Sterile", "Non-Sterile", "Total")
     Range("M3:P3").Formula2 = Array(PCSpillCalc, SterileSpillCalc, NonSterileSpillCalc, TotalSpillCalc)
 
     Range("T2:V2").Value = Array("No Issue", "Issue", "Total")
-    Range("S3").Value = "To Release"
-    Range("S4").Value = "Insufficient RM"
-    Range("S5").Value = "Total"
+    
+    Range("S3").Value = "Released"
+    Range("S4").Value = "To Release"
+    Range("S5").Value = "Insufficient RM"
+    Range("S6").Value = "Total"
 
-    Range("T3:W3").Formula2 = Array(NoIssueReleaseCalc, IssueReleaseCalc, TotalReleaseCalc, PercentageReleaseCalc)
-    Range("T4:V4").Formula2 = Array(NoIssueNoReleaseCalc, IssueNoReleaseCalc, TotalNoReleaseCalc)
-    Range("T5:V5").Formula2 = Array(TotalNoIssueCalc, TotalIssueCalc, TotalTotalCalc)
+    Range("T3:W3").Formula2 = Array(NoIssueReleasedCalc, IssueReleasedCalc, TotalReleasedCalc, PercentageReleasedCalc)
+    Range("T4:W4").Formula2 = Array(NoIssueReleaseCalc, IssueReleaseCalc, TotalReleaseCalc, PercentageReleaseCalc)
+    Range("T5:V5").Formula2 = Array(NoIssueNoReleaseCalc, IssueNoReleaseCalc, TotalNoReleaseCalc)
+    Range("T6:V6").Formula2 = Array(TotalNoIssueCalc, TotalIssueCalc, TotalTotalCalc)
 
     Range("S10:T10").Value = Array("Week", "Total")
     Range("S11:T11").Formula2 = Array(WeekSpillCalc, TotalWeekSpillCalc)
@@ -216,7 +229,7 @@ NetUsableRMCalc = "=G2-M2"
     Range("W3").NumberFormat = "0.00%"
 
     Cells.EntireColumn.AutoFit
-    Range("V3:V5,T5:U5").Activate
+    Range("V3:V6,T6:U6").Activate
     With Selection.Interior
         .Pattern = xlSolid
         .PatternColorIndex = xlAutomatic
