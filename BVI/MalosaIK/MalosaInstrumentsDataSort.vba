@@ -2,7 +2,7 @@
 ' - [ ] Check if in correct exported sheet
 ' - [ ] Column Widths
 ' - [ ] Open Issues Log
-' - [ ] Eventually Obselete with SQL
+' - [ ] Eventually Obselete with SQL - include in VBA?
 ' - [ ] Variable Sheet Names in Requisitions Calculations
 
 
