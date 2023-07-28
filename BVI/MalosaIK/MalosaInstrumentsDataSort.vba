@@ -220,6 +220,10 @@ NetUsableRMCalc = "=G2-M2"
 'Shortages
 'CONCATENATE(LEFT(ARRAY,8)&"A")
 
+Application.EnableEvents = True
+Application.DisplayStatusBar = True
+Application.ScreenUpdating = True
+Application.Calculation = xlAutomatic
 
 'Formatting
 'Reqs
@@ -231,7 +235,7 @@ NetUsableRMCalc = "=G2-M2"
         .NumberFormat = "General"
     End With
     Columns("D:D").NumberFormat = "m/d/yyyy"
-    Range("W3").NumberFormat = "0.00%"
+    Range("W3:W4").NumberFormat = "0.00%"
 
     Cells.EntireColumn.AutoFit
     Range("V3:V6,T6:U6").Activate
@@ -311,10 +315,5 @@ NetUsableRMCalc = "=G2-M2"
 
     Sheets(RequisitionsSheetName).Select
     Range("A1").Select
-
-Application.EnableEvents = True
-Application.DisplayStatusBar = True
-Application.ScreenUpdating = True
-Application.Calculation = xlAutomatic
 
 End Sub
