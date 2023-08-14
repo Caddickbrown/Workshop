@@ -66,6 +66,9 @@ TotalIssueCalc = "=SUM(U3:U5)"
 TotalTotalCalc = "=SUM(V3:V5)"
 
 WeekSpillCalc = "=IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:E999<>""""),FALSE,FALSE)),"""")"
+ReleasedSpillCalc= "=SUMIFS($C:$C,$E:$E,$S11,$H:$H,T$10)"
+ToReleaseSpillCalc= "=SUMIFS($C:$C,$E:$E,$S11,$H:$H,U$10)"
+InsufficientRMSpillCalc= "=SUMIFS($C:$C,$E:$E,$S11,$H:$H,V$10)"
 TotalWeekSpillCalc = "=SUMIFS($C:$C,$E:$E,IFERROR(SORT(UNIQUE(FILTER(E2:E999,E2:E999<>""""),FALSE,FALSE)),""""))"
 
 '## Locations
@@ -152,9 +155,9 @@ NetUsableRMCalc = "=G2-M2"
     Range("T5:V5").Formula2 = Array(NoIssueNoReleaseCalc, IssueNoReleaseCalc, TotalNoReleaseCalc)
     Range("T6:V6").Formula2 = Array(TotalNoIssueCalc, TotalIssueCalc, TotalTotalCalc)
 
-    Range("S10:T10").Value = Array("Week", "Total")
-    Range("S11:T11").Formula2 = Array(WeekSpillCalc, TotalWeekSpillCalc)
-
+    Range("S10:W10").Value = Array("Week", "Released", "To Release", "Insufficient RM", "Total")
+    Range("S11:W11").Formula2 = Array(WeekSpillCalc, ReleasedSpillCalc, ToReleaseSpillCalc, InsufficientRMSpillCalc, TotalWeekSpillCalc)
+    
 'Pivot
     Range("C13").Select
     ActiveWorkbook.PivotCaches.Create(SourceType:=xlDatabase, SourceData:= _
