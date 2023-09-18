@@ -13,6 +13,18 @@ Sub ScheduleSort()
         ActiveSheet.ShowAllData
     End If
     
+    'Sort on Picks
+    ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
+        Key:=Range("Table2[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    
     'Sort on Sequence
     ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
         Key:=Range("Table2[[#All],[Sequence]]"), SortOn:=xlSortOnValues, Order:= _
@@ -38,7 +50,7 @@ Sub ScheduleSort()
         .Apply
     End With
 
-    ActiveSheet.Protect Password:="baconbutty", AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
+    ActiveSheet.Protect Password:="baconbutty", AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
 
 End Sub
 
@@ -52,7 +64,18 @@ Sub MalosaScheduleSort()
     If ActiveSheet.FilterMode = True Then
         ActiveSheet.ShowAllData
     End If
-
+    
+    'Sort on Picks
+    ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
+        Key:=Range("Table2[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
 
     'Sort on Sequence
     ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Add2 _
@@ -79,7 +102,7 @@ Sub MalosaScheduleSort()
         .Apply
     End With
 
-    ActiveSheet.Protect Password:="baconbutty", AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
+    ActiveSheet.Protect Password:="baconbutty", AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
 
 End Sub
 
@@ -95,7 +118,19 @@ Sub SampleScheduleSort()
         ActiveSheet.ShowAllData
     End If
     
-    'Sort on Sequence
+    'Sort on Picks
+    ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
+        Key:=Range("Table2[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    
+    'Sort on Priority
     ActiveWorkbook.Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Add2 _
         Key:=Range("Table29[[#All],[Priority]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
@@ -107,7 +142,7 @@ Sub SampleScheduleSort()
         .Apply
     End With
     
-    'Sort on Date
+    'Sort on Deadline Completion Date
     ActiveWorkbook.Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Clear
     ActiveWorkbook.Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Add2 _
         Key:=Range("Table29[[#All],[Deadline Completion Date]]"), SortOn:=xlSortOnValues, Order:= _
@@ -120,7 +155,7 @@ Sub SampleScheduleSort()
         .Apply
     End With
 
-    ActiveSheet.Protect Password:="baconbutty", AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
+    ActiveSheet.Protect Password:="baconbutty", AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
 
 End Sub
 
