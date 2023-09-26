@@ -14,27 +14,27 @@ Sub UnlockSheet(UnlockTarget as String)
 
 End Sub
 
-Sub LockSheet(LockingTargetT as String)
+Sub LockSheet(LockTarget as String)
 
-    Worksheets(LockingTarget).Protect Password:=SheetPassword, AllowFiltering:=True
+    Worksheets(LockTarget).Protect Password:=SheetPassword, AllowFiltering:=True
 
 End Sub
 
+Sub RevealAllRows()
+    
+    'Unhide/Clear Filters
+    Rows("1:1048576").EntireRow.Hidden = False
+    If ActiveSheet.FilterMode = True Then
+        ActiveSheet.ShowAllData
+    End If
 
-
-
-
+End Sub
 
 Sub SortingHat(UnlockTargetTab As String, TargetTable As String)
 
     Sequence Sort UnlockTargetTab:=UnlockTargetTab, TargetTable:=TargetTable
 
 End Sub
-
-
-
-
-
 
 
 

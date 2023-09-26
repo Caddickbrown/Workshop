@@ -14,6 +14,7 @@ Sub ScheduleSort()
     End If
     
     'Sort on Picks
+    ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Clear
     ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
         Key:=Range("Table2[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
@@ -26,6 +27,7 @@ Sub ScheduleSort()
     End With
     
     'Sort on Sequence
+    ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Clear
     ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
         Key:=Range("Table2[[#All],[Sequence]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
@@ -66,10 +68,11 @@ Sub MalosaScheduleSort()
     End If
     
     'Sort on Picks
-    ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
-        Key:=Range("Table2[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
+    ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Add2 _
+        Key:=Range("Table6[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
-    With ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort
+    With ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort
         .Header = xlYes
         .MatchCase = False
         .Orientation = xlTopToBottom
@@ -78,6 +81,7 @@ Sub MalosaScheduleSort()
     End With
 
     'Sort on Sequence
+    ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Clear
     ActiveWorkbook.Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Add2 _
         Key:=Range("Table6[[#All],[Sequence]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
@@ -119,10 +123,11 @@ Sub SampleScheduleSort()
     End If
     
     'Sort on Picks
-    ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
-        Key:=Range("Table2[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
+    ActiveWorkbook.Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Add2 _
+        Key:=Range("Table29[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
-    With ActiveWorkbook.Worksheets("BVI Main").ListObjects("Table2").Sort
+    With ActiveWorkbook.Worksheets("Samples Main").ListObjects("Table29").Sort
         .Header = xlYes
         .MatchCase = False
         .Orientation = xlTopToBottom
@@ -131,6 +136,7 @@ Sub SampleScheduleSort()
     End With
     
     'Sort on Priority
+    ActiveWorkbook.Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Clear
     ActiveWorkbook.Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Add2 _
         Key:=Range("Table29[[#All],[Priority]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
