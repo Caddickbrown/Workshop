@@ -30,8 +30,10 @@ Sub ArchiveCompleted()
     
     ' Set the source tables based on the provided names
     On Error Resume Next
-    Set tblBVI = wsBVI.ListObjects("Table2")
-    Set tblMalosa = wsMalosa.ListObjects("Table6")
+    Set tblBVI = wsBVI.ListObjects("Table2") ' Kits
+    Set tblMalosa = wsMalosa.ListObjects("Table6") ' Kits
+    'Set tblBVI = wsBVI.ListObjects("Table1") ' Instruments
+    'Set tblMalosa = wsMalosa.ListObjects("Table15") ' Instruments
     On Error GoTo 0
     
     If tblBVI Is Nothing Or tblMalosa Is Nothing Then
