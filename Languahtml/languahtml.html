@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Japanese Learning App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        #quiz-container {
+            margin-top: 20px;
+        }
+
+        #quiz-container div {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Japanese Learning App</h1>
+    <p>Welcome to the Japanese Learning App! Let's start with some basic vocabulary.</p>
+
+    <div id="quiz-container">
+        <div>
+            <p>What is the Japanese word for "hello"?</p>
+            <input type="text" id="q1">
+            <button onclick="checkAnswer('q1', 'こんにちは')">Submit</button>
+        </div>
+
+        <div>
+            <p>Translate "goodbye" to Japanese:</p>
+            <input type="text" id="q2">
+            <button onclick="checkAnswer('q2', 'さようなら')">Submit</button>
+        </div>
+
+        <!-- Add more quiz questions as needed -->
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function checkAnswer(questionId, correctAnswer) {
+            const userAnswer = document.getElementById(questionId).value;
+            const resultsContainer = document.getElementById('results');
+
+            if (userAnswer.trim().toLowerCase() === correctAnswer.toLowerCase()) {
+                resultsContainer.innerHTML = `<p style="color: green;">Correct!</p>`;
+            } else {
+                resultsContainer.innerHTML = `<p style="color: red;">Incorrect. The correct answer is: ${correctAnswer}</p>`;
+            }
+        }
+    </script>
+</body>
+</html>
