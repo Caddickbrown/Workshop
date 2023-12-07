@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Page</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        #text-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            text-align: center;
+            white-space: pre-line;
+        }
+
+        .fade {
+            animation: fadeOut 1s ease-in-out forwards;
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+            }
+        }
+
+        #input-text {
+            position: absolute;
+            bottom: 10%;
+            left: 10%;
+            width: 80%;
+        }
+
+        #download-btn {
+            position: absolute;
+            bottom: 5%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div id="text-container"></div>
+
+    <textarea id="input-text" oninput="handleInput()" onkeydown="handleKeyDown(event)"></textarea>
+    
+    <button id="download-btn" onclick="downloadText()">Download</button>
+
+    <script>
+        let inputTimeout;
+        let currentSentence = '';
+        let completedSentences = [];
+
+        function handleInput() {
+            clearTimeout(inputTimeout);
+
+            const textContainer = document.getElementById('text-container');
+            const inputText = document.getElementById('input-text').value;
+
+            if (inputText.endsWith('.') || inputText.endsWith('!') || inputText.endsWith('?')) {
+                currentSentence = inputText.trim() + '\n'; // Trim removes leading and trailing whitespaces
+                textContainer.innerHTML += currentSentence; // Append only the current sentence
+
+                // Append the current sentence to the completed sentences array
+                completedSentences.push(currentSentence);
+
+                // Clear input after appending the text
+                document.getElementById('input-text').value = '';
+
+                // Set a timeout to fade the text after 1 minute (60,000 milliseconds)
+                inputTimeout = setTimeout(() => {
+                    textContainer.lastChild.classList.add('fade'); // Apply fade only to the last sentence
+                }, 60000);
+            } else {
+                currentSentence = inputText.trim();
+            }
+        }
+
+        function handleKeyDown(event) {
+            // Check if the pressed key is Enter
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent the default Enter key behavior
+                document.getElementById('input-text').value += '\n'; // Add a new line in the input box
+                handleInput(); // Trigger handleInput to add a new line in the exported text
+            }
+        }
+
+        function downloadText() {
+            const fullText = completedSentences.map(sentence => sentence.trim()).join(' ');
+            const blob = new Blob([fullText], { type: 'text/plain' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = 'writing.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
