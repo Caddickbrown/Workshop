@@ -5,12 +5,20 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fake Hemingway</title>
 <style>
+body{
+  font-family: 'Helvetica', 'Arial', sans-serif;
+  font-size: 1.2em;
+  line-height: 1.5em;
+  color: #333;
+  background: #fff;
+
+}
 .adverb {
-  background: #c4e3f3;
+  background: #a9d9f1;
 }
 
 .qualifier {
-  background: #c4e3f3;
+  background: #9dd5f1;
 }
 
 .passive {
@@ -18,15 +26,15 @@
 }
 
 .complex {
-  background: #e3b7e8;
+  background: #e09de7;
 }
 
 .hardSentence {
-  background: #f7ecb5;
+  background: #f7f08e;
 }
 
 .veryHardSentence {
-  background: #e4b9b9;
+  background: #eb8888;
 }
 
 #text-area,
@@ -58,46 +66,27 @@
 <div>
 <h1>Fake Hemingway</h1>
 <div id="left">
-<textarea id="text-area" rows="10"></textarea>
-<button onclick="format()">Test Me</button>
-<div id="output"></div>
+  <textarea id="text-area" rows="10"></textarea>
+  <div id="output"></div>
 </div>
 
 <div id="right">
-        <div id="adverb" class="counter"></div>
-        <div id="passive" class="passive counter"></div>
-        <div id="complex" class="counter"></div>
-        <div id="hardSentence" class="hardSentence counter"></div> 
-        <div id='veryHardSentence' class='veryHardSentence counter'></div> 
+  <div id="adverb" class="adverb counter"></div>
+  <div id="passive" class="passive counter"></div>
+  <div id="complex" class="complex counter"></div>
+  <div id="hardSentence" class="hardSentence counter"></div> 
+  <div id='veryHardSentence' class='veryHardSentence counter'></div> 
 </div>
 
 </body>
 
 <!-- Your JavaScript code goes here -->
 <script>
-(function() {
-  let inputArea = document.getElementById("text-area");
-  let text = `The app highlights lengthy, complex sentences and common errors; if you see a yellow sentence, shorten or split it. If you see a red highlight, your sentence is so dense and complicated that your readers will get lost trying to follow its meandering, splitting logic - try editing this sentence to remove the red.
-You can utilize a shorter word in place of a purple one. Mouse over them for hints.
-Adverbs and weakening phrases are helpfully shown in blue. Get rid of them and pick words with force, perhaps.
-Phrases in green have been marked to show passive voice.
-You can format your text with the toolbar.
-Paste in something you're working on and edit away. Or, click the Write button and compose something new.`;
-  inputArea.value = text;
-
-  let data = {
-    paragraphs: 0,
-    sentences: 0,
-    words: 0,
-    hardSentences: 0,
-    veryHardSentences: 0,
-    adverbs: 0,
-    passiveVoice: 0,
-    complex: 0
-  };
-
-  function format() {
-    data = {
+  (function() {
+    let inputArea = document.getElementById("text-area");
+    let outputArea = document.getElementById("output");
+  
+    let data = {
       paragraphs: 0,
       sentences: 0,
       words: 0,
@@ -107,22 +96,36 @@ Paste in something you're working on and edit away. Or, click the Write button a
       passiveVoice: 0,
       complex: 0
     };
-    ("use strict");
-    let inputArea = document.getElementById("text-area");
-    let text = inputArea.value;
-    let paragraphs = text.split("\n");
-    let outputArea = document.getElementById("output");
-    let hardSentences = paragraphs.map(p => getDifficultSentences(p));
-    let inP = hardSentences.map(para => `<p>${para}</p>`);
-    data.paragraphs = paragraphs.length;
-    console.log(data);
-    counters();
-    outputArea.innerHTML = inP.join(" ");
-  }
-  window.format = format;
-  format();
-
-  function counters() {
+  
+    function format() {
+      data = {
+        paragraphs: 0,
+        sentences: 0,
+        words: 0,
+        hardSentences: 0,
+        veryHardSentences: 0,
+        adverbs: 0,
+        passiveVoice: 0,
+        complex: 0
+      };
+      ("use strict");
+      let text = inputArea.value;
+      let paragraphs = text.split("\n");
+      let hardSentences = paragraphs.map(p => getDifficultSentences(p));
+      let inP = hardSentences.map(para => `<p>${para}</p>`);
+      data.paragraphs = paragraphs.length;
+      console.log(data);
+      counters();
+      outputArea.innerHTML = inP.join(" ");
+    }
+  
+    function updateFormatting() {
+      format();
+    }
+  
+    inputArea.addEventListener("input", updateFormatting);
+  
+    function counters() {
     document.querySelector("#adverb").innerHTML = `You have used ${
       data.adverbs
     } adverb${data.adverbs > 1 ? "s" : ""}. Try to use ${Math.round(
