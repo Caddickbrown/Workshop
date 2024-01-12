@@ -1,34 +1,34 @@
 Sub ScheduleMSort()
-    Dim sortColumns() As Variant
+    Dim sortColumns As Variant
     sortColumns = [{"Sequence", "Date"}]
     ScheduleSort Worksheets("BVI Manufacturing"), "Table19", sortColumns
 End Sub
 
 Sub ScheduleASort()
-    Dim sortColumns() As Variant
+    Dim sortColumns As Variant
     sortColumns = [{"Sequence", "Date"}]
     ScheduleSort Worksheets("BVI Assembly"), "Table1910", sortColumns
 End Sub
 
 Sub SchedulePSort()
-    Dim sortColumns() As Variant
+    Dim sortColumns As Variant
     sortColumns = [{"Sequence", "Date"}]
     ScheduleSort Worksheets("BVI Packaging"), "Table1", sortColumns
 End Sub
 
 Sub MalosaScheduleSort()
-    Dim sortColumns() As Variant
+    Dim sortColumns As Variant
     sortColumns = [{"Sequence", "Date"}]
     ScheduleSort Worksheets("Malosa Main"), "Table15", sortColumns
 End Sub
 
 Sub CompletedScheduleSort()
-    Dim sortColumns() As Variant
+    Dim sortColumns As Variant
     sortColumns = [{"Sequence", "Date"}]
     ScheduleSort Worksheets("Complete"), "Table7", sortColumns
 End Sub
 
-Sub ScheduleSort(ws As Worksheet, tableName As String, sortColumns() As String)
+Sub ScheduleSort(ws As Worksheet, tableName As String, sortColumns As Variant)
     ws.Select
     Protection ws, "Unprotect"
     
@@ -61,17 +61,15 @@ Sub ScheduleSort(ws As Worksheet, tableName As String, sortColumns() As String)
 End Sub
 
 
-Sub Protection(ws As Worksheet, action As String)
-
+Sub Protection(obj As Object, action As String)
     Dim Password As String
-
     Password = "baconbutty"
 
     Select Case action
         Case "Protect"
-            ws.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True
+            obj.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True
         Case "Unprotect"
-            ws.Unprotect Password:=Password
+            obj.Unprotect Password:=Password
         Case Else
             ' Throw an error for an invalid action
             Err.Raise vbObjectError + 9999, "Protection", "Invalid action. Use 'Protect' or 'Unprotect'."
@@ -89,7 +87,7 @@ Sub ArchiveCompleted()
 
     ' Define the destination worksheet as "Complete"
     Set wsComplete = ThisWorkbook.Sheets("Complete") ' Change "Complete" to the name of your destination sheet
-    
+        
     ' Set the source worksheets based on the provided names
     On Error Resume Next
     Set wsBVIM = ThisWorkbook.Sheets("BVI Manufacturing")
@@ -121,7 +119,7 @@ Sub ArchiveCompleted()
         MsgBox "One or both of the source tables does not exist."
         Exit Sub
     End If
-
+    
     Protection wsComplete, "Unprotect"
     
     ' Find the last row in the source tables and move completed orders
@@ -136,10 +134,7 @@ Sub ArchiveCompleted()
                 tbl.ListRows(i).Delete
             End If
         Next i
-        Protection ws, "Protect"
+        Protection tbl.Parent, "Protect"
     Next tbl
     Protection wsComplete, "Protect"
 End Sub
-
-
-
