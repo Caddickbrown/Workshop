@@ -67,7 +67,7 @@ Sub Protection(obj As Object, action As String)
 
     Select Case action
         Case "Protect"
-            obj.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True
+            obj.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True ', UserInterfaceOnly:=True
         Case "Unprotect"
             obj.Unprotect Password:=Password
         Case Else

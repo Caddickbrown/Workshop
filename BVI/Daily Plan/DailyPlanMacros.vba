@@ -1,119 +1,11 @@
-'ToDo
-'- [ ] Add calling Subs/Abstractions to shorten Sorts (Mostly the same anyway)
-
 Sub ScheduleSort()
-'Sorts the Sheet into Schedule Order
 
-    Worksheets("BVI Main").Unprotect Password:="baconbutty" 'Unprotect the Sheet with the password
+    Dim Password As String
+    Dim ws As Worksheet
+    Password = "bvibutty"
+    ws = Worksheets("BVI Main")
 
-    Worksheets("BVI Main").Rows("1:1048576").EntireRow.Hidden = False 'Unhide any rows
-    
-    'Clear Filters
-    If ActiveSheet.FilterMode = True Then
-        ActiveSheet.ShowAllData
-    End If
-    
-    'Sort on Picks
-    Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Clear
-    Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
-        Key:=Range("Table2[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
-        xlAscending, DataOption:=xlSortNormal
-    With Worksheets("BVI Main").ListObjects("Table2").Sort
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-    
-    'Sort on Sequence
-    Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Clear
-    Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
-        Key:=Range("Table2[[#All],[Sequence]]"), SortOn:=xlSortOnValues, Order:= _
-        xlAscending, DataOption:=xlSortNormal
-    With Worksheets("BVI Main").ListObjects("Table2").Sort
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-    
-    'Sort on Date
-    Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Clear
-    Worksheets("BVI Main").ListObjects("Table2").Sort.SortFields.Add2 _
-        Key:=Range("Table2[[#All],[Date]]"), SortOn:=xlSortOnValues, Order:= _
-        xlAscending, DataOption:=xlSortNormal
-    With Worksheets("BVI Main").ListObjects("Table2").Sort
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-
-    Worksheets("BVI Main").Protect Password:="baconbutty", AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
-
-End Sub
-
-Sub MalosaScheduleSort()
-
-    Worksheets("Malosa Main").Unprotect Password:="baconbutty" 'Unprotect the Sheet with the password
-
-    Worksheets("Malosa Main").Rows("1:1048576").EntireRow.Hidden = False 'Unhide any rows
-
-    'Clear Filters
-    If ActiveSheet.FilterMode = True Then
-        ActiveSheet.ShowAllData
-    End If
-    
-    'Sort on Picks
-    Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Clear
-    Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Add2 _
-        Key:=Range("Table6[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
-        xlAscending, DataOption:=xlSortNormal
-    With Worksheets("Malosa Main").ListObjects("Table6").Sort
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-
-    'Sort on Sequence
-    Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Clear
-    Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Add2 _
-        Key:=Range("Table6[[#All],[Sequence]]"), SortOn:=xlSortOnValues, Order:= _
-        xlAscending, DataOption:=xlSortNormal
-    With Worksheets("Malosa Main").ListObjects("Table6").Sort
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-
-    'Sort on Date
-    Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Clear
-    Worksheets("Malosa Main").ListObjects("Table6").Sort.SortFields.Add2 _
-        Key:=Range("Table6[[#All],[Date]]"), SortOn:=xlSortOnValues, Order:= _
-        xlAscending, DataOption:=xlSortNormal
-    With Worksheets("Malosa Main").ListObjects("Table6").Sort
-        .Header = xlYes
-        .MatchCase = False
-        .Orientation = xlTopToBottom
-        .SortMethod = xlPinYin
-        .Apply
-    End With
-
-    Worksheets("Malosa Main").Protect Password:="baconbutty", AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
-
-End Sub
-
-Sub SampleScheduleSort()
-'Sorts the Sheet into Schedule Order
-
-    Worksheets("Samples Main").Unprotect Password:="baconbutty" 'Unprotect the Sheet with the password
+    ws.Unprotect Password:=Password 'Unprotect the Sheet with the password
 
     Rows("1:1048576").EntireRow.Hidden = False 'Unhide any rows
     
@@ -123,11 +15,129 @@ Sub SampleScheduleSort()
     End If
     
     'Sort on Picks
-    Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Clear
-    Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Add2 _
+    ws.ListObjects("Table2").Sort.SortFields.Clear
+    ws.ListObjects("Table2").Sort.SortFields.Add2 _
+        Key:=Range("Table2[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ws.ListObjects("Table2").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    
+    'Sort on Sequence
+    ws.ListObjects("Table2").Sort.SortFields.Clear
+    ws.ListObjects("Table2").Sort.SortFields.Add2 _
+        Key:=Range("Table2[[#All],[Sequence]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ws.ListObjects("Table2").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+    
+    'Sort on Date
+    ws.ListObjects("Table2").Sort.SortFields.Clear
+    ws.ListObjects("Table2").Sort.SortFields.Add2 _
+        Key:=Range("Table2[[#All],[Date]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ws.ListObjects("Table2").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+    ws.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
+
+End Sub
+
+Sub MalosaScheduleSort()
+
+    Dim Password As String
+    Dim ws As Worksheet
+    Password = "malosabutty"
+    ws = Worksheets("Malosa Main")
+
+    Worksheets("Malosa Main").Unprotect Password:=Password 'Unprotect the Sheet with the password
+
+    Rows("1:1048576").EntireRow.Hidden = False 'Unhide any rows
+
+    'Clear Filters
+    If ActiveSheet.FilterMode = True Then
+        ActiveSheet.ShowAllData
+    End If
+    
+    'Sort on Picks
+    ws.ListObjects("Table6").Sort.SortFields.Clear
+    ws.ListObjects("Table6").Sort.SortFields.Add2 _
+        Key:=Range("Table6[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ws.ListObjects("Table6").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+    'Sort on Sequence
+    ws.ListObjects("Table6").Sort.SortFields.Clear
+    ws.ListObjects("Table6").Sort.SortFields.Add2 _
+        Key:=Range("Table6[[#All],[Sequence]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ws.ListObjects("Table6").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+    'Sort on Date
+    ws.ListObjects("Table6").Sort.SortFields.Clear
+    ws.ListObjects("Table6").Sort.SortFields.Add2 _
+        Key:=Range("Table6[[#All],[Date]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ws.ListObjects("Table6").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
+    ws.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
+
+End Sub
+
+Sub SampleScheduleSort()
+
+    Dim Password As String
+    Dim ws As Worksheet
+    Password = "samplesbutty"
+    ws = Worksheets("Samples Main")
+
+    ws.Unprotect Password:=Password 'Unprotect the Sheet with the password
+
+    Rows("1:1048576").EntireRow.Hidden = False 'Unhide any rows
+    
+    'Clear Filters
+    If ActiveSheet.FilterMode = True Then
+        ActiveSheet.ShowAllData
+    End If
+    
+    'Sort on Picks
+    ws.ListObjects("Table29").Sort.SortFields.Clear
+    ws.ListObjects("Table29").Sort.SortFields.Add2 _
         Key:=Range("Table29[[#All],[Picks]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
-    With Worksheets("Samples Main").ListObjects("Table29").Sort
+    With ws.ListObjects("Table29").Sort
         .Header = xlYes
         .MatchCase = False
         .Orientation = xlTopToBottom
@@ -136,11 +146,11 @@ Sub SampleScheduleSort()
     End With
     
     'Sort on Priority
-    Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Clear
-    Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Add2 _
+    ws.ListObjects("Table29").Sort.SortFields.Clear
+    ws.ListObjects("Table29").Sort.SortFields.Add2 _
         Key:=Range("Table29[[#All],[Priority]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
-    With Worksheets("Samples Main").ListObjects("Table29").Sort
+    With ws.ListObjects("Table29").Sort
         .Header = xlYes
         .MatchCase = False
         .Orientation = xlTopToBottom
@@ -149,11 +159,11 @@ Sub SampleScheduleSort()
     End With
     
     'Sort on Deadline Completion Date
-    Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Clear
-    Worksheets("Samples Main").ListObjects("Table29").Sort.SortFields.Add2 _
+    ws.ListObjects("Table29").Sort.SortFields.Clear
+    ws.ListObjects("Table29").Sort.SortFields.Add2 _
         Key:=Range("Table29[[#All],[Deadline Completion Date]]"), SortOn:=xlSortOnValues, Order:= _
         xlAscending, DataOption:=xlSortNormal
-    With Worksheets("Samples Main").ListObjects("Table29").Sort
+    With ws.ListObjects("Table29").Sort
         .Header = xlYes
         .MatchCase = False
         .Orientation = xlTopToBottom
@@ -161,7 +171,7 @@ Sub SampleScheduleSort()
         .Apply
     End With
 
-    ActiveSheet.Protect Password:="baconbutty", AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
+    ws.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True 'Protect the sheet with the password, allowing filtering
 
 End Sub
 
@@ -173,13 +183,16 @@ Sub ArchiveCompleted()
     Dim tblMalosa As ListObject
     Dim LastRow As Long
     Dim i As Long
-    Dim Password As String
+    Dim BVIPassword As String
+    Dim MalosaPassword As String
     ' Set the password for protecting and unprotecting sheets
-    Password = "baconbutty"
+    BVIPassword = "bvibutty"
+    MalosaPassword = "malosabutty"
+    CompletePassword = "completebutty"
     ' Define the destination worksheet as "Complete"
     Set wsComplete = ThisWorkbook.Sheets("Complete") ' Change "Complete" to the name of your destination sheet
     ' Unprotect the destination sheet
-    wsComplete.Unprotect Password:=Password
+    wsComplete.Unprotect Password:=CompletePassword
     
     ' Set the source worksheets based on the provided names
     On Error Resume Next
@@ -197,12 +210,10 @@ Sub ArchiveCompleted()
     
     ' Set the source tables based on the provided names
     On Error Resume Next
-    'Kits
     Set tblBVI = wsBVI.ListObjects("Table2") ' Kits
     Set tblMalosa = wsMalosa.ListObjects("Table6") ' Kits
-    'Instruments
-    'Set tblBVI = wsBVI.ListObjects("Table1")
-    'Set tblMalosa = wsMalosa.ListObjects("Table15")
+    'Set tblBVI = wsBVI.ListObjects("Table1") ' Instruments
+    'Set tblMalosa = wsMalosa.ListObjects("Table15") ' Instruments
     On Error GoTo 0
     
     If tblBVI Is Nothing Or tblMalosa Is Nothing Then
@@ -210,17 +221,15 @@ Sub ArchiveCompleted()
         Exit Sub
     End If
     
-    'wsBVI.Select
+    'ws.BVI.Select
     'ScheduleSort 'Sort the Schedule into the correct order
-    'wsMalosa.Select
+    'ws.Malosa.Select
     'MalosaScheduleSort 'Sort the Malosa Schedule into the correct order
-    'wsSamples.Select
     'SampleScheduleSort 'Sort the Samples Schedule into the correct order
-    'wsComplete.Select
-    
+
     ' Unprotect the source sheets
-    wsBVI.Unprotect Password:=Password
-    wsMalosa.Unprotect Password:=Password
+    wsBVI.Unprotect Password:=BVIPassword
+    wsMalosa.Unprotect Password:=MalosaPassword
     
     ' Find the last row in the source tables and move completed orders
     For Each tbl In Array(tblBVI, tblMalosa)
@@ -236,8 +245,9 @@ Sub ArchiveCompleted()
     Next tbl
     
     ' Protect the source sheets and the destination sheet again
-    wsBVI.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True
-    wsMalosa.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True
-    wsComplete.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True
+    wsBVI.Protect Password:=BVIPassword, AllowSorting:=True, AllowFiltering:=True
+    wsMalosa.Protect Password:=MalosaPassword, AllowSorting:=True, AllowFiltering:=True
+    wsComplete.Protect Password:=CompletePassword, AllowSorting:=True, AllowFiltering:=True
 End Sub
+
 
