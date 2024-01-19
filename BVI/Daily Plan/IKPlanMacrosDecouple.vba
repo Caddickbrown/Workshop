@@ -136,5 +136,8 @@ Sub ArchiveCompleted()
         Next i
         Protection tbl.Parent, "Protect"
     Next tbl
+
+    wsComplete.Columns("A:O").FormatConditions.Delete
+
     Protection wsComplete, "Protect"
 End Sub
