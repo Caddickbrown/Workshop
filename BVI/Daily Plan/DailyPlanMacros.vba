@@ -1,3 +1,55 @@
+Sub BVIScheduleSort()
+    Dim sortColumns As Variant
+    sortColumns = [{"Sequence", "Date"}]
+    ScheduleSort Worksheets("BVI Main"), "Table19", "bvibutty", sortColumns
+End Sub
+
+Sub ScheduleSort(ws As Worksheet, tableName As String,, Password AS String, sortColumns As Variant)
+    ws.Select
+    Protection ws, "Unprotect", Password
+    
+    ' Unhide any rows
+    ws.Rows("1:1048576").EntireRow.Hidden = False
+    
+    ' Clear Filters
+    If ws.FilterMode = True Then
+        ws.ShowAllData
+    End If
+    
+    ' Loop through each sort column
+    For Each sortColumn In sortColumns
+        ' Sort on the current column
+        ws.ListObjects(tableName).Sort.SortFields.Clear
+        ws.ListObjects(tableName).Sort.SortFields.Add2 _
+            Key:=Range(tableName & "[[#All],[" & sortColumn & "]]"), SortOn:=xlSortOnValues, Order:= _
+            xlAscending, DataOption:=xlSortNormal
+        With ws.ListObjects(tableName).Sort
+            .Header = xlYes
+            .MatchCase = False
+            .Orientation = xlTopToBottom
+            .SortMethod = xlPinYin
+            .Apply
+        End With
+    Next sortColumn
+    
+    ' Protect the sheet with the password, allowing sorting and filtering
+    Protection ws, "Protect"
+End Sub
+
+Sub Protection(obj As Object, action As String, Password As String)
+    Select Case action
+        Case "Protect"
+            obj.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True ', UserInterfaceOnly:=True
+        Case "Unprotect"
+            obj.Unprotect Password:=Password
+        Case Else
+            ' Throw an error for an invalid action
+            Err.Raise vbObjectError + 9999, "Protection", "Invalid action. Use 'Protect' or 'Unprotect'."
+    End Select
+End Sub
+
+
+
 Sub ScheduleSort()
 
     Dim Password As String
