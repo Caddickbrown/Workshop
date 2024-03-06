@@ -53,7 +53,7 @@ ReleasedOrdersSheetName = "Released Shop Orders"
     Range("M2").Value = "POOL"
 
     ' Formulas
-    Range("G2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",""N/A"",IFERROR(VLOOKUP($C2,'[IK BVI Demand Plan.xlsm]SKUs'!$A:$B,2,FALSE),""N/A""))" ' Format
+    Range("G2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",IF(RIGHT(C2,1)=""S"",""Shelf"",""Kit""),IFERROR(VLOOKUP($C2,'[IK BVI Demand Plan.xlsm]SKUs'!$A:$B,2,FALSE),""N/A""))" ' Format
     Range("J2").Formula = "=SUMIF('[Instruments Daily Plan.xlsm]Hrs'!$A:$A,$C2,'[Instruments Daily Plan.xlsm]Hrs'!$C:$C)*$I2" ' Hours
     Range("N2").Formula = "=SUMIF($D:$D,$M2,I:I)"
     Range("O2").Formula = "=SUMIF($D:$D,$M2,J:J)"
