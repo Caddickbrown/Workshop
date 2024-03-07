@@ -1,10 +1,11 @@
 PS3='Option: '
-options=("Write an Entry" "Show All of Today's Entries" "Show a Random Entry" "Tacos" "Info" "Quit")
+options=("Write an Entry" "Show All of Today's Entries" "Show a Random Entry" "Open the folder (In Progress)" "Tacos" "Info" "Config (In Progress)" "Quit")
 printf '\033[8;40;100t' # Set the size of the window
 printf 'Welcome to the Jrnl Frontend, below are your options.\n\nWhat would you like to do?.\n\n'
 select selection in "${options[@]}"; do
     case $selection in
         "Write an Entry")
+            printf '\nWhat do you want to journal about?\n\n'
             read dataentry
             jrnl $dataentry
             printf "Sorted!\n\n"
@@ -14,8 +15,11 @@ select selection in "${options[@]}"; do
             jrnl -on today
             ;;
         "Show a Random Entry")
-            printf '\nHere is a random entry... \n\n'
+            printf '\nHere is a random entry...\n\n'
             jrnl -on "$(jrnl --short | shuf -n 1 | cut -d' ' -f1,2)"
+            ;;
+        "Open the folder (In Progress)")
+            printf '\nSoon you will be able to access the Jrnl folder from here... but not now... sorry!\n\n'
             ;;
         "Tacos")
             printf "\nAccording to NationalTacoDay.com, Americans are eating 4.5 billion $selection each year.\n\n"
@@ -23,10 +27,14 @@ select selection in "${options[@]}"; do
         "Info")
             printf "\nThis frontend was created to make working with Jrnl a little easier. Commonly used commands can be accessed quickly and easily rather than typing them out each time.\n\n" | fold -s
             ;;
+        "Config (In Progress)")
+            printf '\nSoon you will be able to access the config file from here... but not now... sorry!\n\n'
+            ;;
 	    "Quit")
 	        exit
 	        ;;
-        *) printf "\nInvalid option $REPLY\n\n";;
+        *) 
+            printf "\nInvalid option $REPLY\n\n";;
     esac
     printf 'Can I help you with anything else?\n\n'
 done

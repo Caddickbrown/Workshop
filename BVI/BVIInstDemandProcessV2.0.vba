@@ -9,8 +9,9 @@ Dim indx As Integer
 
 ReleasedOrdersSheetName = "Released Shop Orders"
 
-'Filter to important data
+' Filter to important data
 
+    ' Sort column order
     Sheets(1).Name = ReleasedOrdersSheetName
 
     Set ws = ActiveSheet
@@ -48,19 +49,21 @@ ReleasedOrdersSheetName = "Released Shop Orders"
     Range("F1:H1").Value = Array("Brand", "Format", "Area")
     Range("J1").Value = "Hours"
 
-    ' Summary
+    ' Summary Section
     Range("N1:O1").Value = Array("Qty", "Hrs")
     Range("M2").Value = "POOL"
 
     ' Formulas
-    Range("G2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",IF(RIGHT(C2,1)=""S"",""Shelf"",""Kit""),IFERROR(VLOOKUP($C2,'[IK BVI Demand Plan.xlsm]SKUs'!$A:$B,2,FALSE),""N/A""))" ' Format
+    Range("F2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",""Malosa"",""BVI"")" ' Brand
+    Range("G2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",IF(RIGHT(C2,1)=""S"",""Shelf"",""Kit""),IFERROR(VLOOKUP($C2,'[IK BVI Demand Plan.xlsm]SKUs'!$A:$B,2,FALSE),NA()))" ' Format
+    ' Need to add Brand and Area Formulas
     Range("J2").Formula = "=SUMIF('[Instruments Daily Plan.xlsm]Hrs'!$A:$A,$C2,'[Instruments Daily Plan.xlsm]Hrs'!$C:$C)*$I2" ' Hours
     Range("N2").Formula = "=SUMIF($D:$D,$M2,I:I)"
     Range("O2").Formula = "=SUMIF($D:$D,$M2,J:J)"
-    Range("G2").AutoFill Destination:=Range("G2:G612")
+    Range("F2:G2").AutoFill Destination:=Range("F2:G612")
     Range("J2").AutoFill Destination:=Range("J2:J612")
     
-    ' Filter
+    ' Filters
     Range("A1").AutoFilter
     ActiveWorkbook.Worksheets(1).AutoFilter.Sort. _
         SortFields.Clear
@@ -90,6 +93,20 @@ ReleasedOrdersSheetName = "Released Shop Orders"
         .Apply
     End With
 
+    ActiveWorkbook.Worksheets(1).AutoFilter.Sort. _
+        SortFields.Clear
+    ActiveWorkbook.Worksheets(1).AutoFilter.Sort. _
+        SortFields.Add2 Key:=Range("F1:F612"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets(1).AutoFilter. _
+        Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+
     ' Final Formatting
     With Columns("A:O")
         .HorizontalAlignment = xlCenter
@@ -104,9 +121,10 @@ ReleasedOrdersSheetName = "Released Shop Orders"
     End With
     Range("J2").Select
     Range(Selection, Selection.End(xlDown)).NumberFormat = "0.00"
+    Range("F:G").NumberFormat = "General"
     Range("O2").NumberFormat = "0.00"
     Cells.EntireColumn.AutoFit
     Columns("N:N").ColumnWidth = 8.14
 
-
 End Sub
+

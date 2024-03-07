@@ -1,1 +1,1 @@
-printf "\nThis frontend was created to make working with Jrnl a little easier. Commonly used commands can be accessed quickly and easily rather than typing them out each time." | fold -s
+printf "\n[INSERT INFO HERE]\n\n" | fold -s
