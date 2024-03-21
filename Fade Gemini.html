@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Writing Page</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 0;
+      /* Make the entire body clickable */
+      cursor: text;
+    }
+
+    #text-container {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 80%;
+      text-align: center;
+      white-space: pre-line;
+      /* Mimic input field styles */
+      font-size: 16px;
+      background-color: #f5f5f5;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      /* Make the element editable */
+      contentEditable: true;
+    }
+
+    .fade {
+      animation: fadeOut 1s ease-in-out forwards;
+    }
+
+    @keyframes fadeOut {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+
+    #download-btn {
+      position: absolute;
+      bottom: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="text-container"></div>
+
+  <button id="download-btn" onclick="downloadText()">Download</button>
+
+  <script>
+    let inputTimeout;
+    let currentSentence = '';
+    let completedSentences = [];
+
+    function handleInput() {
+      clearTimeout(inputTimeout);
+
+      const textContainer = document.getElementById('text-container');
+      const inputText = textContainer.textContent.trim();
+
+      if (inputText.endsWith('.') || inputText.endsWith('!') || inputText.endsWith('?')) {
+        currentSentence = inputText + '\n';
+        completedSentences.push(currentSentence);
+
+        // Update text content
+        textContainer.textContent = textContainer.textContent.slice(0, -1) + currentSentence;
+
+        // Fade out older sentences
+        const sentences = textContainer.querySelectorAll('p');
+        for (let i = sentences.length - 2; i >= 0; i--) {
+          const delay = (sentences.length - 1 - i) * 1000;
+          setTimeout(() => {
+            sentences[i].classList.add('fade');
+          }, delay);
+        }
+
+        currentSentence = '';
+      }
+    }
+
+    // Clicking anywhere on the body sets focus to the text container
+    document.body.addEventListener('click', () => {
+      document.getElementById('text-container').focus();
+    });
+
+    // Trigger handleInput on any key press
+    document.getElementById('text-container').addEventListener('keypress', handleInput);
+
+    function downloadText() {
+      // ... existing download functionality ...
+    }
+  </script>
+</body>
+
+</html>
