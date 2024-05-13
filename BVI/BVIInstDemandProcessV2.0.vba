@@ -60,6 +60,7 @@ ReleasedOrdersSheetName = "Released Shop Orders"
     Range("J2").Formula = "=SUMIF('[Instruments Daily Plan.xlsm]Hrs'!$A:$A,$C2,'[Instruments Daily Plan.xlsm]Hrs'!$C:$C)*$I2" ' Hours
     Range("N2").Formula = "=SUMIF($D:$D,$M2,I:I)"
     Range("O2").Formula = "=SUMIF($D:$D,$M2,J:J)"
+    Range("O6").Formula = "=IF(N6="""",""<- Paste Concat Here"",CONCATENATE(N6,"";"",O5)" ' Concatenate
     Range("F2:G2").AutoFill Destination:=Range("F2:G612")
     Range("J2").AutoFill Destination:=Range("J2:J612")
     
