@@ -1,3 +1,6 @@
+' Todo
+' - [ ] Move the sort so that it sorts just before it processes the sheet.
+
 Sub ScheduleMSort()
     Dim sortColumns As Variant
     sortColumns = [{"Sequence", "Date"}]
