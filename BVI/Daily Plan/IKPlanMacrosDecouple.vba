@@ -143,4 +143,17 @@ Sub ArchiveCompleted()
     wsComplete.Columns("A:O").FormatConditions.Delete
 
     Protection wsComplete, "Protect"
+
+    ' Save
+    ActiveWorkbook.Save
+
 End Sub
+
+' # Changelog
+
+' ## [1.0.1] - 2024-06-13
+
+' ### Added
+
+' - Save to End of ArchiveCompleted Macro
+' - Changelog

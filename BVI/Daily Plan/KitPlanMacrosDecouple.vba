@@ -123,6 +123,7 @@ Sub ArchiveCompleted()
     Set tblMalosa = wsMalosa.ListObjects("Table6")
     On Error GoTo 0
     
+    ' Error if someone has changed the names
     If tblBVI Is Nothing Or tblMalosa Is Nothing Then
         MsgBox "One or both of the source tables does not exist."
         Exit Sub
@@ -149,4 +150,17 @@ Sub ArchiveCompleted()
     wsComplete.Columns("A:V").FormatConditions.Delete
 
     Protection wsComplete, "Protect"
+
+    ' Save
+    ActiveWorkbook.Save
+
 End Sub
+
+' # Changelog
+
+' ## [1.0.1] - 2024-06-13
+
+' ### Added
+
+' - Save to End of ArchiveCompleted Macro
+' - Changelog

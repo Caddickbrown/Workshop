@@ -6,6 +6,8 @@ Sub FillOutHistory()
 
    ResetView "SMW Dashboard"
 
+   ActiveWorkbook.Save
+
 End Sub
 
 Sub ResetView(MainTab As String)
@@ -19,4 +21,20 @@ Sub ArchiveData(DestinationTab As String, SourceTabReleased As String, PastingRa
    Sheets(DestinationTab).Range("H" & LastUsedRow + 1 & ":M" & LastUsedRow + 1).Value = Sheets(SourceTabReqs).Range(PastingRangeReqs).Value
 End Sub
 
+' # Changelog
+
+' ## [1.0.1] - 2024-06-13
+
+' ### Added
+
+' - Save to End of FillOutHistory Macro
+' - Changelog
+
+' ## [1.0.0] - 
+
+' ### Added
+
+' - Initial Commit
+' - Separate ResetView Macro
+' - Separate Archive Macro
 
