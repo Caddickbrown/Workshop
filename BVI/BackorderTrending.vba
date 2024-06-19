@@ -10,6 +10,10 @@ Application.Workbooks.Open ("https://bvx.sharepoint.com/Operations/Reporting%20a
 Application.Wait (Now() + TimeValue("00:00:15"))
 
 'Activate and Calculate
+Workbooks("Daily Plan.xlsm").Activate
+Calculate
+Workbooks("Instruments Daily Plan.xlsm").Activate
+Calculate
 Workbooks("Backorder Trending.xlsm").Activate
 Calculate
 
@@ -31,6 +35,12 @@ Sub ArchiveData(DestinationTab As String, SourceTab As String, PastingRange As S
 End Sub
 
 ' # Changelog
+
+' ## [1.1.0] - 2024-06-19
+
+' ### Added
+
+' - Ensure Calculations are Complete for Plan Workbooks
 
 ' ## [1.0.1] - 2024-06-13
 
