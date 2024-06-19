@@ -18,7 +18,7 @@ Workbooks("Backorder Trending.xlsm").Activate
 Calculate
 
 ' Archive
-ArchiveData DestinationTab:="Archive", SourceTab:="Data", PastingRange:="A2:K2"
+ArchiveData DestinationTab:="Archive", SourceTab:="Data", PastingRange:="A2:M2"
 
 ' Close Workbooks
 Workbooks("Daily Plan.xlsm").Close SaveChanges:=False
@@ -31,10 +31,16 @@ End Sub
 
 Sub ArchiveData(DestinationTab As String, SourceTab As String, PastingRange As String)
    LastUsedRow = ActiveWorkbook.Sheets(DestinationTab).Range("A1", Sheets(DestinationTab).Range("A1").End(xlDown)).Rows.Count
-   Sheets(DestinationTab).Range("A" & LastUsedRow + 1 & ":K" & LastUsedRow + 1).Value = Sheets(SourceTab).Range(PastingRange).Value
+   Sheets(DestinationTab).Range("A" & LastUsedRow + 1 & ":M" & LastUsedRow + 1).Value = Sheets(SourceTab).Range(PastingRange).Value
 End Sub
 
 ' # Changelog
+
+' ## [1.1.1] - 2024-06-19
+
+' ### Added
+
+' - Malosa Instruments Added
 
 ' ## [1.1.0] - 2024-06-19
 
