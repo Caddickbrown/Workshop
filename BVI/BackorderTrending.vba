@@ -41,11 +41,6 @@ End Sub
 ' ### Added
 
 ' - Malosa Instruments Added
-
-' ## [1.1.0] - 2024-06-19
-
-' ### Added
-
 ' - Ensure Calculations are Complete for Plan Workbooks
 
 ' ## [1.0.1] - 2024-06-13
