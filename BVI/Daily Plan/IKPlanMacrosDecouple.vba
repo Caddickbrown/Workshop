@@ -31,6 +31,14 @@ Sub CompletedScheduleSort()
     ScheduleSort Worksheets("Complete"), "Table7", sortColumns
 End Sub
 
+Sub AllScheduleSort()
+    ScheduleMSort
+    ScheduleASort
+    SchedulePSort
+    MalosaScheduleSort
+    CompletedScheduleSort
+End Sub
+
 Sub ScheduleSort(ws As Worksheet, tableName As String, sortColumns As Variant)
     ws.Select
     Protection ws, "Unprotect"
@@ -150,6 +158,12 @@ Sub ArchiveCompleted()
 End Sub
 
 ' # Changelog
+
+' ## [1.1.0] - 2024-06-19
+
+' ### Added
+
+' - Sort All Button Macro
 
 ' ## [1.0.1] - 2024-06-13
 
