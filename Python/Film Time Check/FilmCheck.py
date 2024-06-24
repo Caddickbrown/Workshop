@@ -1,11 +1,9 @@
 import requests
-
 from bs4 import BeautifulSoup
 
 url = 'https://analoguewonderland.co.uk/pages/wonderlab-status'
 
 response = requests.get(url)
-
 content = response.text
 
 soup = BeautifulSoup(content, 'html.parser')
@@ -18,17 +16,20 @@ if parent_div:
     if film_list:
         film_dict = {}
         for li in film_list.find_all('li'):
-            film_name = li.strong.text.strip()
-            # Check if ':' exists in the list item text
-            if ':' in li.text:
-                working_days = li.text.split(':')[1].strip()
+            li_text = li.text.strip()
+            if ':' in li_text:
+                film_name, working_days = li_text.split(':', 1)
+                film_name = film_name.strip()
+                working_days = working_days.strip()
             else:
+                film_name = li_text
                 working_days = "Working days information not available."
             film_dict[film_name] = working_days
         for film, days in film_dict.items():
-            print(f"{film}\n")
+            print(f"{film}: {days}")
     else:
         print("Film list not found.")
 else:
     print("Parent div not found.")
+
 input("Press enter to exit ;)")
