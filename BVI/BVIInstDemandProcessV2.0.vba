@@ -57,7 +57,7 @@ ReleasedOrdersSheetName = "Released Shop Orders"
     Range("F2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",""Malosa"",""BVI"")" ' Brand
     Range("G2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",IF(RIGHT(C2,1)=""S"",""Shelf"",""Kit""),IFERROR(VLOOKUP($C2,'[IK BVI Demand Plan.xlsm]SKUs'!$A:$B,2,FALSE),NA()))" ' Format
     ' Need to add Brand and Area Formulas
-    Range("J2").Formula = "=SUMIF('[Instruments Daily Plan.xlsm]Hrs'!$A:$A,$C2,'[Instruments Daily Plan.xlsm]Hrs'!$C:$C)*$I2" ' Hours
+    Range("J2").Formula = "=SUMIFS('[Instruments Daily Plan.xlsm]Hrs'!$C:$C,'[Instruments Daily Plan.xlsm]Hrs'!$A:$A,$C2,'[Instruments Daily Plan.xlsm]Hrs'!D:D,""<>""&""Boxing"")*$I2" ' Hours
     Range("N2").Formula = "=SUMIF($D:$D,$M2,I:I)"
     Range("O2").Formula = "=SUMIF($D:$D,$M2,J:J)"
     Range("O6").Formula = "=IF(N6="""",""<- Paste Concat Here"",CONCATENATE(N6,"";"",O5)" ' Concatenate
@@ -129,3 +129,14 @@ ReleasedOrdersSheetName = "Released Shop Orders"
 
 End Sub
 
+' # Changelog
+
+' ## [1.0.1] - 2024-07-04
+
+' ### Added
+
+' - Changelog
+
+' ### Fixed
+
+' - Removed Boxing hours from Calculation as causing double count.

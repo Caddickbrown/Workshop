@@ -4,6 +4,12 @@ Sub BVIScheduleSort()
     ScheduleSort Worksheets("BVI Main"), "Table2", sortColumns
 End Sub
 
+Sub BVISchedulePicksSort()
+    Dim sortColumns As Variant
+    sortColumns = [{"Picks", "Date"}]
+    ScheduleSort Worksheets("BVI Main"), "Table2", sortColumns
+End Sub
+
 Sub MalosaScheduleSort()
     Dim sortColumns As Variant
     sortColumns = [{"Sequence", "Date"}]
@@ -163,6 +169,12 @@ Sub ArchiveCompleted()
 End Sub
 
 ' # Changelog
+
+' ## [1.2.0] - 2024-07-23
+
+' ### Added
+
+' - Picks First BVI Macro
 
 ' ## [1.1.0] - 2024-06-19
 
