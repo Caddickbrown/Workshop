@@ -125,9 +125,7 @@ Sub ArchiveCompleted()
         Exit Sub
     End If
     
-    BVIScheduleSort
-    MalosaScheduleSort
-    CompletedScheduleSort
+    AllScheduleSort
     
     ' Set the source tables based on the provided names
     On Error Resume Next
@@ -142,6 +140,8 @@ Sub ArchiveCompleted()
     End If
     
     Protection wsComplete, "Unprotect"
+
+    Application.Calculation = xlManual
     
     ' Find the last row in the source tables and move completed orders
     For Each tbl In Array(tblBVI, tblMalosa)
@@ -159,6 +159,8 @@ Sub ArchiveCompleted()
         Protection tbl.Parent, "Protect"
     Next tbl
 
+    Application.Calculation = xlAutomatic
+
     wsComplete.Columns("A:V").FormatConditions.Delete
 
     Protection wsComplete, "Protect"
@@ -169,6 +171,17 @@ Sub ArchiveCompleted()
 End Sub
 
 ' # Changelog
+
+' ## [1.3.0] - 2024-07-30
+
+' ### Added
+
+'- Turn off Calculations before Completed Archive
+'- Turn on Calculations after Completed Archive
+
+' ### Changed
+
+'- Use AllScheduleSort instead of individially defining sorts
 
 ' ## [1.2.0] - 2024-07-23
 
