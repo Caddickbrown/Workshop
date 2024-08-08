@@ -1,0 +1,69 @@
+-- Not Complete
+
+SELECT
+	--*,
+	req.PROPOSAL_NO AS 'Proposal/Order No',
+	req.PART_NO AS 'Part No',
+	ipt.DESCRIPTION AS 'Part Description',
+	CASE WHEN ipt.PLANNER_BUYER IN ('3001','3801') THEN 'KITEU'
+		 WHEN ipt.PLANNER_BUYER IN ('5001') THEN 'MMK'
+		 WHEN LEFT(req.PART_NO,4) = 'MMSU' THEN 'MMINS'
+		 WHEN LEFT(req.PART_NO,4) = 'PLAN' THEN 'Plan'
+		 WHEN LEFT(req.PART_NO,4) = 'MMSP' THEN 'Sample'
+		 WHEN LEFT(req.PART_NO,1) = 'S' THEN 'Sample'
+		 WHEN LEFT(req.PART_NO,1) = 'N' THEN 'Sample'
+		 -- WHEN LEFT(req.PART_NO,1) IN ('S','N') THEN 'Sample' -- Try this when you get a chance
+		 ELSE 'IK'
+			END AS 'Area',
+	'Requisition' AS 'Status',
+	req.PLAN_ORDER_REC AS 'Qty',
+	CONCAT(YEAR(req.REVISED_DUE_DATE),'-',FORMAT(DATEPART(WEEK,req.REVISED_DUE_DATE),'00','en-US')) AS 'Due Week',
+	req.REVISED_DUE_DATE AS 'Due Date'
+
+FROM IFS.SHOP_ORDER_PROP_TAB AS req
+INNER JOIN IFS.INVENTORY_PART_TAB AS ipt ON req.PART_NO = ipt.PART_NO AND req.CONTRACT = ipt.CONTRACT
+--INNER JOIN IFS.ROUTING_OPERATION_TAB AS hrs ON req.PART_NO = hrs.PART_NO AND ipt.CONTRACT = hrs.CONTRACT
+
+WHERE req.CONTRACT = '2051'
+AND req.ROWSTATE = 'ProposalCreated'
+--AND req.PART_NO IN ('590389')
+AND req.REVISED_DUE_DATE < (CONVERT(DATE,GETDATE()))
+
+UNION
+
+SELECT
+	--*,
+	so.ORDER_NO AS 'Proposal/Order No',
+	so.PART_NO AS 'Part No',
+	ipt.DESCRIPTION AS 'Part Description',
+	CASE
+		WHEN ipt.PLANNER_BUYER IN ('3001','3801') THEN 'KITEU'
+		WHEN ipt.PLANNER_BUYER IN ('5001') THEN 'MMK'
+		WHEN LEFT(so.PART_NO,4) = 'MMSU' THEN 'MMINS'
+		WHEN LEFT(so.PART_NO,4) = 'PLAN' THEN 'Plan'
+		WHEN LEFT(so.PART_NO,4) = 'MMSP' THEN 'Sample'
+		WHEN LEFT(so.PART_NO,1) = 'S' THEN 'Sample'
+		WHEN LEFT(so.PART_NO,1) = 'N' THEN 'Sample'
+		ELSE 'IK'
+			END AS 'Area',
+	CASE 
+		WHEN so.ROWSTATE IN ('Planned') THEN 'ProposalCreated'
+		WHEN so.ROWSTATE IN ('Reserved') THEN 'Reserved'
+		WHEN so.ROWSTATE IN ('Released') THEN 'Released'
+		WHEN so.ROWSTATE IN ('Started') THEN 'Started'
+		ELSE so.ROWSTATE
+		END AS 'Status',
+	so.REVISED_QTY_DUE AS 'Qty',
+	CONCAT(YEAR(so.REVISED_DUE_DATE),'-',FORMAT(DATEPART(WEEK,so.REVISED_DUE_DATE),'00','en-US')) AS 'Due Week',
+	so.REVISED_DUE_DATE AS 'Due Date'
+	
+FROM IFS.SHOP_ORD_TAB AS so
+INNER JOIN IFS.INVENTORY_PART_TAB AS ipt ON so.PART_NO = ipt.PART_NO AND so.CONTRACT = ipt.CONTRACT
+--INNER JOIN IFS.ROUTING_OPERATION_TAB AS hrs ON req.PART_NO = hrs.PART_NO AND ipt.CONTRACT = hrs.CONTRACT
+
+WHERE so.CONTRACT = '2051'
+AND so.ROWSTATE NOT IN ('Closed')
+--AND req.PART_NO IN ('590389')
+AND so.REVISED_DUE_DATE < (CONVERT(DATE,GETDATE()))
+
+;
