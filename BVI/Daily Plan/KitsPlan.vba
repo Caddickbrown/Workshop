@@ -94,6 +94,7 @@ Sub Protection(obj As Object, action As String)
     Select Case action
         Case "Protect"
             obj.Protect Password:=Password, AllowSorting:=True, AllowFiltering:=True ', UserInterfaceOnly:=True
+            obj.EnableSelection = xlNoRestrictions
         Case "Unprotect"
             obj.Unprotect Password:=Password
         Case Else
@@ -171,6 +172,12 @@ Sub ArchiveCompleted()
 End Sub
 
 ' # Changelog
+
+' ## [1.3.1] - 2024-08-12
+
+' ### Changed
+
+'- Allow Selection of Locked Cells
 
 ' ## [1.3.0] - 2024-07-30
 

@@ -26,15 +26,20 @@ Sub ArchiveData()
 
    LastUsedRow = ActiveWorkbook.Sheets(DestinationTab).Range("A1", Sheets(DestinationTab).Range("A1").End(xlDown)).Rows.Count
    Sheets(DestinationTab).Range("A" & LastUsedRow + 1).Value = Date - 1
-   Sheets(DestinationTab).Range("E" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F3").Value
-   Sheets(DestinationTab).Range("F" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F4").Value
-
+   Sheets(DestinationTab).Range("C" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F3").Value
+   Sheets(DestinationTab).Range("D" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F4").Value
 
    'ActiveWorkbook.Save
 
 End Sub
 
 ' # Changelog
+
+' ## [1.1.1] - 2024-08-16
+
+' ### Changed
+
+' - Moved Order of Archive Columns
 
 ' ## [1.1.0] - 2024-08-08
 
