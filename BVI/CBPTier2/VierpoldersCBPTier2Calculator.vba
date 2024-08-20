@@ -1,15 +1,7 @@
 Sub CBPDailyPrep()
 
-    Range("D3:D4").Value = Range("F3:F4").Value
-    Range("E3:E4").ClearContents
-    Range("J5:K6").ClearContents
-    Range("A1").Select
-    
-End Sub
-
-Sub CopyOver()
-
-    Range("E3:E4").Value = Range("L5:L6").Value
+    Range("D3:D5").Value = Range("F3:F5").Value
+    Range("E3:E5").ClearContents
     Range("A1").Select
     
 End Sub
@@ -31,10 +23,10 @@ Sub ArchiveData()
    
    LastUsedRow = ActiveWorkbook.Sheets(DestinationTab).Range("A1", Sheets(DestinationTab).Range("A1").End(xlDown)).Rows.Count
    
-   Sheets(DestinationTab).Range("A" & LastUsedRow + 1).Value = ArchiveDate ' Date
-   Sheets(DestinationTab).Range("C" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F3").Value ' Kits
-   Sheets(DestinationTab).Range("D" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F4").Value ' Instruments
-
+   Sheets(DestinationTab).Range("A" & LastUsedRow + 1).Value = ArchiveDate
+   Sheets(DestinationTab).Range("C" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F3").Value ' Area 1
+   Sheets(DestinationTab).Range("D" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F4").Value ' Area 2
+   Sheets(DestinationTab).Range("E" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("F5").Value ' Cleanroom
 
    'ActiveWorkbook.Save
 
@@ -53,9 +45,14 @@ End Sub
 
 ' - Changed Date Formula to use Fridays Date if on a Monday
 
+' ### Changed
+
+' - Adjusted Macros for Vierpolders Template
+
 ' ### Removed
 
 ' - Unused reference to "PastingRange"
+' - CopyOver Macro as not reqwuired for Vierpolders
 
 ' ## [1.1.1] - 2024-08-16
 
