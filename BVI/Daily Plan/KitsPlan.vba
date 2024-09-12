@@ -157,6 +157,16 @@ Sub ArchiveCompleted()
                 tbl.ListRows(i).Delete
             End If
         Next i
+        
+        For i = tbl.ListRows.Count To 1 Step -1
+            If tbl.ListRows(i).Range.Cells(1, tbl.ListColumns("Status").Index).Value = "Cancelled" Then
+                ' Copy the entire row to the destination sheet
+                tbl.ListRows(i).Range.Copy wsComplete.Cells(wsComplete.Cells(wsComplete.Rows.Count, "A").End(xlUp).Row + 1, 1)
+                
+                ' Delete the row from the source table (optional)
+                tbl.ListRows(i).Delete
+            End If
+        Next i
         Protection tbl.Parent, "Protect"
     Next tbl
 
@@ -172,6 +182,12 @@ Sub ArchiveCompleted()
 End Sub
 
 ' # Changelog
+
+' ## [1.4.0] - 2024-09-12
+
+' ### Added
+
+'- Section of Archive to remove Cancelled Items as well
 
 ' ## [1.3.1] - 2024-08-12
 
