@@ -47,8 +47,26 @@ Sub TTC()
     Sheets(DestinationTab).Range("A" & LastUsedRow + 1).Value = ArchiveDate 'Date
     Sheets(DestinationTab).Range("B" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AG1").Value 'Blocked Lines
     Sheets(DestinationTab).Range("C" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AI1").Value 'Blocked Qty
-    Sheets(DestinationTab).Range("D" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AK1").Value 'TW+ (This Week + x Weeks)
+    Sheets(DestinationTab).Range("D" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("Z1").Value 'Lines to Check
+    Sheets(DestinationTab).Range("E" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AA1").Value 'Qty to Check
+    Sheets(DestinationTab).Range("F" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AK1").Value 'TW+ (This Week + x Weeks)
 
     'ActiveWorkbook.Save
 
 End Sub
+
+'# Changelog
+
+'## [1.1.0] - 2024-10-10
+
+'### Added
+
+'- Lines to Check to Archive
+'- Qty to Check to Archive
+'- Changelog
+
+'## [1.0.0] - 2024-10-08
+
+'### Added
+
+'- Initial Commit
