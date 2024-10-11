@@ -40,7 +40,7 @@ Sub TTC()
     
     DestinationTab = "KPI"
     SourceTab = "Main"
-    ArchiveDate = Date
+    ArchiveDate = TEXT(Now(), "dd/mm/yyyy hh:mm")
 
     LastUsedRow = ActiveWorkbook.Sheets(DestinationTab).Range("A1", Sheets(DestinationTab).Range("A1").End(xlDown)).Rows.Count
 
