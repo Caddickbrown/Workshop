@@ -45,11 +45,11 @@ Sub TTC()
     LastUsedRow = ActiveWorkbook.Sheets(DestinationTab).Range("A1", Sheets(DestinationTab).Range("A1").End(xlDown)).Rows.Count
 
     Sheets(DestinationTab).Range("A" & LastUsedRow + 1).Value = ArchiveDate 'Date
-    Sheets(DestinationTab).Range("B" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AG1").Value 'Blocked Lines
-    Sheets(DestinationTab).Range("C" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AI1").Value 'Blocked Qty
-    Sheets(DestinationTab).Range("D" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("Z1").Value 'Lines to Check
-    Sheets(DestinationTab).Range("E" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AA1").Value 'Qty to Check
-    Sheets(DestinationTab).Range("F" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AK1").Value 'TW+ (This Week + x Weeks)
+    Sheets(DestinationTab).Range("B" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AH1").Value 'Blocked Lines
+    Sheets(DestinationTab).Range("C" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AJ1").Value 'Blocked Qty
+    Sheets(DestinationTab).Range("D" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AA1").Value 'Lines to Check
+    Sheets(DestinationTab).Range("E" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AB1").Value 'Qty to Check
+    Sheets(DestinationTab).Range("F" & LastUsedRow + 1).Value = Sheets(SourceTab).Range("AL1").Value 'TW+ (This Week + x Weeks)
 
     'ActiveWorkbook.Save
 
