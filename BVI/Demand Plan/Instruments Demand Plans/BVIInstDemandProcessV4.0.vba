@@ -13,7 +13,7 @@ ReleasedOrdersSheetName = "Released Shop Orders"
     Dim response As VbMsgBoxResult
     response = MsgBox("Are you sure you want to run this macro?", vbYesNo + vbQuestion, "Confirmation")
 
-    ' Check the user's response
+    ' Check the user's response - in case they've done it in the wrong sheet
     If response = vbNo Then
         MsgBox "Macro cancelled.", vbInformation, "Cancelled"
         Exit Sub
@@ -64,7 +64,7 @@ ReleasedOrdersSheetName = "Released Shop Orders"
     Range("M2").Value = "POOL"
 
     ' Formulas
-    Range("D2").Formula = "=CONCATENATE(TEXT(ISOWEEKNUM(E2),""00""),TEXT(WEEKDAY(E2,2),""00""))" ' Brand
+    Range("D2").Formula = "=CONCATENATE(TEXT(ISOWEEKNUM(E2),""00""),TEXT(WEEKDAY(E2,2),""00""))" ' Priority Category - Disable if don't do "POOL" step
     Range("F2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",""Malosa"",""BVI"")" ' Brand
     Range("G2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",IF(RIGHT(C2,1)=""S"",""Shelf"",""Kit""),IFERROR(VLOOKUP($C2,'[IK BVI Demand Plan.xlsm]SKUs'!$A:$B,2,FALSE),NA()))" ' Format
     ' Need to add Brand and Area Formulas
@@ -75,7 +75,7 @@ ReleasedOrdersSheetName = "Released Shop Orders"
 
     LastUsedRow = ActiveSheet.Range("B1", ActiveSheet.Range("B1").End(xlDown)).Rows.Count
 
-    Range("D2").AutoFill Destination:=Range("D2:D" & LastUsedRow)
+    Range("D2").AutoFill Destination:=Range("D2:D" & LastUsedRow) '- Priority Category - Disable if don't do "POOL" step
     Range("F2:G2").AutoFill Destination:=Range("F2:G" & LastUsedRow)
     Range("J2").AutoFill Destination:=Range("J2:J" & LastUsedRow)
     
