@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Control</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 20px;
+            /* background: #e0e0e0; */
+            color: #000;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            /* background-color: #7FC8DC; */
+            padding: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            gap: 20px;
+        }
+        
+        .control-section {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            border: 2px solid black;
+            width: 70px;
+            height: 70px;
+            margin: 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 4px solid black;
+            border-radius: 50%;
+        }
+
+        .logo-text {
+            font-weight: bold;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: left;
+            padding-left: 40px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: left;
+            padding-left: 40px;
+        }
+
+        .department-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .department-text {
+            text-transform: uppercase;
+            font-size: 14px;
+            white-space: nowrap;
+            background-color: #000;
+            color: #fff;
+            width: 95%;
+            padding-left: 15px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+
+        .department-line-inner {
+            flex-grow: 1;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                #000,
+                #000 8px,
+                transparent 8px,
+                transparent 12px
+            );
+        }
+
+        /* Flex container for main content */
+        .content-wrapper {
+            display: flex;
+            position: relative;
+        }
+
+        /* Vertical divider line */
+        .content-wrapper::after {
+            content: '';
+            position: absolute;
+            left: 200px; /* Same as comments-column width */
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: black;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Left column - Comments */
+        .comments-column {
+            width: 200px;
+            flex-shrink: 0;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-right: 1px #000;
+            min-height: 500px;
+        }
+
+        .comment-box {
+            text-align: right;
+            padding: 10px;
+            border-right: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        .comment-box:hover {
+            border-right-color: #000;
+        }
+
+        /* Right column - Checklist */
+        .checklist-column {
+            flex-grow: 1;
+            padding-left: 20px;
+        }
+
+        .checklist-item {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            position: relative;
+        }
+
+        .item-text {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        .item-text:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .delete-button {
+            opacity: 0;
+            transition: opacity 0.3s;
+            background: none;
+            border: none;
+            color: #000;
+            cursor: pointer;
+            padding: 0 5px;
+            font-size: 16px;
+        }
+
+        .checklist-item:hover .delete-button {
+            opacity: 1;
+        }
+
+        @media print {
+            .delete-button {
+                display: none !important;
+            }
+            .item-text:hover {
+                background-color: transparent;
+            }
+            .controls { display: none; }
+            .container {
+                box-shadow: none;
+                padding: 0;
+            }
+            .department-text {
+                background-color: #000 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }         
+            .content-wrapper::after {
+                background: black !important;
+                width: 1px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+
+        .checkbox {
+            min-width: 10px;
+            height: 10px;
+            border: 1px solid black;
+            margin-top: 4px;
+        }
+
+        .copyright {
+            margin-top: 80px;
+            font-size: 10px;
+            text-align: center;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        /* Controls styling */
+        input[type="text"], select {
+            padding: 5px;
+            margin: 5px;
+            font-family: inherit;
+        }
+
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+            background-color: #333;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .add-comment-form {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 4px;
+        }
+
+        .add-comment-form textarea {
+            width: 100%;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="control-section">
+            <h3>Document Settings</h3>
+            <input type="text" id="documentTitle" value="Production Control Leader" placeholder="Document Title">
+            <input type="text" id="documentSubtitle" value="Morning Checklist" placeholder="Subtitle">
+            <button onclick="window.print()">Print</button>
+        </div>
+        <div class="control-section">
+            <h3>Add Comment</h3>
+            <textarea id="newComment" rows="3" placeholder="Add new comment..."></textarea>
+            <button onclick="addComment()">Add Comment</button>
+        </div>
+        <div class="control-section">
+            <h3>Add Checklist Item</h3>
+            <textarea id="newItem" rows="3" placeholder="Add new checklist item..."></textarea>
+            <button onclick="addItem()">Add Item</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <div class="logo">
+                <div class="logo-text">BVI</div>
+            </div>
+
+            <div class="title" id="titleDisplay">Production Control Leader</div>
+            <div class="subtitle" id="subtitleDisplay">Morning Checklist</div>
+
+            <div class="department-line" style="font-weight: 600;">
+                <span class="department-text">PRODUCTION CONTROL</span>
+            </div>
+        </div>
+
+        <div class="content-wrapper">
+            <!-- Left Column - Comments -->
+            <div class="comments-column" id="commentsColumn">
+                <div class="comment-box">
+                    The following
+                    should be
+                    completed
+                    before
+                    commencing
+                    the day's
+                    work.
+                </div>
+                <div class="comment-box">
+                    Thank you
+                    for your
+                    commitment
+                    to BVI Medical!
+                </div>
+            </div>
+
+            <!-- Right Column - Checklist -->
+            
+            <div class="checklist-column">
+                <div style="font-weight: 600;">Remember! You are permitted one record to listen to each morning during your morning checklist procedures. Which will you choose today?</div>
+                <br>
+                <div class="checklist" id="itemList"></div>
+            </div>
+        </div>
+
+        <div class="copyright">
+            Copyright © B.V.I. Medical<br>
+            All Rights Reserved<br>
+            Printed in U.K.<br>
+            Do Not Distribute
+        </div>
+    </div>
+
+    <script>
+        const defaultItems = [
+            'Brew a cup of coffee.',
+            'Refill the soap dispenser in the restroom.',
+            'Sweep the floor using the carpet sweeper.',
+            'Wipe down the desk surfaces in each cubicle.',
+            'Dust the BVI Compliance Handbook and Appendices.',
+            'Return vending machine tokens to jar.',
+            'Review employee lunches.',
+            'Check refrigerator temperature.',
+            'Inspect keyboards for weak keys.',
+            'Self-Assess: Can I lead today?',
+            'Inspect office crannies for interdepartmental raiders (unlikely).',
+            'Test each chair.',
+            'Check/refill copier paper.',
+            'Remember to Practice MEE TIME'
+        ];
+
+        let items = [...defaultItems];
+        let comments = [];
+
+        function renderItems() {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = items.map((item, index) => `
+                <div class="checklist-item">
+                    <div class="checkbox"></div>
+                    <span class="item-text" onclick="editItem(${index})">${item}</span>
+                    <button class="delete-button" onclick="removeItem(${index})">×</button>
+                </div>
+            `).join('');
+        }
+
+        function editItem(index) {
+            const newText = prompt('Edit item:', items[index]);
+            if (newText !== null) {
+                items[index] = newText.trim();
+                renderItems();
+            }
+        }
+
+        function removeItem(index) {
+            items.splice(index, 1);
+            renderItems();
+        
+        }
+
+        function addItem() {
+            const input = document.getElementById('newItem');
+            const text = input.value.trim();
+            if (text) {
+                items.push(text);
+                input.value = '';
+                renderItems();
+            }
+        }
+
+        function addComment() {
+            const input = document.getElementById('newComment');
+            const comment = input.value.trim();
+            if (comment) {
+                const commentsColumn = document.getElementById('commentsColumn');
+                const newCommentDiv = document.createElement('div');
+                newCommentDiv.className = 'comment-box';
+                newCommentDiv.textContent = comment;
+                // Insert before the last comment (thank you message)
+                commentsColumn.insertBefore(newCommentDiv, commentsColumn.lastElementChild);
+                input.value = '';
+            }
+        }
+
+        // Update document title when input changes
+        document.getElementById('documentTitle').addEventListener('input', function(e) {
+            document.getElementById('titleDisplay').textContent = e.target.value;
+        });
+
+        // Update document title when input changes
+        document.getElementById('documentSubtitle').addEventListener('input', function(e) {
+            document.getElementById('subtitleDisplay').textContent = e.target.value;
+        });
+
+        // Add comment when pressing Enter in textarea
+        document.getElementById('newComment').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                addComment();
+            }
+        });
+
+        // Initial render
+        renderItems();
+    </script>
+</body>
+</html>
