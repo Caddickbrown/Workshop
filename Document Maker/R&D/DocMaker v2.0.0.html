@@ -275,6 +275,29 @@
             font-family: inherit;
         }
 
+        
+        .markdown-mode {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .markdown-editor {
+            width: 100%;
+            min-height: 400px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .mode-controls {
+            margin-bottom: 10px;
+        }
+
     </style>
 </head>
 <body>
@@ -284,16 +307,27 @@
             <input type="text" id="documentTitle" value="Production Control Leader" placeholder="Document Title">
             <input type="text" id="documentSubtitle" value="Morning Checklist" placeholder="Subtitle">
             <button onclick="window.print()">Print</button>
+            <button onclick="toggleMarkdownMode()" id="modeToggleBtn">Markdown Mode</button>
         </div>
-        <div class="control-section">
-            <h3>Add Comment</h3>
-            <textarea id="newComment" rows="3" placeholder="Add new comment..."></textarea>
-            <button onclick="addComment()">Add Comment</button>
+        <div id="standardControls">
+            <div class="control-section">
+                <h3>Add Comment</h3>
+                <textarea id="newComment" rows="3" placeholder="Add new comment..."></textarea>
+                <button onclick="addComment()">Add Comment</button>
+            </div>
+            <div class="control-section">
+                <h3>Add Checklist Item</h3>
+                <textarea id="newItem" rows="3" placeholder="Add new checklist item..."></textarea>
+                <button onclick="addItem()">Add Item</button>
+            </div>
         </div>
-        <div class="control-section">
-            <h3>Add Checklist Item</h3>
-            <textarea id="newItem" rows="3" placeholder="Add new checklist item..."></textarea>
-            <button onclick="addItem()">Add Item</button>
+        
+        <div id="markdownMode" class="markdown-mode">
+            <div class="mode-controls">
+                <button onclick="copyMarkdownToClipboard()">Copy to Clipboard</button>
+            </div>
+            <textarea id="markdownEditor" class="markdown-editor" 
+                      placeholder="Enter markdown or paste exported content..."></textarea>
         </div>
     </div>
 
@@ -369,6 +403,8 @@
         let items = [...defaultItems];
         let comments = [];
 
+
+
         function renderItems() {
             const itemList = document.getElementById('itemList');
             itemList.innerHTML = items.map((item, index) => `
@@ -417,6 +453,165 @@
                 input.value = '';
             }
         }
+
+        let isMarkdownMode = false;
+
+        function toggleMarkdownMode() {
+            isMarkdownMode = !isMarkdownMode;
+            const standardControls = document.getElementById('standardControls');
+            const markdownMode = document.getElementById('markdownMode');
+            const modeToggleBtn = document.getElementById('modeToggleBtn');
+
+            if (isMarkdownMode) {
+                standardControls.style.display = 'none';
+                markdownMode.style.display = 'block';
+                modeToggleBtn.textContent = 'Standard Mode';
+                
+                // Generate and display markdown
+                const markdown = generateMarkdown();
+                document.getElementById('markdownEditor').value = markdown;
+            } else {
+                // Parse markdown and update document
+                const markdown = document.getElementById('markdownEditor').value;
+                parseMarkdown(markdown);
+                
+                standardControls.style.display = 'block';
+                markdownMode.style.display = 'none';
+                modeToggleBtn.textContent = 'Markdown Mode';
+            }
+        }
+
+        function generateMarkdown() {
+            let markdown = '';
+            
+            // Add metadata
+            markdown += '---\n';
+            markdown += `title: ${document.getElementById('documentTitle').value}\n`;
+            markdown += `subtitle: ${document.getElementById('documentSubtitle').value}\n`;
+            markdown += '---\n\n';
+            
+            // Add comments
+            markdown += '## Comments\n';
+            const comments = Array.from(document.querySelectorAll('.comment-box'))
+                .map(box => box.textContent.trim());
+            comments.forEach(comment => {
+                markdown += `- ${comment}\n`;
+            });
+            markdown += '\n';
+            
+            // Add checklist items
+            markdown += '## Checklist\n';
+            const items = Array.from(document.querySelectorAll('.checklist-item'))
+                .map(item => item.textContent.trim());
+            items.forEach(item => {
+                markdown += `- [ ] ${item}\n`;
+            });
+            
+            return markdown;
+        }
+
+        function parseMarkdown(markdown) {
+            const lines = markdown.split('\n');
+            let section = '';
+            let inMetadata = false;
+            
+            // Clear existing content
+            document.getElementById('commentsColumn').innerHTML = '';
+            document.getElementById('itemList').innerHTML = '';
+            
+            lines.forEach(line => {
+                line = line.trim();
+                
+                if (line === '---') {
+                    inMetadata = !inMetadata;
+                    return;
+                }
+                
+                if (inMetadata) {
+                    const [key, value] = line.split(':').map(part => part.trim());
+                    if (key === 'title') document.getElementById('documentTitle').value = value;
+                    if (key === 'subtitle') document.getElementById('documentSubtitle').value = value;
+                    return;
+                }
+                
+                if (line.startsWith('## ')) {
+                    section = line.substring(3);
+                    return;
+                }
+                
+                if (line.startsWith('- ')) {
+                    const content = line.replace('- [ ]', '').replace('- ', '').trim();
+                    if (section === 'Comments') {
+                        addCommentDirect(content);
+                    } else if (section === 'Checklist') {
+                        addItemDirect(content);
+                    }
+                }
+            });
+
+            // Update displayed title and subtitle
+            document.getElementById('titleDisplay').textContent = 
+                document.getElementById('documentTitle').value;
+            document.getElementById('subtitleDisplay').textContent = 
+                document.getElementById('documentSubtitle').value;
+        }
+
+        function addCommentDirect(comment) {
+            const commentsColumn = document.getElementById('commentsColumn');
+            const newCommentDiv = document.createElement('div');
+            newCommentDiv.className = 'comment-box';
+            newCommentDiv.textContent = comment;
+            commentsColumn.insertBefore(newCommentDiv, commentsColumn.lastElementChild);
+        }
+
+        function addItemDirect(text) {
+            const itemList = document.getElementById('itemList');
+            const newItem = document.createElement('div');
+            newItem.className = 'checklist-item';
+            newItem.innerHTML = `
+                <div class="checkbox"></div>
+                <span class="item-text">${text}</span>
+                <button class="delete-button" onclick="removeItem(this)">×</button>
+            `;
+            itemList.appendChild(newItem);
+        }
+
+        async function copyMarkdownToClipboard() {
+            const markdown = generateMarkdown();
+            try {
+                await navigator.clipboard.writeText(markdown);
+                showNotification('Document copied to clipboard!');
+            } catch (err) {
+                showNotification('Failed to copy to clipboard');
+                console.error('Failed to copy:', err);
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '10px';
+            notification.style.background = '#4CAF50';
+            notification.style.color = 'white';
+            notification.style.borderRadius = '4px';
+            notification.style.zIndex = '1000';
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 2000);
+        }
+
+        // Add this to your existing event listeners
+        document.getElementById('markdownEditor').addEventListener('input', function() {
+            if (isMarkdownMode) {
+                parseMarkdown(this.value);
+            }
+        });
 
         // Update document title when input changes
         document.getElementById('documentTitle').addEventListener('input', function(e) {
