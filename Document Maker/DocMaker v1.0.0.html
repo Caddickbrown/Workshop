@@ -286,8 +286,10 @@
             <button onclick="window.print()">Print</button>
         </div>
         <div class="control-section">
-            <h3>Add Comment</h3>
-            <textarea id="newComment" rows="3" placeholder="Add new comment..."></textarea>
+            <h3>Change Remark or Add a Comment</h3>
+            <input type="text" id="documentRemark" value="Remember! You are permitted one record to listen to each morning during your morning checklist procedures. Which will you choose today?" placeholder="Document Remark">
+            <br>
+            <textarea type="text" id="newComment" rows="3" placeholder="Add new comment..."></textarea>
             <button onclick="addComment()">Add Comment</button>
         </div>
         <div class="control-section">
@@ -325,7 +327,7 @@
             <!-- Right Column - Checklist -->
             
             <div class="checklist-column">
-                <div style="font-weight: 600;">Remember! You are permitted one record to listen to each morning during your morning checklist procedures. Which will you choose today?</div>
+                <div class="remark" id="remarkDisplay" style="font-weight: 600;">Remember! You are permitted one record to listen to each morning during your morning checklist procedures. Which will you choose today?</div>
                 <br>
                 <div class="checklist" id="itemList"></div>
             </div>
@@ -414,9 +416,14 @@
             document.getElementById('titleDisplay').textContent = e.target.value;
         });
 
-        // Update document title when input changes
+        // Update document subtitle when input changes
         document.getElementById('documentSubtitle').addEventListener('input', function(e) {
             document.getElementById('subtitleDisplay').textContent = e.target.value;
+        });
+
+        // Update document title when input changes
+        document.getElementById('documentRemark').addEventListener('input', function(e) {
+            document.getElementById('remarkDisplay').textContent = e.target.value;
         });
 
         // Add comment when pressing Enter in textarea
