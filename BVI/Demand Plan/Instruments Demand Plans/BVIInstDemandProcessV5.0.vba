@@ -67,7 +67,8 @@ ReleasedOrdersSheetName = "Released Shop Orders"
     Range("D2").Formula = "=CONCATENATE(TEXT(ISOWEEKNUM(E2),""00""),TEXT(WEEKDAY(E2,2),""00""))" ' Priority Category - Disable if don't do "POOL" step
     Range("F2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",""Malosa"",""BVI"")" ' Brand
     Range("G2").Formula = "=SWITCH(LEFT(C2,4),""MMSU"",IF(RIGHT(C2,1)=""S"",""Shelf"",""Kit""),IFERROR(VLOOKUP($C2,'[IK BVI Demand Plan.xlsm]SKUs'!$A:$B,2,FALSE),NA()))" ' Format
-    ' Need to add Brand and Area Formulas
+    Range("H2").Formula = "=SWITCH(LEFT(C2,4),""5857"",""Packaging - Non-Sterile"",IF(LEFT(C2,1)=""5"",""Packaging - Sterile"",IF(LEFT(C2,1)=""8"",""Packaging - Kit"","""")))" ' Area
+    ' Need to add Brand Formula
     Range("J2").Formula = "=SUMIFS('[Instruments Daily Plan.xlsm]Hrs'!$C:$C,'[Instruments Daily Plan.xlsm]Hrs'!$A:$A,$C2,'[Instruments Daily Plan.xlsm]Hrs'!D:D,""<>""&""Boxing"")*$I2" ' Hours
     Range("N2").Formula = "=SUMIF($D:$D,$M2,I:I)"
     Range("O2").Formula = "=SUMIF($D:$D,$M2,J:J)"
@@ -145,6 +146,12 @@ ReleasedOrdersSheetName = "Released Shop Orders"
 End Sub
 
 ' # Changelog
+
+' ## [5.0.0] - 2025-01-27
+
+' ### Added
+
+' - Area Formula to categorize based on Part No
 
 ' ## [4.0.0] - 2024-11-27
 
