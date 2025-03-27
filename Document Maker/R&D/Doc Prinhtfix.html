@@ -9,7 +9,6 @@
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
             padding: 20px;
-            /* background: #e0e0e0; */
             color: #000;
             line-height: 1.5;
         }
@@ -17,7 +16,6 @@
         .container {
             max-width: 1000px;
             margin: 0 auto;
-            /* background-color: #7FC8DC; */
             padding: 40px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
@@ -30,10 +28,12 @@
             font-family: system-ui, -apple-system, sans-serif;
             display: flex;
             gap: 20px;
+            flex-wrap: wrap;
         }
         
         .control-section {
             flex: 1;
+            min-width: 250px;
             padding: 10px;
             border: 1px solid #ddd;
             border-radius: 4px;
@@ -149,6 +149,7 @@
             justify-content: space-between;
             border-right: 1px #000;
             min-height: 500px;
+            padding-right: 10px;
         }
 
         .comment-box {
@@ -168,6 +169,10 @@
             padding-left: 20px;
         }
 
+        .checklist {
+            columns: 1;
+        }
+
         .checklist-item {
             margin-bottom: 12px;
             display: flex;
@@ -175,6 +180,8 @@
             gap: 10px;
             font-size: 14px;
             position: relative;
+            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .item-text {
@@ -199,32 +206,6 @@
 
         .checklist-item:hover .delete-button {
             opacity: 1;
-        }
-
-        @media print {
-            .delete-button {
-                display: none !important;
-            }
-            .item-text:hover {
-                background-color: transparent;
-            }
-            .controls { display: none; }
-            .container {
-                box-shadow: none;
-                padding: 0;
-            }
-            .department-text {
-                background-color: #000 !important;
-                color: #fff !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }         
-            .content-wrapper::after {
-                background: black !important;
-                width: 1px !important;
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
         }
 
         .checkbox {
@@ -275,7 +256,6 @@
             font-family: inherit;
         }
 
-        
         .markdown-mode {
             display: none;
             margin-top: 20px;
@@ -298,6 +278,75 @@
             margin-bottom: 10px;
         }
 
+        /* Print styles */
+        @media print {
+            .delete-button {
+                display: none !important;
+            }
+            .item-text:hover {
+                background-color: transparent;
+            }
+            .controls { 
+                display: none; 
+            }
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            .department-text {
+                background-color: #000 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }         
+            .content-wrapper::after {
+                background: black !important;
+                width: 1px !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            .checklist {
+                columns: 1; /* Single column for print */
+            }
+            .checklist-item {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .checklist-column {
+                overflow: visible;
+            }
+            /* Ensure proper page breaks */
+            .content-wrapper {
+                page-break-inside: auto;
+            }
+            @page {
+                margin: 0.5cm;
+                size: portrait;
+            }
+        }
+
+        /* Responsive styles */
+        @media screen and (min-width: 768px) {
+            .checklist {
+                columns: 1;
+            }
+        }
+
+        @media screen and (min-width: 992px) {
+            .checklist {
+                columns: 1;
+            }
+        }
+
+        /* Layout toggle button */
+        .layout-toggle {
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -308,6 +357,7 @@
             <input type="text" id="documentSubtitle" value="Morning Checklist" placeholder="Subtitle">
             <button onclick="window.print()">Print</button>
             <button onclick="toggleMarkdownMode()" id="modeToggleBtn">Markdown Mode</button>
+            <button onclick="toggleLayout()" id="layoutToggleBtn">Toggle Layout</button>
         </div>
         <div id="standardControls">
             <div class="control-section">
@@ -366,7 +416,6 @@
             </div>
 
             <!-- Right Column - Checklist -->
-            
             <div class="checklist-column">
                 <div style="font-weight: 600;">Remember! You are permitted one record to listen to each morning during your morning checklist procedures. Which will you choose today?</div>
                 <br>
@@ -376,38 +425,40 @@
 
         <div class="copyright">
             Copyright © BVI Medical<br>
-            BVI and all other trademarks<br>
-            (unless noted otherwise) are property of BVI. <br>
-            Printed in U.K.<br>
-            Do Not Distribute
+            BVI and all other trademarks (unless noted otherwise) are property of BVI. <br>
+            Printed in U.K. - Do Not Distribute
         </div>
     </div>
 
     <script>
         const defaultItems = [
+            'Say "Good Morning" to Team',
+            'Open the blinds and/or window, and set office temperature.',
+            'Setup your desk.',
             'Brew a cup of coffee.',
-            'Refill the soap dispenser in the restroom.',
-            'Sweep the floor using the carpet sweeper.',
-            'Wipe down the desk surfaces in each cubicle.',
-            'Dust the BVI Compliance Handbook and Appendices.',
-            'Return vending machine tokens to jar.',
-            'Review employee lunches.',
-            'Check refrigerator temperature.',
-            'Inspect keyboards for weak keys.',
             'Self-Assess: Can I lead today?',
-            'Inspect office crannies for interdepartmental raiders (unlikely).',
-            'Test each chair.',
-            'Check/refill copier paper.',
-            'Remember to Practice MEE TIME',
+            'Review calendar for the day.',
+            'Review Production Output/Days Available.',
+            'Review and update TOOB Report.',
+            'Review and update KPI PowerPoint.',
+            'Review and update Supply Chain Dashboard.',
+            'Review and update Internal KPIs.',
+            'Review and update Tier 2 Boards.',
+            'Review and update KPI Action Log.',
+            'Participate in Tier 3.',
+            'Participate in Tier 2.',
+            'Remember to Practice MEE TIME.',
             'Take a mental health break.',
             'Step away from your desk.',
-            'Close your email once to focus.'
+            'Wipe down the desk surfaces.',
+            'Clean and put away coffee cup.',
+            'Close your email once to focus.',
+            'Print Tomorrow`s Checksheet.'
         ];
 
         let items = [...defaultItems];
         let comments = [];
-
-
+        let columnLayout = 1; // Start with 1 column
 
         function renderItems() {
             const itemList = document.getElementById('itemList');
@@ -431,7 +482,6 @@
         function removeItem(index) {
             items.splice(index, 1);
             renderItems();
-        
         }
 
         function addItem() {
@@ -456,6 +506,13 @@
                 commentsColumn.insertBefore(newCommentDiv, commentsColumn.lastElementChild);
                 input.value = '';
             }
+        }
+
+        function toggleLayout() {
+            columnLayout = columnLayout === 1 ? 2 : 1;
+            document.querySelector('.checklist').style.columns = columnLayout;
+            document.getElementById('layoutToggleBtn').textContent = 
+                `Layout: ${columnLayout} Column${columnLayout > 1 ? 's' : ''}`;
         }
 
         let isMarkdownMode = false;
@@ -505,8 +562,6 @@
             
             // Add checklist items
             markdown += '## Checklist\n';
-            const items = Array.from(document.querySelectorAll('.checklist-item'))
-                .map(item => item.textContent.trim());
             items.forEach(item => {
                 markdown += `- [ ] ${item}\n`;
             });
@@ -521,7 +576,7 @@
             
             // Clear existing content
             document.getElementById('commentsColumn').innerHTML = '';
-            document.getElementById('itemList').innerHTML = '';
+            items = []; // Clear items array
             
             lines.forEach(line => {
                 line = line.trim();
@@ -548,7 +603,7 @@
                     if (section === 'Comments') {
                         addCommentDirect(content);
                     } else if (section === 'Checklist') {
-                        addItemDirect(content);
+                        items.push(content);
                     }
                 }
             });
@@ -558,6 +613,8 @@
                 document.getElementById('documentTitle').value;
             document.getElementById('subtitleDisplay').textContent = 
                 document.getElementById('documentSubtitle').value;
+                
+            renderItems(); // Render updated items
         }
 
         function addCommentDirect(comment) {
@@ -565,19 +622,13 @@
             const newCommentDiv = document.createElement('div');
             newCommentDiv.className = 'comment-box';
             newCommentDiv.textContent = comment;
-            commentsColumn.insertBefore(newCommentDiv, commentsColumn.lastElementChild);
-        }
-
-        function addItemDirect(text) {
-            const itemList = document.getElementById('itemList');
-            const newItem = document.createElement('div');
-            newItem.className = 'checklist-item';
-            newItem.innerHTML = `
-                <div class="checkbox"></div>
-                <span class="item-text">${text}</span>
-                <button class="delete-button" onclick="removeItem(this)">×</button>
-            `;
-            itemList.appendChild(newItem);
+            
+            // If there's at least one element in the comments column
+            if (commentsColumn.children.length > 0) {
+                commentsColumn.insertBefore(newCommentDiv, commentsColumn.lastElementChild);
+            } else {
+                commentsColumn.appendChild(newCommentDiv);
+            }
         }
 
         async function copyMarkdownToClipboard() {
@@ -622,7 +673,7 @@
             document.getElementById('titleDisplay').textContent = e.target.value;
         });
 
-        // Update document title when input changes
+        // Update document subtitle when input changes
         document.getElementById('documentSubtitle').addEventListener('input', function(e) {
             document.getElementById('subtitleDisplay').textContent = e.target.value;
         });
@@ -635,8 +686,17 @@
             }
         });
 
+        // Add item when pressing Enter in textarea
+        document.getElementById('newItem').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                addItem();
+            }
+        });
+
         // Initial render
         renderItems();
+        document.getElementById('layoutToggleBtn').textContent = `Layout: ${columnLayout} Column`;
     </script>
 </body>
 </html>

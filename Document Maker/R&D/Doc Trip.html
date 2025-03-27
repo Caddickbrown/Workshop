@@ -1,0 +1,1607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three-Part Document Maker</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 20px;
+            color: #000;
+            line-height: 1.5;
+        }
+
+        .controls {
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 4px;
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .section-tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid transparent;
+            border-bottom: none;
+            background-color: #f1f1f1;
+            margin-right: 5px;
+            border-top-left-radius: 4px;
+            border-top-right-radius: 4px;
+        }
+
+        .tab.active {
+            background-color: white;
+            border-color: #ddd;
+            border-bottom-color: white;
+            font-weight: bold;
+        }
+
+        .document-section {
+            display: none;
+        }
+
+        .document-section.active {
+            display: block;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background-color: white;
+        }
+
+        .control-section {
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .header {
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+            border: 2px solid black;
+            width: 70px;
+            height: 70px;
+            margin: 30px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .logo::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border: 4px solid black;
+            border-radius: 50%;
+        }
+
+        .logo-text {
+            font-weight: bold;
+            font-size: 24px;
+            letter-spacing: 1px;
+        }
+
+        .title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            text-align: left;
+            padding-left: 40px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: left;
+            padding-left: 40px;
+        }
+
+        .department-line {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            gap: 10px;
+        }
+
+        .department-text {
+            text-transform: uppercase;
+            font-size: 14px;
+            white-space: nowrap;
+            background-color: #000;
+            color: #fff;
+            width: 95%;
+            padding-left: 15px;
+            padding-top: 2px;
+            padding-bottom: 2px;
+        }
+
+        .department-line-inner {
+            flex-grow: 1;
+            height: 8px;
+            background: repeating-linear-gradient(
+                90deg,
+                #000,
+                #000 8px,
+                transparent 8px,
+                transparent 12px
+            );
+        }
+
+        /* Flex container for main content */
+        .content-wrapper {
+            display: flex;
+            position: relative;
+        }
+
+        /* Vertical divider line */
+        .content-wrapper::after {
+            content: '';
+            position: absolute;
+            left: 200px; /* Same as comments-column width */
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: black;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Left column - Comments */
+        .comments-column {
+            width: 200px;
+            flex-shrink: 0;
+            font-size: 14px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-right: 1px #000;
+            min-height: 500px;
+            padding-right: 10px;
+        }
+
+        .comment-box {
+            text-align: right;
+            padding: 10px;
+            border-right: 2px solid transparent;
+            transition: border-color 0.3s;
+        }
+
+        /* Right column - Checklist */
+        .checklist-column {
+            flex-grow: 1;
+            padding-left: 20px;
+        }
+
+        .checklist {
+            columns: 1;
+        }
+
+        .checklist-item {
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            position: relative;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .checkbox {
+            min-width: 16px;
+            height: 16px;
+            border: 1px solid black;
+            margin-top: 2px;
+        }
+
+        .item-text {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        .delete-button {
+            opacity: 0;
+            transition: opacity 0.3s;
+            background: none;
+            border: none;
+            color: #000;
+            cursor: pointer;
+            padding: 0 5px;
+            font-size: 16px;
+        }
+
+        .checklist-item:hover .delete-button {
+            opacity: 1;
+        }
+
+        .item-text:hover {
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .copyright {
+            margin-top: 80px;
+            font-size: 10px;
+            text-align: center;
+            text-transform: uppercase;
+            line-height: 1.4;
+        }
+
+        /* Inputs styling */
+        input[type="text"], select, textarea {
+            padding: 8px;
+            margin: 5px 0;
+            font-family: inherit;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 8px 12px;
+            margin: 5px 0;
+            background-color: #333;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #555;
+        }
+
+        .day-selector {
+            margin-bottom: 15px;
+        }
+
+        .export-section {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .export-editor {
+            width: 100%;
+            min-height: 300px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        /* Print styles */
+        @media print {
+            .controls, .section-tabs, .delete-button {
+                display: none !important;
+            }
+            
+            .item-text:hover {
+                background-color: transparent;
+            }
+            
+            .document-section {
+                display: block !important;
+                page-break-after: always;
+            }
+            
+            .document-section:last-child {
+                page-break-after: avoid;
+            }
+            
+            .container {
+                box-shadow: none;
+                padding: 0;
+                max-width: 100%;
+            }
+            
+            .department-text {
+                background-color: #000 !important;
+                color: #fff !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            .content-wrapper::after {
+                background: black !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            
+            @page {
+                margin: 0.5cm;
+                size: portrait;
+            }
+        }
+
+        .print-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .hidden-print-only {
+            display: none;
+        }
+
+        .day-checkboxes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .day-checkboxes label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            cursor: pointer;
+        }
+
+        .day-checkboxes input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="controls">
+        <div class="section-tabs">
+            <div class="tab active" onclick="switchTab(0)">Morning Setup</div>
+            <div class="tab" onclick="switchTab(1)">Daily Tasks</div>
+            <div class="tab" onclick="switchTab(2)">Close Down</div>
+            <div class="tab" onclick="switchTab(3)">Export/Import</div>
+        </div>
+
+        <div class="print-buttons">
+            <button onclick="printCurrentSection()">Print Current Section</button>
+            <button onclick="printAllSections()">Print All Sections</button>
+        </div>
+
+        <div class="control-section">
+            <h3>Document Settings</h3>
+            <input type="text" id="companyName" value="BVI" placeholder="Company Name">
+            <input type="text" id="departmentName" value="PRODUCTION CONTROL" placeholder="Department Name">
+        </div>
+
+        <div id="dailyTasksControls" style="display: none;">
+            <div class="control-section day-selector">
+                <h3>Day Selection</h3>
+                <div class="day-checkboxes">
+                    <label>
+                        <input type="checkbox" name="daySelect" value="monday" checked onclick="changeDay('monday')">
+                        Monday
+                    </label>
+                    <label>
+                        <input type="checkbox" name="daySelect" value="tuesday" onclick="changeDay('tuesday')">
+                        Tuesday
+                    </label>
+                    <label>
+                        <input type="checkbox" name="daySelect" value="wednesday" onclick="changeDay('wednesday')">
+                        Wednesday
+                    </label>
+                    <label>
+                        <input type="checkbox" name="daySelect" value="thursday" onclick="changeDay('thursday')">
+                        Thursday
+                    </label>
+                    <label>
+                        <input type="checkbox" name="daySelect" value="friday" onclick="changeDay('friday')">
+                        Friday
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Morning Setup Section -->
+    <div class="document-section active" id="morningSetup">
+        <div class="container">
+            <div class="header">
+                <div class="logo">
+                    <div class="logo-text" id="logoText">BVI</div>
+                </div>
+
+                <div class="title">Production Control</div>
+                <div class="subtitle">Morning Setup Checklist</div>
+
+                <div class="department-line">
+                    <span class="department-text" id="departmentDisplay">PRODUCTION CONTROL</span>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+                <!-- Left Column - Comments -->
+                <div class="comments-column" id="morningComments">
+                    <div class="comment-box">
+                        The following should be completed before starting the day.
+                    </div>
+                </div>
+
+                <!-- Right Column - Checklist -->
+                <div class="checklist-column">
+                    <div class="control-section">
+                        <h3>Add Item</h3>
+                        <textarea id="newMorningItem" rows="2" placeholder="Add new morning setup item..."></textarea>
+                        <button onclick="addItem('morning')">Add Item</button>
+                    </div>
+                    <div class="checklist" id="morningItemList">
+                        <!-- Morning Setup Items will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="copyright">
+                Copyright © <span id="copyrightCompany">BVI Medical</span><br>
+                All rights reserved. <br>
+                <span id="printDate"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Daily Tasks Section -->
+    <div class="document-section" id="dailyTasks">
+        <div class="container">
+            <div class="header">
+                <div class="logo">
+                    <div class="logo-text" id="logoText2">BVI</div>
+                </div>
+
+                <div class="title">Production Control</div>
+                <div class="subtitle">Daily Tasks - <span id="dayDisplay">Monday</span></div>
+
+                <div class="department-line">
+                    <span class="department-text" id="departmentDisplay2">PRODUCTION CONTROL</span>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+                <!-- Left Column - Comments -->
+                <div class="comments-column" id="dailyComments">
+                    <div class="comment-box">
+                        Tasks to be completed during the workday.
+                    </div>
+                </div>
+
+                <!-- Right Column - Checklist -->
+                <div class="checklist-column">
+                    <div class="control-section">
+                        <h3>Add Item</h3>
+                        <textarea id="newDailyItem" rows="2" placeholder="Add new daily task..."></textarea>
+                        <button onclick="addItem('daily')">Add Item</button>
+                    </div>
+                    <div class="checklist" id="dailyItemList">
+                        <!-- Daily Tasks will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="copyright">
+                Copyright © <span class="copyrightCompany">BVI Medical</span><br>
+                All rights reserved. <br>
+                <span class="printDate"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Close Down Section -->
+    <div class="document-section" id="closeDown">
+        <div class="container">
+            <div class="header">
+                <div class="logo">
+                    <div class="logo-text" id="logoText3">BVI</div>
+                </div>
+
+                <div class="title">Production Control</div>
+                <div class="subtitle">Close Down Checklist</div>
+
+                <div class="department-line">
+                    <span class="department-text" id="departmentDisplay3">PRODUCTION CONTROL</span>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+                <!-- Left Column - Comments -->
+                <div class="comments-column" id="closeDownComments">
+                    <div class="comment-box">
+                        The following should be completed before ending the day.
+                    </div>
+                </div>
+
+                <!-- Right Column - Checklist -->
+                <div class="checklist-column">
+                    <div class="control-section">
+                        <h3>Add Item</h3>
+                        <textarea id="newCloseDownItem" rows="2" placeholder="Add new close down item..."></textarea>
+                        <button onclick="addItem('closeDown')">Add Item</button>
+                    </div>
+                    <div class="checklist" id="closeDownItemList">
+                        <!-- Close Down Items will be added here -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="copyright">
+                Copyright © <span class="copyrightCompany">BVI Medical</span><br>
+                All rights reserved. <br>
+                <span class="printDate"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export/Import Section -->
+    <div class="document-section" id="exportImport">
+        <div class="container">
+            <div class="control-section">
+                <h3>Export/Import</h3>
+                <select id="formatSelect" onchange="changeFormat()">
+                    <option value="json">JSON Format</option>
+                    <option value="markdown">Markdown Format</option>
+                </select>
+                <div class="export-buttons" style="margin-top: 10px;">
+                    <button onclick="exportDocument()">Export All</button>
+                    <button onclick="copyToClipboard()">Copy to Clipboard</button>
+                    <button onclick="importFromClipboard()">Import from Clipboard</button>
+                </div>
+            </div>
+            <textarea id="exportEditor" class="export-editor" 
+                    placeholder="Export content will appear here. You can also paste content to import..."></textarea>
+        </div>
+    </div>
+
+    <!-- Hidden Print Section (for printing individual sections) -->
+    <div id="printContainer" class="hidden-print-only"></div>
+
+    <script>
+        // Default items for each section
+        const defaultItems = {
+            morning: [
+                'Say "Good Morning" to Team.',
+                'Open the blinds and/or window, and set office temperature.',
+                'Setup your desk.',
+                'Brew a cup of coffee.',
+                'Self-Assess: Can I lead today?',
+                'Review your calendar for the day.'
+            ],
+            standard: [
+                'Review the Production Output and Days Available KPIs',
+                'Review TOOB Report',
+                'Review and update Tier 2 and Tier 3 Boards.',
+                'Review and update KPI Action Log.',
+                'Participate in Tier 3.',
+                'Participate in Tier 2.',
+                'Close email once - to focus.'
+            ],
+            daily: {
+                monday: [
+                    
+                ],
+                tuesday: [
+                    'Update TOOB Report.',
+                    'Review and update KPI PowerPoint.',
+                    'Review and update Supply Chain Dashboard.',
+                    'Review and update Internal KPIs.',
+                    'Tier 2 Update',
+                    'KPI Action Log'
+                ],
+                wednesday: [
+                    
+                ],
+                thursday: [
+                    'Prepare Tier 2 Meeting Board',
+                    'Run Tier 2 Meeting'
+                ],
+                friday: [
+                    'Print Next Week`s Morning Setup and Close Down Check Sheets'
+                ]
+            },
+            closeDown: [
+                'Clear and Tidy your desk.',
+                'Wipe down desk surfaces.',
+                'Close Window and Blinds.',
+                'Turn off air conditioning. (Consider Automating)',
+                'Print Tomorrow`s Daily Check sheet',
+                'Wipe down desk surfaces.'
+            ]
+        };
+
+        // Current state
+        let currentTab = 1;
+        let currentDay = 'monday';
+        let currentFormat = 'json';
+        
+        // Items storage
+        let items = {
+            morning: [...defaultItems.morning],
+            standard: [...defaultItems.standard],
+            daily: {
+                monday: [...defaultItems.daily.monday],
+                tuesday: [...defaultItems.daily.tuesday],
+                wednesday: [...defaultItems.daily.wednesday],
+                thursday: [...defaultItems.daily.thursday],
+                friday: [...defaultItems.daily.friday]
+            },
+            closeDown: [...defaultItems.closeDown]
+        };
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderMorningItems();
+            renderDailyItems();
+            renderCloseDownItems();
+            updateCompanyInfo();
+            switchTab(currentTab);
+            updatePrintDate();
+                    
+            // Add event listeners for enter key in textareas
+            document.getElementById('newMorningItem').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    addItem('morning');
+                }
+            });
+            
+            document.getElementById('newDailyItem').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    addItem('daily');
+                }
+            });
+            
+            document.getElementById('newCloseDownItem').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    addItem('closeDown');
+                }
+            });
+            
+            // Company name change listeners
+            document.getElementById('companyName').addEventListener('input', updateCompanyInfo);
+            document.getElementById('departmentName').addEventListener('input', updateCompanyInfo);
+            
+            // Export editor change listener
+            document.getElementById('exportEditor').addEventListener('input', function() {
+                try {
+                    const content = this.value;
+                    if (currentFormat === 'json') {
+                        if (content.trim()) {
+                            parseJSON(content);
+                        }
+                    } else if (currentFormat === 'markdown') {
+                        parseMarkdown(content);
+                    }
+                } catch (err) {
+                    // Silently fail for invalid JSON during editing
+                }
+            });
+        });
+
+        function updatePrintDate() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString();
+            const printDateElements = document.querySelectorAll('.printDate');
+            printDateElements.forEach(el => {
+                el.textContent = 'Printed: ' + dateStr;
+            });
+            document.getElementById('printDate').textContent = 'Printed: ' + dateStr;
+        }
+
+        function updateCompanyInfo() {
+            const companyName = document.getElementById('companyName').value;
+            const departmentName = document.getElementById('departmentName').value;
+            
+            // Update logo text
+            document.getElementById('logoText').textContent = companyName;
+            document.getElementById('logoText2').textContent = companyName;
+            document.getElementById('logoText3').textContent = companyName;
+            
+            // Update department display
+            document.getElementById('departmentDisplay').textContent = departmentName;
+            document.getElementById('departmentDisplay2').textContent = departmentName;
+            document.getElementById('departmentDisplay3').textContent = departmentName;
+            
+            // Update copyright
+            const copyrightElements = document.querySelectorAll('.copyrightCompany');
+            copyrightElements.forEach(el => {
+                el.textContent = companyName + ' Medical';
+            });
+            document.getElementById('copyrightCompany').textContent = companyName + ' Medical';
+        }
+
+        function switchTab(tabIndex) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.document-section');
+            sections.forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show selected section
+            sections[tabIndex].classList.add('active');
+            
+            // Update tabs
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach((tab, i) => {
+                if (i === tabIndex) {
+                    tab.classList.add('active');
+                } else {
+                    tab.classList.remove('active');
+                }
+            });
+            
+            // Show/hide daily tasks controls
+            if (tabIndex === 1) {
+                document.getElementById('dailyTasksControls').style.display = 'block';
+            } else {
+                document.getElementById('dailyTasksControls').style.display = 'none';
+            }
+            
+            currentTab = tabIndex;
+            
+            // If export tab, update content
+            if (tabIndex === 3) {
+                updateExportContent();
+            }
+        }
+
+        function changeDay(day) {
+            // Uncheck all other checkboxes
+            const checkboxes = document.querySelectorAll('input[name="daySelect"]');
+            checkboxes.forEach(checkbox => {
+                if (checkbox.value !== day) {
+                    checkbox.checked = false;
+                }
+            });
+            
+            // Update the current day
+            currentDay = day;
+            document.getElementById('dayDisplay').textContent = 
+                day.charAt(0).toUpperCase() + day.slice(1);
+            
+            // Render the items for the selected day
+            renderDailyItems();
+        }
+
+        function renderMorningItems() {
+            const itemList = document.getElementById('morningItemList');
+            itemList.innerHTML = '';
+            
+            items.morning.forEach((item, index) => {
+                const itemElement = createItemElement(item, index, 'morning');
+                itemList.appendChild(itemElement);
+            });
+        }
+
+        function renderDailyItems() {
+            const itemList = document.getElementById('dailyItemList');
+            itemList.innerHTML = '';
+
+            items.standard.forEach((item, index) => {
+                const itemElement = createItemElement(item, index, 'standard');
+                itemList.appendChild(itemElement);
+            });
+            
+            items.daily[currentDay].forEach((item, index) => {
+                const itemElement = createItemElement(item, index, 'daily');
+                itemList.appendChild(itemElement);
+            });
+        }
+
+        function renderCloseDownItems() {
+            const itemList = document.getElementById('closeDownItemList');
+            itemList.innerHTML = '';
+            
+            items.closeDown.forEach((item, index) => {
+                const itemElement = createItemElement(item, index, 'closeDown');
+                itemList.appendChild(itemElement);
+            });
+        }
+
+        function createItemElement(text, index, section) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'checklist-item';
+            
+            const checkbox = document.createElement('div');
+            checkbox.className = 'checkbox';
+            
+            const textSpan = document.createElement('span');
+            textSpan.className = 'item-text';
+            textSpan.textContent = text;
+            textSpan.onclick = function() {
+                editItem(index, section);
+            };
+            
+            const deleteButton = document.createElement('button');
+            deleteButton.className = 'delete-button';
+            deleteButton.textContent = '×';
+            deleteButton.onclick = function() {
+                removeItem(index, section);
+            };
+            
+            itemDiv.appendChild(checkbox);
+            itemDiv.appendChild(textSpan);
+            itemDiv.appendChild(deleteButton);
+            
+            return itemDiv;
+        }
+
+        function addItem(section) {
+            let input;
+            if (section === 'morning') {
+                input = document.getElementById('newMorningItem');
+            } else if (section === 'daily') {
+                input = document.getElementById('newDailyItem');
+            } else {
+                input = document.getElementById('newCloseDownItem');
+            }
+            
+            const text = input.value.trim();
+            if (text) {
+                if (section === 'daily') {
+                    items.daily[currentDay].push(text);
+                    renderDailyItems();
+                } else if (section === 'morning') {
+                    items.morning.push(text);
+                    renderMorningItems();
+                } else {
+                    items.closeDown.push(text);
+                    renderCloseDownItems();
+                }
+                input.value = '';
+            }
+        }
+
+        function editItem(index, section) {
+            let currentText;
+            if (section === 'daily') {
+                currentText = items.daily[currentDay][index];
+            } else if (section === 'morning') {
+                currentText = items.morning[index];
+            } else {
+                currentText = items.closeDown[index];
+            }
+            
+            const newText = prompt('Edit item:', currentText);
+            if (newText !== null && newText.trim()) {
+                if (section === 'daily') {
+                    items.daily[currentDay][index] = newText.trim();
+                    renderDailyItems();
+                } else if (section === 'morning') {
+                    items.morning[index] = newText.trim();
+                    renderMorningItems();
+                } else {
+                    items.closeDown[index] = newText.trim();
+                    renderCloseDownItems();
+                }
+            }
+        }
+
+        function removeItem(index, section) {
+            if (section === 'daily') {
+                items.daily[currentDay].splice(index, 1);
+                renderDailyItems();
+            } else if (section === 'morning') {
+                items.morning.splice(index, 1);
+                renderMorningItems();
+            } else {
+                items.closeDown.splice(index, 1);
+                renderCloseDownItems();
+            }
+        }
+
+        function changeFormat() {
+            currentFormat = document.getElementById('formatSelect').value;
+            updateExportContent();
+        }
+
+        function updateExportContent() {
+            if (currentFormat === 'json') {
+                document.getElementById('exportEditor').value = generateJSON();
+            } else {
+                document.getElementById('exportEditor').value = generateMarkdown();
+            }
+        }
+
+        function generateJSON() {
+            const companyName = document.getElementById('companyName').value;
+            const departmentName = document.getElementById('departmentName').value;
+            
+            const data = {
+                metadata: {
+                    company: companyName,
+                    department: departmentName
+                },
+                sections: {
+                    morning: {
+                        title: "Morning Setup",
+                        items: items.morning
+                    },
+                    daily: {
+                        title: "Daily Tasks",
+                        items: items.daily
+                    },
+                    closeDown: {
+                        title: "Close Down",
+                        items: items.closeDown
+                    }
+                }
+            };
+            
+            return JSON.stringify(data, null, 2);
+        }
+
+        function generateMarkdown() {
+            const companyName = document.getElementById('companyName').value;
+            const departmentName = document.getElementById('departmentName').value;
+            
+            let markdown = '';
+            
+            // Add metadata
+            markdown += '---\n';
+            markdown += `company: ${companyName}\n`;
+            markdown += `department: ${departmentName}\n`;
+            markdown += '---\n\n';
+            
+            // Morning Setup
+            markdown += '# Morning Setup\n\n';
+            items.morning.forEach(item => {
+                markdown += `- [ ] ${item}\n`;
+            });
+            markdown += '\n';
+            
+            // Daily Tasks for all days
+            markdown += '# Daily Tasks\n\n';
+            
+            for (const day in items.daily) {
+                markdown += `## ${day.charAt(0).toUpperCase() + day.slice(1)}\n\n`;
+                items.daily[day].forEach(item => {
+                    markdown += `- [ ] ${item}\n`;
+                });
+                markdown += '\n';
+            }
+            
+            // Close Down
+            markdown += '# Close Down\n\n';
+            items.closeDown.forEach(item => {
+                markdown += `- [ ] ${item}\n`;
+            });
+            
+            return markdown;
+        }
+
+        function parseJSON(jsonString) {
+            try {
+                const data = JSON.parse(jsonString);
+                
+                // Update metadata
+                if (data.metadata) {
+                    if (data.metadata.company) {
+                        document.getElementById('companyName').value = data.metadata.company;
+                    }
+                    if (data.metadata.department) {
+                        document.getElementById('departmentName').value = data.metadata.department;
+                    }
+                    updateCompanyInfo();
+                }
+                
+                // Update sections
+                if (data.sections) {
+                    // Morning setup
+                    if (data.sections.morning && data.sections.morning.items) {
+                        items.morning = [...data.sections.morning.items];
+                        renderMorningItems();
+                    }
+                    
+                    // Daily tasks
+                    if (data.sections.daily && data.sections.daily.items) {
+                        items.daily = {...data.sections.daily.items};
+                        renderDailyItems();
+                    }
+                    
+                    // Close down
+                    if (data.sections.closeDown && data.sections.closeDown.items) {
+                        items.closeDown = [...data.sections.closeDown.items];
+                        renderCloseDownItems();
+                    }
+                }
+                
+                showNotification('JSON imported successfully!');
+            } catch (err) {
+                showNotification('Error parsing JSON: ' + err.message);
+                console.error('Error parsing JSON:', err);
+            }
+        }
+
+        function parseMarkdown(markdownString) {
+            try {
+                const lines = markdownString.split('\n');
+                let section = '';
+                let subSection = '';
+                let inMetadata = false;
+                
+                // Reset collections
+                const newMorningItems = [];
+                const newDailyItems = {
+                    monday: [],
+                    tuesday: [],
+                    wednesday: [],
+                    thursday: [],
+                    friday: []
+                };
+                const newCloseDownItems = [];
+                
+                // Parse lines
+                lines.forEach(line => {
+                    line = line.trim();
+                    
+                    if (line === '---') {
+                        inMetadata = !inMetadata;
+                        return;
+                    }
+                    
+                    if (inMetadata) {
+                        const [key, value] = line.split(':').map(part => part.trim());
+                        if (key === 'company') {
+                            document.getElementById('companyName').value = value;
+                        }
+                        if (key === 'department') {
+                            document.getElementById('departmentName').value = value;
+                        }
+                        return;
+                    }
+                    
+                    if (line.startsWith('# ')) {
+                        section = line.substring(2).trim().toLowerCase();
+                        subSection = '';
+                        return;
+                    }
+                    
+                    if (line.startsWith('## ')) {
+                        subSection = line.substring(3).trim().toLowerCase();
+                        return;
+                    }
+                    
+                    if (line.startsWith('- [ ]') || line.startsWith('-[ ]') || line.startsWith('- ')) {
+                        const content = line.replace('- [ ]', '').replace('-[ ]', '').replace('- ', '').trim();
+                        
+                        if (section.includes('morning')) {
+                            newMorningItems.push(content);
+                        } else if (section.includes('daily')) {
+                            if (subSection) {
+                                const day = subSection.toLowerCase();
+                                if (newDailyItems[day]) {
+                                    newDailyItems[day].push(content);
+                                }
+                            }
+                        } else if (section.includes('close')) {
+                            newCloseDownItems.push(content);
+                        }
+                    }
+                });
+                
+                // Update data
+                if (newMorningItems.length > 0) {
+                    items.morning = newMorningItems;
+                    renderMorningItems();
+                }
+                
+                items.daily = newDailyItems;
+                renderDailyItems();
+                
+                if (newCloseDownItems.length > 0) {
+                    items.closeDown = newCloseDownItems;
+                    renderCloseDownItems();
+                }
+                
+                // Update company info
+                updateCompanyInfo();
+                
+                showNotification('Markdown imported successfully!');
+            } catch (err) {
+                showNotification('Error parsing markdown: ' + err.message);
+                console.error('Error parsing markdown:', err);
+            }
+        }
+
+        async function copyToClipboard() {
+            try {
+                const content = document.getElementById('exportEditor').value;
+                await navigator.clipboard.writeText(content);
+                showNotification('Content copied to clipboard!');
+            } catch (err) {
+                showNotification('Failed to copy to clipboard');
+                console.error('Failed to copy:', err);
+            }
+        }
+
+        async function importFromClipboard() {
+            try {
+                const text = await navigator.clipboard.readText();
+                document.getElementById('exportEditor').value = text;
+                
+                // Try to detect format
+                if (text.trim().startsWith('{')) {
+                    document.getElementById('formatSelect').value = 'json';
+                    currentFormat = 'json';
+                    parseJSON(text);
+                } else {
+                    document.getElementById('formatSelect').value = 'markdown';
+                    currentFormat = 'markdown';
+                    parseMarkdown(text);
+                }
+                
+                showNotification('Content imported from clipboard!');
+            } catch (err) {
+                showNotification('Failed to read from clipboard');
+                console.error('Failed to read from clipboard:', err);
+            }
+        }
+
+        function showNotification(message) {
+            const notification = document.createElement('div');
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '10px';
+            notification.style.background = '#4CAF50';
+            notification.style.color = 'white';
+            notification.style.borderRadius = '4px';
+            notification.style.zIndex = '1000';
+            notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => notification.remove(), 500);
+            }, 3000);
+        }
+
+        function exportDocument() {
+            updateExportContent();
+            switchTab(3);
+        }
+
+        function printAllSections() {
+            window.print();
+        }
+        
+        function printCurrentSection() {
+            // Create a container for the current section
+            const printContainer = document.getElementById('printContainer');
+            printContainer.innerHTML = '';
+            
+            // Clone the current section
+            let sectionToPrint;
+            if (currentTab === 0) {
+                sectionToPrint = document.getElementById('morningSetup').cloneNode(true);
+            } else if (currentTab === 1) {
+                sectionToPrint = document.getElementById('dailyTasks').cloneNode(true);
+            } else if (currentTab === 2) {
+                sectionToPrint = document.getElementById('closeDown').cloneNode(true);
+            } else {
+                // Cannot print export section
+                showNotification('Please select a document section to print');
+                return;
+            }
+            
+            // Remove control elements from the clone
+            const controls = sectionToPrint.querySelectorAll('.control-section');
+            controls.forEach(control => {
+                control.style.display = 'none';
+            });
+            
+            // Add to print container
+            printContainer.appendChild(sectionToPrint);
+            
+            // Create the print window
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Print Document</title>
+                    <style>
+                        @media print {
+                            body { margin: 0; padding: 0; }
+                            .control-section { display: none !important; }
+                            .delete-button { display: none !important; }
+                        }
+                        
+                        body {
+                            font-family: Arial, Helvetica, sans-serif;
+                            margin: 0;
+                            padding: 20px;
+                            color: #000;
+                            line-height: 1.5;
+                        }
+
+                        .controls {
+                            margin-bottom: 20px;
+                            padding: 10px;
+                            background-color: #f5f5f5;
+                            border-radius: 4px;
+                            font-family: system-ui, -apple-system, sans-serif;
+                        }
+
+                        .section-tabs {
+                            display: flex;
+                            margin-bottom: 20px;
+                            border-bottom: 1px solid #ddd;
+                        }
+
+                        .tab {
+                            padding: 10px 20px;
+                            cursor: pointer;
+                            border: 1px solid transparent;
+                            border-bottom: none;
+                            background-color: #f1f1f1;
+                            margin-right: 5px;
+                            border-top-left-radius: 4px;
+                            border-top-right-radius: 4px;
+                        }
+
+                        .tab.active {
+                            background-color: white;
+                            border-color: #ddd;
+                            border-bottom-color: white;
+                            font-weight: bold;
+                        }
+
+                        .document-section {
+                            display: none;
+                        }
+
+                        .document-section.active {
+                            display: block;
+                        }
+
+                        .container {
+                            max-width: 1000px;
+                            margin: 0 auto;
+                            padding: 40px;
+                            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                            background-color: white;
+                        }
+
+                        .control-section {
+                            margin-bottom: 15px;
+                            padding: 10px;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                        }
+
+                        .header {
+                            margin-bottom: 40px;
+                        }
+
+                        .logo {
+                            text-align: center;
+                            margin-bottom: 30px;
+                            border: 2px solid black;
+                            width: 70px;
+                            height: 70px;
+                            margin: 30px;
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            border-radius: 50%;
+                        }
+
+                        .logo::before {
+                            content: '';
+                            position: absolute;
+                            top: -2px;
+                            left: -2px;
+                            right: -2px;
+                            bottom: -2px;
+                            border: 4px solid black;
+                            border-radius: 50%;
+                        }
+
+                        .logo-text {
+                            font-weight: bold;
+                            font-size: 24px;
+                            letter-spacing: 1px;
+                        }
+
+                        .title {
+                            font-size: 18px;
+                            font-weight: bold;
+                            margin-bottom: 5px;
+                            text-align: left;
+                            padding-left: 40px;
+                        }
+
+                        .subtitle {
+                            font-size: 16px;
+                            margin-bottom: 20px;
+                            text-align: left;
+                            padding-left: 40px;
+                        }
+
+                        .department-line {
+                            display: flex;
+                            align-items: center;
+                            margin-bottom: 30px;
+                            gap: 10px;
+                        }
+
+                        .department-text {
+                            text-transform: uppercase;
+                            font-size: 14px;
+                            white-space: nowrap;
+                            background-color: #000;
+                            color: #fff;
+                            width: 95%;
+                            padding-left: 15px;
+                            padding-top: 2px;
+                            padding-bottom: 2px;
+                        }
+
+                        .department-line-inner {
+                            flex-grow: 1;
+                            height: 8px;
+                            background: repeating-linear-gradient(
+                                90deg,
+                                #000,
+                                #000 8px,
+                                transparent 8px,
+                                transparent 12px
+                            );
+                        }
+
+                        /* Flex container for main content */
+                        .content-wrapper {
+                            display: flex;
+                            position: relative;
+                        }
+
+                        /* Vertical divider line */
+                        .content-wrapper::after {
+                            content: '';
+                            position: absolute;
+                            left: 200px; /* Same as comments-column width */
+                            top: 0;
+                            bottom: 0;
+                            width: 1px;
+                            background: black;
+                            -webkit-print-color-adjust: exact;
+                            print-color-adjust: exact;
+                        }
+
+                        /* Left column - Comments */
+                        .comments-column {
+                            width: 200px;
+                            flex-shrink: 0;
+                            font-size: 14px;
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-between;
+                            border-right: 1px #000;
+                            min-height: 500px;
+                            padding-right: 10px;
+                        }
+
+                        .comment-box {
+                            text-align: right;
+                            padding: 10px;
+                            border-right: 2px solid transparent;
+                            transition: border-color 0.3s;
+                        }
+
+                        /* Right column - Checklist */
+                        .checklist-column {
+                            flex-grow: 1;
+                            padding-left: 20px;
+                        }
+
+                        .checklist {
+                            columns: 1;
+                        }
+
+                        .checklist-item {
+                            margin-bottom: 12px;
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 10px;
+                            font-size: 14px;
+                            position: relative;
+                            break-inside: avoid;
+                            page-break-inside: avoid;
+                        }
+
+                        .checkbox {
+                            min-width: 16px;
+                            height: 16px;
+                            border: 1px solid black;
+                            margin-top: 2px;
+                        }
+
+                        .item-text {
+                            flex-grow: 1;
+                            cursor: pointer;
+                        }
+
+                        .delete-button {
+                            opacity: 0;
+                            transition: opacity 0.3s;
+                            background: none;
+                            border: none;
+                            color: #000;
+                            cursor: pointer;
+                            padding: 0 5px;
+                            font-size: 16px;
+                        }
+
+                        .checklist-item:hover .delete-button {
+                            opacity: 1;
+                        }
+
+                        .item-text:hover {
+                            background-color: rgba(0, 0, 0, 0.05);
+                        }
+
+                        .copyright {
+                            margin-top: 80px;
+                            font-size: 10px;
+                            text-align: center;
+                            text-transform: uppercase;
+                            line-height: 1.4;
+                        }
+
+                        /* Inputs styling */
+                        input[type="text"], select, textarea {
+                            padding: 8px;
+                            margin: 5px 0;
+                            font-family: inherit;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                            width: 100%;
+                            box-sizing: border-box;
+                        }
+
+                        button {
+                            padding: 8px 12px;
+                            margin: 5px 0;
+                            background-color: #333;
+                            color: white;
+                            border: none;
+                            border-radius: 4px;
+                            cursor: pointer;
+                        }
+
+                        button:hover {
+                            background-color: #555;
+                        }
+
+                        .day-selector {
+                            margin-bottom: 15px;
+                        }
+
+                        .export-section {
+                            display: none;
+                            margin-top: 20px;
+                        }
+
+                        .export-editor {
+                            width: 100%;
+                            min-height: 300px;
+                            padding: 15px;
+                            font-family: 'Courier New', monospace;
+                            font-size: 14px;
+                            line-height: 1.6;
+                            border: 1px solid #ddd;
+                            border-radius: 4px;
+                            resize: vertical;
+                        }
+
+                        /* Print styles */
+                        @media print {
+                            .controls, .section-tabs, .delete-button {
+                                display: none !important;
+                            }
+                            
+                            .item-text:hover {
+                                background-color: transparent;
+                            }
+                            
+                            .document-section {
+                                display: block !important;
+                                page-break-after: always;
+                            }
+                            
+                            .document-section:last-child {
+                                page-break-after: avoid;
+                            }
+                            
+                            .container {
+                                box-shadow: none;
+                                padding: 0;
+                                max-width: 100%;
+                            }
+                            
+                            .department-text {
+                                background-color: #000 !important;
+                                color: #fff !important;
+                                -webkit-print-color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+                            
+                            .content-wrapper::after {
+                                background: black !important;
+                                -webkit-print-color-adjust: exact !important;
+                                print-color-adjust: exact !important;
+                            }
+                            
+                            body {
+                                padding: 0;
+                                margin: 0;
+                            }
+                            
+                            @page {
+                                margin: 0.5cm;
+                                size: portrait;
+                            }
+                        }
+
+                        .print-buttons {
+                            display: flex;
+                            gap: 10px;
+                            margin-bottom: 15px;
+                        }
+
+                        .hidden-print-only {
+                            display: none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${printContainer.innerHTML}
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            setTimeout(function() {
+                                window.close();
+                            }, 500);
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            
+            printWindow.document.close();
+        }
+    </script>
+</body>
+</html>
