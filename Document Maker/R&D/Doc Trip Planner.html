@@ -396,7 +396,7 @@
             <h4 style="margin-top: 15px; margin-bottom: 5px;">Section Titles</h4>
     
             <label for="mainTitle">Main Title (for all sections):</label>
-            <input type="text" id="mainTitle" value="Production Control Manager" placeholder="Main Title">
+            <input type="text" id="mainTitle" value="Production Planner" placeholder="Main Title">
             
             <label for="morningTitle">Morning Setup Title:</label>
             <input type="text" id="morningTitle" value="Morning Setup Checklist" placeholder="Title for Morning Setup">
@@ -445,7 +445,7 @@
                     <div class="logo-text" id="logoText">BVI</div>
                 </div>
 
-                <div class="title">Production Control Manager</div>
+                <div class="title">Production Planner</div>
                 <div class="subtitle">Morning Setup Checklist</div>
 
                 <div class="department-line">
@@ -471,8 +471,8 @@
                     </div>
                     <div class="control-section">
                         <h3>Add Item</h3>
-                        <textarea id="newAdditionalMorningItem" rows="2" placeholder="Add item..."></textarea>
-                        <button onclick="addItem('morning', true)">Add Item</button>
+                        <textarea id="newMorningItem" rows="2" placeholder="Add new morning setup item..."></textarea>
+                        <button onclick="addItem('morning')">Add Item</button>
                     </div>
                     <div class="checklist" id="morningItemList">
                         <!-- Morning Setup Items will be added here -->
@@ -496,7 +496,7 @@
                     <div class="logo-text" id="logoText2">BVI</div>
                 </div>
 
-                <div class="title">Production Control Manager</div>
+                <div class="title">Production Planner</div>
                 <div class="subtitle">Daily Tasks - <span id="dayDisplay">Monday</span></div>
 
                 <div class="department-line">
@@ -522,8 +522,8 @@
                     </div>
                     <div class="control-section">
                         <h3>Add Item</h3>
-                        <textarea id="newAdditionalDailyItem" rows="2" placeholder="Add task..."></textarea>
-                        <button onclick="addItem('daily', true)">Add Item</button>
+                        <textarea id="newDailyItem" rows="2" placeholder="Add new daily task..."></textarea>
+                        <button onclick="addItem('daily')">Add Item</button>
                     </div>
                     <div class="checklist" id="dailyItemList">
                         <!-- Daily Tasks will be added here -->
@@ -547,7 +547,7 @@
                     <div class="logo-text" id="logoText3">BVI</div>
                 </div>
 
-                <div class="title">Production Control Manager</div>
+                <div class="title">Production Planner</div>
                 <div class="subtitle">Close Down Checklist</div>
 
                 <div class="department-line">
@@ -573,8 +573,8 @@
                     </div>
                     <div class="control-section">
                         <h3>Add Item</h3>
-                        <textarea id="newAdditionalCloseDownItem" rows="2" placeholder="Add item..."></textarea>
-                        <button onclick="addItem('closeDown', true)">Add Item</button>
+                        <textarea id="newCloseDownItem" rows="2" placeholder="Add new close down item..."></textarea>
+                        <button onclick="addItem('closeDown')">Add Item</button>
                     </div>
                     
                     <br>
@@ -622,34 +622,30 @@
                 'Say "Good Morning" to Team.',
                 'Open the blinds and/or window, and set office temperature.',
                 'Setup your desk.',
-                'Brew a cup of coffee.',
-                'Self-Assess: Can I lead today?',
+                'Brew or prepare a beverage of your choice.',
+                'Self-Assess: Can I plan today?',
                 'Review your calendar for the day.'
             ],
             standard: [
                 'Review the Production Output and Days Available KPIs.',
-                'Review TOOB Report.',
                 'Review and update Tier 2 and Tier 3 Boards.',
-                'Review and update KPI Action Log.',
                 'Participate in Tier 3.',
-                'Participate in Tier 2.'
+                'Participate in Tier 2.',
+                'Close your email once. (To focus).'
             ],
             daily: {
                 monday: [
-                    
+                    'Refresh Demand Plan',
+                    'Update CTP/SA Figures from last week.'
                 ],
                 tuesday: [
-                    'Update TOOB Report.',
-                    'Review and update KPI PowerPoint.',
-                    'Review and update Supply Chain Dashboard.',
-                    'Review and update Internal KPIs.'
+                    'Refresh Demand Plan',
+                    'Update CTP/SA Figures on Tier 2 Board.'
                 ],
                 wednesday: [
-                    
                 ],
                 thursday: [
-                    'Prepare Tier 2 Meeting Board.',
-                    'Run Tier 2 Meeting.'
+                    'Refresh Demand Plan'
                 ],
                 friday: [
                     'Print Next Week`s Morning Setup and Close Down Check Sheets.',
@@ -661,33 +657,21 @@
                 'Print Tomorrow`s Daily Check sheet.',
                 'Save your work, close all programs, and shut down your PC.',
                 'Clear and Tidy your desk.',
-                'Close Window and Blinds.',
-                'Turn off air conditioning. (Consider Automating)',
+                'Wipe down desk surfaces.',
                 'Wipe down desk surfaces.'
             ]
         };
 
-        let additionalItems = {
-            morning: [],
-            daily: [],
-            closeDown: []
-        };
-
         const reminders = {
             morningreminder: [
-                'You are permitted one song to listen to each morning during your morning checklist procedures. Which will you choose today?',
-                'Take a moment to breathe and relax before starting your day.',
+                'You are permitted one song to listen to each morning during your morning checklist procedures. Which will you choose today?'
             ],
             dailyreminder: [
                 'Practice MEE TIME for a healthy mind!',
-                'Take a mental health break to keep focussed! Step away from your desk, take a walk, and breathe.',
-                'Use your stapleless stapler for an Eco-Friendly day!',
-                'Close your email once in the day to focus!',
-                'Have you had your weekly piece of fruit this week? If not, grab one now!'
+                'Take a mental health break to keep focussed! Step away from your desk, take a walk, and breathe.'
             ],
             closingreminder: [
-                'Organising tomorrow, today, makes tomorrow a good day!',
-                'The work is mysterious, and important!'
+                'Organising tomorrow, today, makes tomorrow a good day!'
             ]
         };
 
@@ -719,24 +703,25 @@
             switchTab(currentTab);
             updateReminders();
                     
-            document.getElementById('newAdditionalMorningItem').addEventListener('keypress', function(e) {
+            // Add event listeners for enter key in textareas
+            document.getElementById('newMorningItem').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    addItem('morning', true);
+                    addItem('morning');
                 }
             });
-
-            document.getElementById('newAdditionalDailyItem').addEventListener('keypress', function(e) {
+            
+            document.getElementById('newDailyItem').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    addItem('daily', true);
+                    addItem('daily');
                 }
             });
-
-            document.getElementById('newAdditionalCloseDownItem').addEventListener('keypress', function(e) {
+            
+            document.getElementById('newCloseDownItem').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    addItem('closeDown', true);
+                    addItem('closeDown');
                 }
             });
             
@@ -771,17 +756,17 @@
             // Morning reminder
             const morningIndex = Math.floor(Math.random() * reminders.morningreminder.length);
             document.getElementById('morningReminder').innerHTML = 
-                'Remember! ' + reminders.morningreminder[morningIndex];
+                reminders.morningreminder[morningIndex];
             
             // Daily reminder
             const dailyIndex = Math.floor(Math.random() * reminders.dailyreminder.length);
             document.getElementById('dailyReminder').innerHTML = 
-                'Remember! ' + reminders.dailyreminder[dailyIndex];
+                reminders.dailyreminder[dailyIndex];
             
             // Closing reminder
             const closingIndex = Math.floor(Math.random() * reminders.closingreminder.length);
             document.getElementById('closeDownReminder').innerHTML = 
-                'Remember! ' + reminders.closingreminder[closingIndex];
+                reminders.closingreminder[closingIndex];
         }
 
         function updateCompanyInfo() {
@@ -878,15 +863,8 @@
             const itemList = document.getElementById('morningItemList');
             itemList.innerHTML = '';
             
-            // Render standard items
             items.morning.forEach((item, index) => {
-                const itemElement = createItemElement(item, index, 'morning', false);
-                itemList.appendChild(itemElement);
-            });
-            
-            // Render additional items to the same list
-            additionalItems.morning.forEach((item, index) => {
-                const itemElement = createItemElement(item, index, 'morning', true);
+                const itemElement = createItemElement(item, index, 'morning');
                 itemList.appendChild(itemElement);
             });
         }
@@ -895,21 +873,13 @@
             const itemList = document.getElementById('dailyItemList');
             itemList.innerHTML = '';
 
-            // Render standard items
             items.standard.forEach((item, index) => {
-                const itemElement = createItemElement(item, index, 'standard', false);
+                const itemElement = createItemElement(item, index, 'standard');
                 itemList.appendChild(itemElement);
             });
             
-            // Render day-specific items
             items.daily[currentDay].forEach((item, index) => {
-                const itemElement = createItemElement(item, index, 'daily', false);
-                itemList.appendChild(itemElement);
-            });
-            
-            // Render additional items that stay consistent across all days
-            additionalItems.daily.forEach((item, index) => {
-                const itemElement = createItemElement(item, index, 'daily', true);
+                const itemElement = createItemElement(item, index, 'daily');
                 itemList.appendChild(itemElement);
             });
         }
@@ -918,20 +888,13 @@
             const itemList = document.getElementById('closeDownItemList');
             itemList.innerHTML = '';
             
-            // Render standard items
             items.closeDown.forEach((item, index) => {
-                const itemElement = createItemElement(item, index, 'closeDown', false);
-                itemList.appendChild(itemElement);
-            });
-            
-            // Render additional items
-            additionalItems.closeDown.forEach((item, index) => {
-                const itemElement = createItemElement(item, index, 'closeDown', true);
+                const itemElement = createItemElement(item, index, 'closeDown');
                 itemList.appendChild(itemElement);
             });
         }
 
-        function createItemElement(text, index, section, isAdditional) {
+        function createItemElement(text, index, section) {
             const itemDiv = document.createElement('div');
             itemDiv.className = 'checklist-item';
             
@@ -941,21 +904,15 @@
             const textSpan = document.createElement('span');
             textSpan.className = 'item-text';
             textSpan.textContent = text;
-            
-            // You might want to style additional items differently
-            // if (isAdditional) {
-            //     textSpan.style.fontStyle = 'italic';  // Optional: makes additional items visually distinct
-            // }
-            
             textSpan.onclick = function() {
-                editItem(index, section, isAdditional);
+                editItem(index, section);
             };
             
             const deleteButton = document.createElement('button');
             deleteButton.className = 'delete-button';
             deleteButton.textContent = '×';
             deleteButton.onclick = function() {
-                removeItem(index, section, isAdditional);
+                removeItem(index, section);
             };
             
             itemDiv.appendChild(checkbox);
@@ -965,92 +922,66 @@
             return itemDiv;
         }
 
-        // Add a new input field for additional items
-// <textarea id="newAdditionalDailyItem" rows="2" placeholder="Add additional daily task..."></textarea>
-// <button onclick="addItem('daily', true)">Add Additional Item</button>
-
-        function addItem(section, isAdditional = false) {
+        function addItem(section) {
             let input;
-            let itemsList;
-            
             if (section === 'morning') {
-                input = isAdditional ? 
-                    document.getElementById('newAdditionalMorningItem') : 
-                    document.getElementById('newMorningItem');
-                itemsList = isAdditional ? additionalItems.morning : items.morning;
+                input = document.getElementById('newMorningItem');
             } else if (section === 'daily') {
-                input = isAdditional ? 
-                    document.getElementById('newAdditionalDailyItem') : 
-                    document.getElementById('newDailyItem');
-                itemsList = isAdditional ? additionalItems.daily : items.daily[currentDay];
-            } else { // closeDown
-                input = isAdditional ? 
-                    document.getElementById('newAdditionalCloseDownItem') : 
-                    document.getElementById('newCloseDownItem');
-                itemsList = isAdditional ? additionalItems.closeDown : items.closeDown;
+                input = document.getElementById('newDailyItem');
+            } else {
+                input = document.getElementById('newCloseDownItem');
             }
             
             const text = input.value.trim();
             if (text) {
-                itemsList.push(text);
+                if (section === 'daily') {
+                    items.daily[additional].push(text);
+                    renderDailyItems();
+                } else if (section === 'morning') {
+                    items.morning.push(text);
+                    renderMorningItems();
+                } else {
+                    items.closeDown.push(text);
+                    renderCloseDownItems();
+                }
                 input.value = '';
-                
-                // Update the appropriate view
-                if (section === 'morning') {
-                    renderMorningItems();
-                } else if (section === 'daily') {
-                    renderDailyItems();
-                } else {
-                    renderCloseDownItems();
-                }
             }
         }
 
-        function editItem(index, section, isAdditional = false) {
-            let itemsList;
-            
-            if (section === 'morning') {
-                itemsList = isAdditional ? additionalItems.morning : items.morning;
-            } else if (section === 'daily') {
-                itemsList = isAdditional ? additionalItems.daily : items.daily[currentDay];
-            } else { // closeDown
-                itemsList = isAdditional ? additionalItems.closeDown : items.closeDown;
-            }
-            
-            const newText = prompt('Edit item:', itemsList[index]);
-            if (newText !== null && newText.trim()) {
-                itemsList[index] = newText.trim();
-                
-                // Update the appropriate view
-                if (section === 'morning') {
-                    renderMorningItems();
-                } else if (section === 'daily') {
-                    renderDailyItems();
-                } else {
-                    renderCloseDownItems();
-                }
-            }
-        }
-
-        function removeItem(index, section, isAdditional = false) {
-            let itemsList;
-            
-            if (section === 'morning') {
-                itemsList = isAdditional ? additionalItems.morning : items.morning;
-            } else if (section === 'daily') {
-                itemsList = isAdditional ? additionalItems.daily : items.daily[currentDay];
-            } else { // closeDown
-                itemsList = isAdditional ? additionalItems.closeDown : items.closeDown;
-            }
-            
-            itemsList.splice(index, 1);
-            
-            // Update the appropriate view
-            if (section === 'morning') {
-                renderMorningItems();
-            } else if (section === 'daily') {
-                renderDailyItems();
+        function editItem(index, section) {
+            let currentText;
+            if (section === 'daily') {
+                currentText = items.daily[currentDay][index];
+            } else if (section === 'morning') {
+                currentText = items.morning[index];
             } else {
+                currentText = items.closeDown[index];
+            }
+            
+            const newText = prompt('Edit item:', currentText);
+            if (newText !== null && newText.trim()) {
+                if (section === 'daily') {
+                    items.daily[currentDay][index] = newText.trim();
+                    renderDailyItems();
+                } else if (section === 'morning') {
+                    items.morning[index] = newText.trim();
+                    renderMorningItems();
+                } else {
+                    items.closeDown[index] = newText.trim();
+                    renderCloseDownItems();
+                }
+            }
+        }
+
+        function removeItem(index, section) {
+            if (section === 'daily') {
+                items.daily[currentDay].splice(index, 1);
+                renderDailyItems();
+            } else if (section === 'morning') {
+                items.morning.splice(index, 1);
+                renderMorningItems();
+            } else {
+                items.closeDown.splice(index, 1);
                 renderCloseDownItems();
             }
         }
@@ -1079,24 +1010,60 @@
                 },
                 sections: {
                     morning: {
-                        title: document.getElementById('morningTitle').value,
-                        items: items.morning,
-                        additionalItems: additionalItems.morning
+                        title: "Morning Setup",
+                        items: items.morning
                     },
                     daily: {
-                        title: document.getElementById('dailyTitle').value,
-                        items: items.daily,
-                        additionalItems: additionalItems.daily
+                        title: "Daily Tasks",
+                        items: items.daily
                     },
                     closeDown: {
-                        title: document.getElementById('closeDownTitle').value,
-                        items: items.closeDown,
-                        additionalItems: additionalItems.closeDown
+                        title: "Close Down",
+                        items: items.closeDown
                     }
                 }
             };
             
             return JSON.stringify(data, null, 2);
+        }
+
+        function generateMarkdown() {
+            const companyName = document.getElementById('companyName').value;
+            const departmentName = document.getElementById('departmentName').value;
+            
+            let markdown = '';
+            
+            // Add metadata
+            markdown += '---\n';
+            markdown += `company: ${companyName}\n`;
+            markdown += `department: ${departmentName}\n`;
+            markdown += '---\n\n';
+            
+            // Morning Setup
+            markdown += '# Morning Setup\n\n';
+            items.morning.forEach(item => {
+                markdown += `- [ ] ${item}\n`;
+            });
+            markdown += '\n';
+            
+            // Daily Tasks for all days
+            markdown += '# Daily Tasks\n\n';
+            
+            for (const day in items.daily) {
+                markdown += `## ${day.charAt(0).toUpperCase() + day.slice(1)}\n\n`;
+                items.daily[day].forEach(item => {
+                    markdown += `- [ ] ${item}\n`;
+                });
+                markdown += '\n';
+            }
+            
+            // Close Down
+            markdown += '# Close Down\n\n';
+            items.closeDown.forEach(item => {
+                markdown += `- [ ] ${item}\n`;
+            });
+            
+            return markdown;
         }
 
         function parseJSON(jsonString) {
@@ -1117,35 +1084,20 @@
                 // Update sections
                 if (data.sections) {
                     // Morning setup
-                    if (data.sections.morning) {
-                        if (data.sections.morning.items) {
-                            items.morning = [...data.sections.morning.items];
-                        }
-                        if (data.sections.morning.additionalItems) {
-                            additionalItems.morning = [...data.sections.morning.additionalItems];
-                        }
+                    if (data.sections.morning && data.sections.morning.items) {
+                        items.morning = [...data.sections.morning.items];
                         renderMorningItems();
                     }
                     
                     // Daily tasks
-                    if (data.sections.daily) {
-                        if (data.sections.daily.items) {
-                            items.daily = {...data.sections.daily.items};
-                        }
-                        if (data.sections.daily.additionalItems) {
-                            additionalItems.daily = [...data.sections.daily.additionalItems];
-                        }
+                    if (data.sections.daily && data.sections.daily.items) {
+                        items.daily = {...data.sections.daily.items};
                         renderDailyItems();
                     }
                     
                     // Close down
-                    if (data.sections.closeDown) {
-                        if (data.sections.closeDown.items) {
-                            items.closeDown = [...data.sections.closeDown.items];
-                        }
-                        if (data.sections.closeDown.additionalItems) {
-                            additionalItems.closeDown = [...data.sections.closeDown.additionalItems];
-                        }
+                    if (data.sections.closeDown && data.sections.closeDown.items) {
+                        items.closeDown = [...data.sections.closeDown.items];
                         renderCloseDownItems();
                     }
                 }
@@ -1155,70 +1107,6 @@
                 showNotification('Error parsing JSON: ' + err.message);
                 console.error('Error parsing JSON:', err);
             }
-        }
-
-        function generateMarkdown() {
-            const companyName = document.getElementById('companyName').value;
-            const departmentName = document.getElementById('departmentName').value;
-            
-            let markdown = '';
-            
-            // Add metadata
-            markdown += '---\n';
-            markdown += `company: ${companyName}\n`;
-            markdown += `department: ${departmentName}\n`;
-            markdown += '---\n\n';
-            
-            // Morning Setup
-            markdown += '# Morning Setup\n\n';
-            items.morning.forEach(item => {
-                markdown += `- [ ] ${item}\n`;
-            });
-            
-            // Morning Additional Items
-            if (additionalItems.morning.length > 0) {
-                markdown += '\n### Additional Items\n\n';
-                additionalItems.morning.forEach(item => {
-                    markdown += `- [ ] ${item}\n`;
-                });
-            }
-            markdown += '\n';
-            
-            // Daily Tasks for all days
-            markdown += '# Daily Tasks\n\n';
-            
-            for (const day in items.daily) {
-                markdown += `## ${day.charAt(0).toUpperCase() + day.slice(1)}\n\n`;
-                items.daily[day].forEach(item => {
-                    markdown += `- [ ] ${item}\n`;
-                });
-                markdown += '\n';
-            }
-            
-            // Daily Additional Items
-            if (additionalItems.daily.length > 0) {
-                markdown += '\n### Additional Items\n\n';
-                additionalItems.daily.forEach(item => {
-                    markdown += `- [ ] ${item}\n`;
-                });
-                markdown += '\n';
-            }
-            
-            // Close Down
-            markdown += '# Close Down\n\n';
-            items.closeDown.forEach(item => {
-                markdown += `- [ ] ${item}\n`;
-            });
-            
-            // Close Down Additional Items
-            if (additionalItems.closeDown.length > 0) {
-                markdown += '\n### Additional Items\n\n';
-                additionalItems.closeDown.forEach(item => {
-                    markdown += `- [ ] ${item}\n`;
-                });
-            }
-            
-            return markdown;
         }
 
         function parseMarkdown(markdownString) {
@@ -1238,11 +1126,6 @@
                     friday: []
                 };
                 const newCloseDownItems = [];
-                
-                // Reset additional items
-                const newAdditionalMorningItems = [];
-                const newAdditionalDailyItems = [];
-                const newAdditionalCloseDownItems = [];
                 
                 // Parse lines
                 lines.forEach(line => {
@@ -1275,36 +1158,20 @@
                         return;
                     }
                     
-                    // For additional items sections
-                    if (line.startsWith('### Additional Items')) {
-                        subSection = 'additional';
-                        return;
-                    }
-                    
                     if (line.startsWith('- [ ]') || line.startsWith('-[ ]') || line.startsWith('- ')) {
                         const content = line.replace('- [ ]', '').replace('-[ ]', '').replace('- ', '').trim();
                         
                         if (section.includes('morning')) {
-                            if (subSection === 'additional') {
-                                newAdditionalMorningItems.push(content);
-                            } else {
-                                newMorningItems.push(content);
-                            }
+                            newMorningItems.push(content);
                         } else if (section.includes('daily')) {
-                            if (subSection === 'additional') {
-                                newAdditionalDailyItems.push(content);
-                            } else if (subSection) {
+                            if (subSection) {
                                 const day = subSection.toLowerCase();
                                 if (newDailyItems[day]) {
                                     newDailyItems[day].push(content);
                                 }
                             }
                         } else if (section.includes('close')) {
-                            if (subSection === 'additional') {
-                                newAdditionalCloseDownItems.push(content);
-                            } else {
-                                newCloseDownItems.push(content);
-                            }
+                            newCloseDownItems.push(content);
                         }
                     }
                 });
@@ -1312,25 +1179,16 @@
                 // Update data
                 if (newMorningItems.length > 0) {
                     items.morning = newMorningItems;
+                    renderMorningItems();
                 }
-                if (newAdditionalMorningItems.length > 0) {
-                    additionalItems.morning = newAdditionalMorningItems;
-                }
-                renderMorningItems();
                 
                 items.daily = newDailyItems;
-                if (newAdditionalDailyItems.length > 0) {
-                    additionalItems.daily = newAdditionalDailyItems;
-                }
                 renderDailyItems();
                 
                 if (newCloseDownItems.length > 0) {
                     items.closeDown = newCloseDownItems;
+                    renderCloseDownItems();
                 }
-                if (newAdditionalCloseDownItems.length > 0) {
-                    additionalItems.closeDown = newAdditionalCloseDownItems;
-                }
-                renderCloseDownItems();
                 
                 // Update company info
                 updateCompanyInfo();
