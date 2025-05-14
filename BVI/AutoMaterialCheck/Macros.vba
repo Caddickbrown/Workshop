@@ -1,0 +1,237 @@
+Sub ProcessBlankCellsInMain()
+    Dim iterations As Integer
+    Dim mainSheet As Worksheet
+    Dim stockTallySheet As Worksheet
+    Dim demandSheet As Worksheet
+    Dim i As Long, j As Long
+    Dim lastRow As Long, lastRowDemand As Long
+    Dim recordsProcessed As Integer
+    Dim valueToSearch As Variant
+    
+    ' Set references to worksheets
+    Set mainSheet = ThisWorkbook.Worksheets("Main")
+    Set stockTallySheet = ThisWorkbook.Worksheets("StockTally")
+    Set demandSheet = ThisWorkbook.Worksheets("Demand")
+    
+    ' Get iterations value from cell X1 in StockTally sheet
+    iterations = mainSheet.Range("P1").Value
+    recordsProcessed = 0
+    
+    mainSheet.Range("P2").Formula = "=NOW()"
+    mainSheet.Range("P2").Formula = mainSheet.Range("P2").Value
+    
+    ' Find the last row in column E of Main sheet
+    lastRow = mainSheet.Cells(mainSheet.Rows.Count, "G").End(xlUp).Row
+    If lastRow < mainSheet.Cells(mainSheet.Rows.Count, "A").End(xlUp).Row Then
+        lastRow = mainSheet.Cells(mainSheet.Rows.Count, "A").End(xlUp).Row
+    End If
+    
+    ' Find the last row in Demand sheet
+    lastRowDemand = demandSheet.Cells(demandSheet.Rows.Count, "A").End(xlUp).Row
+    
+    ' Loop through column E in Main sheet
+    For i = 1 To lastRow
+        ' Check if the cell in column E is blank and we still have iterations left
+        If IsEmpty(mainSheet.Cells(i, "G").Value) And iterations > 0 Then
+            ' Copy values from columns A, B, D to StockTally cells F2, G2, H2
+            stockTallySheet.Range("G2").Value = mainSheet.Cells(i, "A").Value
+            stockTallySheet.Range("H2").Value = mainSheet.Cells(i, "B").Value
+            stockTallySheet.Range("I2").Value = mainSheet.Cells(i, "E").Value
+            
+            ' Allow Excel to calculate
+            Application.Calculate
+            
+            ' Wait for the calculation to complete
+            Application.Wait Now + TimeValue("00:00:02")
+            
+            ' Copy value from T2 in StockTally to the blank cell in column E
+            mainSheet.Cells(i, "G").Value = stockTallySheet.Range("T2").Value
+            mainSheet.Cells(i, "H").Value = stockTallySheet.Range("T4").Value
+            
+            ' Check if T2 says "Release"
+            If stockTallySheet.Range("T2").Value = "Release" Then
+                ' Get the value to search for from F2 in StockTally
+                valueToSearch = stockTallySheet.Range("G2").Value
+                
+                ' Search for this value in column A of Demand sheet
+                For j = 1 To lastRowDemand
+                    If demandSheet.Cells(j, "A").Value = valueToSearch Then
+                        ' Change column E of the found row to "Released"
+                        demandSheet.Cells(j, "E").Value = "Released"
+                        ' No need to continue searching
+                        Exit For
+                    End If
+                Next j
+            End If
+            
+            ' Decrement iterations counter
+            iterations = iterations - 1
+            recordsProcessed = recordsProcessed + 1
+            
+            ' Update the iterations value in StockTally sheet
+            mainSheet.Range("R1").Value = iterations
+            
+            ' Check if we've done all iterations
+            If iterations <= 0 Then
+                Exit For
+            End If
+        End If
+    Next i
+
+    'MsgBox "Process completed. " & recordsProcessed & " records processed. Remaining iterations: " & iterations
+End Sub
+Sub TTC()
+    
+    Sheets("Demand").Columns("A:A").TextToColumns Destination:=Range("Demand[[#Headers],[SO No]]"), _
+        DataType:=xlDelimited, TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter _
+        :=False, Tab:=True, Semicolon:=False, Comma:=False, Space:=False, _
+        Other:=False, FieldInfo:=Array(1, 1), TrailingMinusNumbers:=True
+    Sheets("Demand").Columns("B:B").TextToColumns Destination:=Range("Demand[[#Headers],[Part No]]"), _
+        DataType:=xlDelimited, TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter _
+        :=False, Tab:=True, Semicolon:=False, Comma:=False, Space:=False, _
+        Other:=False, FieldInfo:=Array(1, 1), TrailingMinusNumbers:=True
+    Sheets("IPIS").Columns("A:A").TextToColumns Destination:=Range("IPIS[[#Headers],[PART_NO]]"), _
+        DataType:=xlDelimited, TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter _
+        :=False, Tab:=True, Semicolon:=False, Comma:=False, Space:=False, _
+        Other:=False, FieldInfo:=Array(1, 1), TrailingMinusNumbers:=True
+    Sheets("ManStructures").Columns("A:A").TextToColumns Destination:=Range( _
+        "Manufacturing_Structures[[#Headers],[Parent Part]]"), DataType:=xlDelimited _
+        , TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, Tab:=True, _
+        Semicolon:=False, Comma:=False, Space:=False, Other:=False, FieldInfo _
+        :=Array(1, 1), TrailingMinusNumbers:=True
+    Sheets("ManStructures").Columns("B:B").TextToColumns Destination:=Range( _
+        "Manufacturing_Structures[[#Headers],[Component Part]]"), DataType:= _
+        xlDelimited, TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, _
+        Tab:=True, Semicolon:=False, Comma:=False, Space:=False, Other:=False _
+        , FieldInfo:=Array(1, 1), TrailingMinusNumbers:=True
+    Sheets("POs").Columns("B:B").TextToColumns Destination:=Range( _
+        "Manufacturing_Structures[[#Headers],[Component Part]]"), DataType:= _
+        xlDelimited, TextQualifier:=xlDoubleQuote, ConsecutiveDelimiter:=False, _
+        Tab:=True, Semicolon:=False, Comma:=False, Space:=False, Other:=False _
+        , FieldInfo:=Array(1, 1), TrailingMinusNumbers:=True
+    
+    ActiveWorkbook.Worksheets("Demand").ListObjects("Demand").Sort.SortFields.Clear
+    ActiveWorkbook.Worksheets("Demand").ListObjects("Demand").Sort.SortFields.Add2 _
+        Key:=Range("Demand[[#All],[Status]]"), SortOn:=xlSortOnValues, Order:= _
+        xlAscending, DataOption:=xlSortNormal
+    With ActiveWorkbook.Worksheets("Demand").ListObjects("Demand").Sort
+        .Header = xlYes
+        .MatchCase = False
+        .Orientation = xlTopToBottom
+        .SortMethod = xlPinYin
+        .Apply
+    End With
+                
+    Sheets("Main").Select
+End Sub
+
+
+Sub FindAndReplacePatterns()
+    ' This macro processes a list of values and handles different pattern replacements
+    ' Each value in the list will be searched for in multiple formats (with/without semicolons)
+    
+    Dim ws As Worksheet
+    Dim valueRange As Range
+    Dim valueToProcess As String
+    Dim i As Long
+    Dim j As Long
+    Dim searchRange As Range
+    Dim foundCell As Range
+    Dim firstAddress As String
+    Dim findPatterns(1 To 4) As String
+    Dim replacePatterns(1 To 4) As String
+    
+    ' Set the worksheets to work with
+    Dim wsSource As Worksheet
+    Dim wsTarget As Worksheet
+    
+    On Error Resume Next
+    Set wsSource = ThisWorkbook.Worksheets("Main")
+    Set wsTarget = ThisWorkbook.Worksheets("Main")
+    On Error GoTo 0
+    
+    ' Check if the specified sheets exist
+    If wsSource Is Nothing Then
+        MsgBox "The sheet 'Main' could not be found!", vbExclamation
+        Exit Sub
+    End If
+    
+    If wsTarget Is Nothing Then
+        MsgBox "The sheet 'Main' could not be found!", vbExclamation
+        Exit Sub
+    End If
+    
+    ' Automatically determine the range containing the values to process
+    ' This will find all consecutive non-empty cells in column N starting from N1 in "BOM Check" sheet
+    Dim lastRow As Long
+    lastRow = wsSource.Cells(wsSource.Rows.Count, "Z").End(xlUp).Row
+    Set valueRange = wsSource.Range("Z1:Z" & lastRow)
+    
+    ' Define the range to search in (only column R in the "Main" sheet)
+    Dim lastRowTarget As Long
+    lastRowTarget = wsTarget.Cells(wsTarget.Rows.Count, "G").End(xlUp).Row
+    Set searchRange = wsTarget.Range("G1:G" & lastRowTarget)
+    
+    ' Loop through each value in the list
+    For i = 1 To valueRange.Rows.Count
+        valueToProcess = Trim(valueRange.Cells(i, 1).Value)
+        
+        ' Skip empty values
+        If Not IsEmpty(valueToProcess) Then
+            ' Create the different patterns to find/replace for this value
+            ' Pattern 1: ";value;" -> ";"
+            findPatterns(1) = ";" & valueToProcess & ";"
+            replacePatterns(1) = ";"
+            
+            ' Pattern 2: ";value" -> ""
+            findPatterns(2) = ";" & valueToProcess
+            replacePatterns(2) = ""
+            
+            ' Pattern 3: "value;" -> ""
+            findPatterns(3) = valueToProcess & ";"
+            replacePatterns(3) = ""
+            
+            ' Pattern 4: "value" -> ""
+            findPatterns(4) = valueToProcess
+            replacePatterns(4) = ""
+            
+            ' Process each pattern for this value
+            For j = 1 To 4
+                ' Initialize for a new search
+                Set foundCell = Nothing
+                
+                ' Find all instances of this pattern and replace them
+                Set foundCell = searchRange.Find(What:=findPatterns(j), LookIn:=xlValues, _
+                                              LookAt:=xlPart, SearchOrder:=xlByRows, _
+                                              SearchDirection:=xlNext, MatchCase:=True)
+                
+                ' If the pattern is found, replace it and continue searching
+                If Not foundCell Is Nothing Then
+                    firstAddress = foundCell.Address
+                    
+                    Do
+                        ' Store the original value
+                        Dim originalValue As String
+                        originalValue = foundCell.Value
+                        
+                        ' Replace only the found pattern in the cell, not the entire cell value
+                        foundCell.Value = Replace(originalValue, findPatterns(j), replacePatterns(j))
+                        
+                        ' Find the next occurrence
+                        Set foundCell = searchRange.FindNext(After:=foundCell)
+                        
+                        ' Exit loop if no more matches or we've gone full circle
+                        If foundCell Is Nothing Then Exit Do
+                        If foundCell.Address = firstAddress Then Exit Do
+                    Loop
+                End If
+            Next j
+            
+            Application.StatusBar = "Processed: " & valueToProcess
+        End If
+    Next i
+    
+    Application.StatusBar = False
+    MsgBox "Find and replace operations completed!", vbInformation
+End Sub
+
