@@ -89,7 +89,7 @@ Sub Protection(obj As Object, action As String)
         Case Else
             MsgBox "Error"
             Exit Sub
-    End Select        
+    End Select
 
     Select Case action
         Case "Protect"
@@ -101,6 +101,65 @@ Sub Protection(obj As Object, action As String)
             ' Throw an error for an invalid action
             Err.Raise vbObjectError + 9999, "Protection", "Invalid action. Use 'Protect' or 'Unprotect'."
     End Select
+End Sub
+
+Sub ArchivePKRCompleted()
+    Dim wsPKR As Worksheet, wsPKRComplete As Worksheet
+    Dim tblPKR As ListObject
+    Dim LastRow As Long
+    Dim i As Long
+    Dim Password As String
+    
+    ' Set the password for protecting and unprotecting sheets
+
+    ' Define the destination worksheet as "Complete"
+    Set wsPKRComplete = ThisWorkbook.Sheets("PKRComplete") ' Change "Complete" to the name of your destination sheet
+        
+    ' Set the source worksheets based on the provided names
+    On Error Resume Next
+    Set wsPKR = ThisWorkbook.Sheets("PREKIT Request Sheet")
+    On Error GoTo 0
+    
+    If wsPKR Is Nothing Then
+        MsgBox "Source sheet does not exist."
+        Exit Sub
+    End If
+    
+    ' Set the source tables based on the provided names
+    On Error Resume Next
+    Set tblPKR = wsPKR.ListObjects("Table110")
+    On Error GoTo 0
+    
+    ' Error if someone has changed the names
+    If tblPKR Is Nothing Then
+        MsgBox "Source table does not exist."
+        Exit Sub
+    End If
+
+    Application.Calculation = xlManual
+    
+    ' Find the last row in the source tables and move completed orders
+    For Each tbl In Array(tblPKR)
+
+        For i = tbl.ListRows.Count To 1 Step -1
+            If tbl.ListRows(i).Range.Cells(1, tbl.ListColumns("Replenished").Index).Value = "DONE" Then
+                ' Copy the entire row to the destination sheet
+                tbl.ListRows(i).Range.Copy wsPKRComplete.Cells(wsPKRComplete.Cells(wsPKRComplete.Rows.Count, "A").End(xlUp).Row + 1, 1)
+                
+                ' Delete the row from the source table (optional)
+                tbl.ListRows(i).Delete
+            End If
+        Next i
+        
+    Next tbl
+
+    Application.Calculation = xlAutomatic
+
+    wsPKRComplete.Columns("A:V").FormatConditions.Delete
+
+    ' Save
+    ' ActiveWorkbook.Save
+
 End Sub
 
 Sub ArchiveCompleted()
@@ -175,13 +234,22 @@ Sub ArchiveCompleted()
     wsComplete.Columns("A:V").FormatConditions.Delete
 
     Protection wsComplete, "Protect"
+    
+    ArchivePKRCompleted
 
     ' Save
-    ActiveWorkbook.Save
+    ' ActiveWorkbook.Save
 
 End Sub
 
 ' # Changelog
+
+' ## [1.5.0] - 2025-05-21
+
+' ### Added
+
+' - ArchivePKRCompleted Macro to move completed orders from PREKIT Request Sheet to PKRComplete
+' - ArchiveCompleted Macro Updated to run ArchivePKRCompleted
 
 ' ## [1.4.0] - 2024-09-12
 
