@@ -19,3 +19,15 @@ This is a simple Materials Checker for Shop Orders.
 ## Versions
 
 ### PlanSnap
+A simple Materials Checker for Shop Orders. Load in the details and it will check the materials against the stock and give you a list of what you can make and what you can't - and the shortages if any.
+
+(Potential to be depreciated...)
+
+### MinMax
+A materials checker that min/maxes on various areas. Giving you the ability to focus on specific metrics.
+
+### SchEng
+A beta test of a scheduling engine that will allow you to schedule orders based on various constraints. This is a work in progress and will be updated as new features are added.
+
+### InstSch
+A beta test of an Instruments Scheduler. This does _NOT_ work currently and needs work. It is a work in progress and will be updated as new features are added.
