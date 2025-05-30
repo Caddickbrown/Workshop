@@ -21,7 +21,7 @@ This is a simple Materials Checker for Shop Orders.
 ### PlanSnap
 A simple Materials Checker for Shop Orders. Load in the details and it will check the materials against the stock and give you a list of what you can make and what you can't - and the shortages if any.
 
-(Potential to be depreciated...)
+(Potential to be depreciated. MinMax seems to do everything this does and more, but this is still a good tool for quick checks.)
 
 ### MinMax
 A materials checker that min/maxes on various areas. Giving you the ability to focus on specific metrics.
