@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple, Any
 import time
 import os
+import threading
 
 # VERSION INFO
 VERSION = "v1.0.0"
@@ -31,6 +32,23 @@ class Order:
     priority_score: float = 0.0
     assigned_line: str = ""
     scheduled_date: Optional[datetime] = None
+    
+    def __post_init__(self):
+        """Validate order data after initialization"""
+        if not self.order_no or not self.order_no.strip():
+            raise ValueError("Order number cannot be empty")
+        if not self.part_no or not self.part_no.strip():
+            raise ValueError("Part number cannot be empty")
+        if self.quantity <= 0:
+            raise ValueError("Quantity must be greater than 0")
+        if self.due_date < self.start_date:
+            raise ValueError("Due date cannot be before start date")
+        if self.picks < 0:
+            raise ValueError("Picks cannot be negative")
+        if self.hours < 0:
+            raise ValueError("Hours cannot be negative")
+        if self.boxes < 0:
+            raise ValueError("Boxes cannot be negative")
     
 @dataclass
 class Constraint:
@@ -114,9 +132,22 @@ class SchedulingEngine:
         
         # Check each constraint
         for name, constraint in self.constraints.items():
-            required = self.get_order_constraint_value(order, name)
-            if required > 0 and not constraint.can_accommodate(required):
-                violations.append(f"{name}: need {required}, available {constraint.remaining()}")
+            if constraint.limit < 0:
+                violations.append(f"{name}: Invalid negative limit {constraint.limit}")
+                continue
+                
+            try:
+                required = self.get_order_constraint_value(order, name)
+                if required < 0:
+                    violations.append(f"{name}: Invalid negative requirement {required}")
+                    continue
+                    
+                if required > 0 and not constraint.can_accommodate(required):
+                    violations.append(f"{name}: need {required}, available {constraint.remaining()}")
+            except KeyError:
+                violations.append(f"{name}: Constraint not found")
+            except Exception as e:
+                violations.append(f"{name}: Error checking constraint: {str(e)}")
         
         return len(violations) == 0, violations
     
@@ -410,121 +441,170 @@ class SchedulingGUI:
         if not self.file_path_var.get():
             messagebox.showerror("Error", "Please select an Excel file first")
             return
-        
-        try:
-            self.status_var.set("Loading data from Excel...")
-            self.root.update()
             
-            # Load from ReleasedPOOL sheet (based on your template structure)
-            df_orders = pd.read_excel(self.file_path_var.get(), sheet_name="ReleasedPOOL")
-            
-            # Try to load Main sheet for additional order details
+        def loading_thread():
             try:
-                df_main = pd.read_excel(self.file_path_var.get(), sheet_name="Main", skiprows=6)
-                # Merge additional details if available
-                if not df_main.empty:
-                    df_orders = df_orders.merge(df_main[['Order No', 'Picks', 'Hours', 'Boxes', 'Country', 'Brand']].dropna(), 
-                                              left_on='Order No', right_on='Order No', how='left')
-            except:
-                # If Main sheet can't be loaded, continue with basic data
-                pass
-            
-            # Helper function to safely convert values with NaN handling
-            def safe_int(value, default=0):
+                self.status_var.set("Loading data from Excel...")
+                self.root.update()
+                
+                # Load from ReleasedPOOL sheet (based on your template structure)
+                df_orders = pd.read_excel(self.file_path_var.get(), sheet_name="ReleasedPOOL")
+                
+                # Try to load Main sheet for additional order details
                 try:
-                    if pd.isna(value):
-                        return default
-                    return int(float(value))
-                except (ValueError, TypeError):
-                    return default
-            
-            def safe_float(value, default=0.0):
-                try:
-                    if pd.isna(value):
-                        return default
-                    return float(value)
-                except (ValueError, TypeError):
-                    return default
-            
-            def safe_str(value, default=''):
-                try:
-                    if pd.isna(value):
-                        return default
-                    return str(value)
-                except (ValueError, TypeError):
-                    return default
-            
-            # Convert to Order objects
-            self.engine.orders = []
-            
-            for _, row in df_orders.iterrows():
-                try:
-                    order = Order(
-                        order_no=safe_str(row.get('Order No', '')),
-                        part_no=safe_str(row.get('Part No', '')),
-                        quantity=safe_int(row.get('Qty', 0)),
-                        start_date=pd.to_datetime(row.get('Start Date', datetime.now()), errors='coerce') or datetime.now(),
-                        due_date=pd.to_datetime(row.get('Due Date', datetime.now() + timedelta(days=30)), errors='coerce') or (datetime.now() + timedelta(days=30)),
-                        picks=safe_int(row.get('Picks', 0)),
-                        hours=safe_float(row.get('Hours', 0.0)),
-                        boxes=safe_int(row.get('Boxes', 0)),
-                        country=safe_str(row.get('Country', '')),
-                        brand=safe_str(row.get('Brand', ''))
-                    )
-                    self.engine.orders.append(order)
+                    df_main = pd.read_excel(self.file_path_var.get(), sheet_name="Main", skiprows=6)
+                    # Merge additional details if available
+                    if not df_main.empty:
+                        df_orders = df_orders.merge(df_main[['Order No', 'Picks', 'Hours', 'Boxes', 'Country', 'Brand']].dropna(), 
+                                                  left_on='Order No', right_on='Order No', how='left')
+                except FileNotFoundError:
+                    print(f"Warning: Main sheet not found in file")
+                except pd.errors.EmptyDataError:
+                    print(f"Warning: Main sheet is empty")
                 except Exception as e:
-                    print(f"Error processing order {row.get('Order No', 'Unknown')}: {e}")
-                    continue
-            
-            # Update results display
-            self.results_text.delete(1.0, tk.END)
-            self.results_text.insert(tk.END, f"✅ DATA LOADED SUCCESSFULLY!\n\n")
-            self.results_text.insert(tk.END, f"📊 SUMMARY:\n")
-            self.results_text.insert(tk.END, f"Orders loaded: {len(self.engine.orders)}\n")
-            self.results_text.insert(tk.END, f"Total quantity: {sum(order.quantity for order in self.engine.orders):,}\n")
-            self.results_text.insert(tk.END, f"Total hours: {sum(order.hours for order in self.engine.orders):,.1f}\n")
-            self.results_text.insert(tk.END, f"Total picks: {sum(order.picks for order in self.engine.orders):,}\n\n")
-            
-            self.results_text.insert(tk.END, f"🏭 PRODUCTION LINES CONFIGURED:\n")
-            for line_name, config in self.engine.line_configs.items():
-                self.results_text.insert(tk.END, f"{line_name}: {config.total_associates} associates\n")
-            
-            self.status_var.set(f"Data loaded: {len(self.engine.orders)} orders ready for scheduling")
-            
-        except Exception as e:
-            messagebox.showerror("Error", f"Failed to load data: {str(e)}")
-            self.status_var.set("Error loading data")
+                    print(f"Warning: Could not load Main sheet details: {str(e)}")
+                
+                # Helper function to safely convert values with NaN handling
+                def safe_int(value, default=0):
+                    try:
+                        if pd.isna(value):
+                            return default
+                        return int(float(value))
+                    except (ValueError, TypeError):
+                        return default
+                
+                def safe_float(value, default=0.0):
+                    try:
+                        if pd.isna(value):
+                            return default
+                        return float(value)
+                    except (ValueError, TypeError):
+                        return default
+                
+                def safe_str(value, default=''):
+                    try:
+                        if pd.isna(value):
+                            return default
+                        return str(value)
+                    except (ValueError, TypeError):
+                        return default
+                
+                # Convert to Order objects
+                self.engine.orders = []
+                
+                for _, row in df_orders.iterrows():
+                    try:
+                        order = Order(
+                            order_no=safe_str(row.get('Order No', '')),
+                            part_no=safe_str(row.get('Part No', '')),
+                            quantity=safe_int(row.get('Qty', 0)),
+                            start_date=pd.to_datetime(row.get('Start Date', datetime.now()), errors='coerce') or datetime.now(),
+                            due_date=pd.to_datetime(row.get('Due Date', datetime.now() + timedelta(days=30)), errors='coerce') or (datetime.now() + timedelta(days=30)),
+                            picks=safe_int(row.get('Picks', 0)),
+                            hours=safe_float(row.get('Hours', 0.0)),
+                            boxes=safe_int(row.get('Boxes', 0)),
+                            country=safe_str(row.get('Country', '')),
+                            brand=safe_str(row.get('Brand', ''))
+                        )
+                        self.engine.orders.append(order)
+                    except Exception as e:
+                        print(f"Error processing order {row.get('Order No', 'Unknown')}: {e}")
+                        continue
+                
+                # Update results display
+                self.results_text.delete(1.0, tk.END)
+                self.results_text.insert(tk.END, f"✅ DATA LOADED SUCCESSFULLY!\n\n")
+                self.results_text.insert(tk.END, f"📊 SUMMARY:\n")
+                self.results_text.insert(tk.END, f"Orders loaded: {len(self.engine.orders)}\n")
+                self.results_text.insert(tk.END, f"Total quantity: {sum(order.quantity for order in self.engine.orders):,}\n")
+                self.results_text.insert(tk.END, f"Total hours: {sum(order.hours for order in self.engine.orders):,.1f}\n")
+                self.results_text.insert(tk.END, f"Total picks: {sum(order.picks for order in self.engine.orders):,}\n\n")
+                
+                self.results_text.insert(tk.END, f"🏭 PRODUCTION LINES CONFIGURED:\n")
+                for line_name, config in self.engine.line_configs.items():
+                    self.results_text.insert(tk.END, f"{line_name}: {config.total_associates} associates\n")
+                
+                self.status_var.set(f"Data loaded: {len(self.engine.orders)} orders ready for scheduling")
+                
+                # Update UI in main thread
+                self.root.after(0, self.update_load_results)
+                
+            except Exception as e:
+                # Update UI in main thread
+                self.root.after(0, lambda: self.handle_load_error(str(e)))
+        
+        # Disable UI controls during loading
+        self.disable_controls()
+        threading.Thread(target=loading_thread, daemon=True).start()
+    
+    def disable_controls(self):
+        """Disable UI controls during long operations"""
+        for widget in [self.load_button, self.schedule_button, self.export_button]:
+            widget.configure(state='disabled')
+    
+    def enable_controls(self):
+        """Re-enable UI controls after long operations"""
+        for widget in [self.load_button, self.schedule_button, self.export_button]:
+            widget.configure(state='normal')
+    
+    def handle_load_error(self, error_msg):
+        """Handle errors during data loading"""
+        messagebox.showerror("Error", f"Failed to load data: {error_msg}")
+        self.status_var.set("Error loading data")
+        self.enable_controls()
+    
+    def update_load_results(self):
+        """Update UI after successful data load"""
+        self.results_text.delete(1.0, tk.END)
+        self.results_text.insert(tk.END, f"✅ DATA LOADED SUCCESSFULLY!\n\n")
+        self.results_text.insert(tk.END, f"📊 SUMMARY:\n")
+        self.results_text.insert(tk.END, f"Orders loaded: {len(self.engine.orders)}\n")
+        self.results_text.insert(tk.END, f"Total quantity: {sum(order.quantity for order in self.engine.orders):,}\n")
+        self.results_text.insert(tk.END, f"Total hours: {sum(order.hours for order in self.engine.orders):,.1f}\n")
+        self.results_text.insert(tk.END, f"Total picks: {sum(order.picks for order in self.engine.orders):,}\n\n")
+        
+        self.results_text.insert(tk.END, f"🏭 PRODUCTION LINES CONFIGURED:\n")
+        for line_name, config in self.engine.line_configs.items():
+            self.results_text.insert(tk.END, f"{line_name}: {config.total_associates} associates\n")
+        
+        self.enable_controls()
     
     def create_schedule(self):
         """Create optimized production schedule"""
         if not self.engine.orders:
             messagebox.showerror("Error", "Please load order data first")
             return
-        
+            
         if not self.update_constraints():
             return
+            
+        def scheduling_thread():
+            try:
+                self.status_var.set("Creating optimized schedule...")
+                self.root.update()
+                
+                # Parse and validate target date
+                target_date = datetime.strptime(self.target_date_var.get(), "%Y-%m-%d")
+                if target_date.date() < datetime.now().date():
+                    raise ValueError("Target date cannot be in the past")
+                
+                # Run scheduling engine
+                results = self.engine.schedule_orders(target_date)
+                self.results = results
+                
+                # Update UI in main thread
+                self.root.after(0, lambda: self.display_results(results))
+                
+            except ValueError as e:
+                self.root.after(0, lambda: messagebox.showerror("Error", f"Invalid date format. Use YYYY-MM-DD"))
+            except Exception as e:
+                self.root.after(0, lambda: messagebox.showerror("Error", f"Scheduling failed: {str(e)}"))
+            finally:
+                self.root.after(0, self.enable_controls)
         
-        try:
-            self.status_var.set("Creating optimized schedule...")
-            self.root.update()
-            
-            # Parse target date
-            target_date = datetime.strptime(self.target_date_var.get(), "%Y-%m-%d")
-            
-            # Run scheduling engine
-            results = self.engine.schedule_orders(target_date)
-            self.results = results
-            
-            # Display results
-            self.display_results(results)
-            
-            self.status_var.set(f"Schedule complete: {results['summary']['scheduled_orders']}/{results['summary']['total_orders']} orders scheduled")
-            
-        except ValueError as e:
-            messagebox.showerror("Error", f"Invalid date format. Use YYYY-MM-DD")
-        except Exception as e:
-            messagebox.showerror("Error", f"Scheduling failed: {str(e)}")
-            self.status_var.set("Scheduling failed")
+        # Disable UI controls during scheduling
+        self.disable_controls()
+        threading.Thread(target=scheduling_thread, daemon=True).start()
     
     def display_results(self, results):
         """Display scheduling results"""
