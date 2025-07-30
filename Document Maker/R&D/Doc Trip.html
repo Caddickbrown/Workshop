@@ -392,6 +392,7 @@
             <h3>Document Settings</h3>
             <input type="text" id="companyName" value="BVI" placeholder="Company Name">
             <input type="text" id="departmentName" value="PRODUCTION CONTROL" placeholder="Department Name">
+            <button style="float:right; margin-top: -40px;" onclick="resetLocalStorage()">Reset Data</button>
             
             <h4 style="margin-top: 15px; margin-bottom: 5px;">Section Titles</h4>
     
@@ -710,8 +711,87 @@
             closeDown: [...defaultItems.closeDown]
         };
 
+        // --- LocalStorage Functions ---
+        function saveToLocalStorage() {
+            const data = {
+                items,
+                additionalItems,
+                companyName: document.getElementById('companyName').value,
+                departmentName: document.getElementById('departmentName').value,
+                mainTitle: document.getElementById('mainTitle').value,
+                morningTitle: document.getElementById('morningTitle').value,
+                dailyTitle: document.getElementById('dailyTitle').value,
+                closeDownTitle: document.getElementById('closeDownTitle').value,
+                currentDay,
+                currentTab
+            };
+            localStorage.setItem('docTripData', JSON.stringify(data));
+        }
+
+        function loadFromLocalStorage() {
+            const data = localStorage.getItem('docTripData');
+            if (data) {
+                try {
+                    const parsed = JSON.parse(data);
+                    if (parsed.items) items = parsed.items;
+                    if (parsed.additionalItems) additionalItems = parsed.additionalItems;
+                    if (parsed.companyName) document.getElementById('companyName').value = parsed.companyName;
+                    if (parsed.departmentName) document.getElementById('departmentName').value = parsed.departmentName;
+                    if (parsed.mainTitle) document.getElementById('mainTitle').value = parsed.mainTitle;
+                    if (parsed.morningTitle) document.getElementById('morningTitle').value = parsed.morningTitle;
+                    if (parsed.dailyTitle) document.getElementById('dailyTitle').value = parsed.dailyTitle;
+                    if (parsed.closeDownTitle) document.getElementById('closeDownTitle').value = parsed.closeDownTitle;
+                    if (parsed.currentDay) currentDay = parsed.currentDay;
+                    if (parsed.currentTab !== undefined) currentTab = parsed.currentTab;
+                } catch (e) {
+                    console.error('Failed to load from localStorage:', e);
+                }
+            }
+        }
+
+        function resetLocalStorage() {
+            if (confirm('Are you sure you want to reset all data to default?')) {
+                localStorage.removeItem('docTripData');
+                // Reset all data to defaults
+                items = {
+                    morning: [...defaultItems.morning],
+                    standard: [...defaultItems.standard],
+                    daily: {
+                        monday: [...defaultItems.daily.monday],
+                        tuesday: [...defaultItems.daily.tuesday],
+                        wednesday: [...defaultItems.daily.wednesday],
+                        thursday: [...defaultItems.daily.thursday],
+                        friday: [...defaultItems.daily.friday]
+                    },
+                    closeDown: [...defaultItems.closeDown]
+                };
+                additionalItems = {
+                    morning: [],
+                    daily: [],
+                    closeDown: []
+                };
+                document.getElementById('companyName').value = 'BVI';
+                document.getElementById('departmentName').value = 'PRODUCTION CONTROL';
+                document.getElementById('mainTitle').value = 'Production Control Manager';
+                document.getElementById('morningTitle').value = 'Morning Setup Checklist';
+                document.getElementById('dailyTitle').value = 'Daily Tasks';
+                document.getElementById('closeDownTitle').value = 'Close Down Checklist';
+                currentDay = 'monday';
+                currentTab = 1;
+                renderMorningItems();
+                renderDailyItems();
+                renderCloseDownItems();
+                updateCompanyInfo();
+                switchTab(currentTab);
+                updateReminders();
+                saveToLocalStorage();
+                showNotification('Data reset to default!');
+            }
+        }
+
         // Initialize on load
         document.addEventListener('DOMContentLoaded', function() {
+            loadFromLocalStorage();
             renderMorningItems();
             renderDailyItems();
             renderCloseDownItems();
@@ -741,8 +821,8 @@
             });
             
             // Company name change listeners
-            document.getElementById('companyName').addEventListener('input', updateCompanyInfo);
-            document.getElementById('departmentName').addEventListener('input', updateCompanyInfo);
+            document.getElementById('companyName').addEventListener('input', function() { updateCompanyInfo(); saveToLocalStorage(); });
+            document.getElementById('departmentName').addEventListener('input', function() { updateCompanyInfo(); saveToLocalStorage(); });
             
             // Export editor change listener
             document.getElementById('exportEditor').addEventListener('input', function() {
@@ -762,10 +842,10 @@
         });
 
         // Add event listeners for the title input fields
-        document.getElementById('morningTitle').addEventListener('input', updateCompanyInfo);
-        document.getElementById('dailyTitle').addEventListener('input', updateCompanyInfo);
-        document.getElementById('closeDownTitle').addEventListener('input', updateCompanyInfo);
-        document.getElementById('mainTitle').addEventListener('input', updateCompanyInfo);
+        document.getElementById('morningTitle').addEventListener('input', function() { updateCompanyInfo(); saveToLocalStorage(); });
+        document.getElementById('dailyTitle').addEventListener('input', function() { updateCompanyInfo(); saveToLocalStorage(); });
+        document.getElementById('closeDownTitle').addEventListener('input', function() { updateCompanyInfo(); saveToLocalStorage(); });
+        document.getElementById('mainTitle').addEventListener('input', function() { updateCompanyInfo(); saveToLocalStorage(); });
 
         function updateReminders() {
             // Morning reminder
@@ -844,6 +924,7 @@
             }
             
             currentTab = tabIndex;
+            saveToLocalStorage();
             
             // If export tab, update content
             if (tabIndex === 3) {
@@ -862,6 +943,7 @@
             
             // Update the current day
             currentDay = day;
+            saveToLocalStorage();
             
             // Get the daily title base
             const dailyTitle = document.getElementById('dailyTitle').value;
@@ -1003,6 +1085,7 @@
                 } else {
                     renderCloseDownItems();
                 }
+                saveToLocalStorage();
             }
         }
 
@@ -1029,6 +1112,7 @@
                 } else {
                     renderCloseDownItems();
                 }
+                saveToLocalStorage();
             }
         }
 
@@ -1053,6 +1137,7 @@
             } else {
                 renderCloseDownItems();
             }
+            saveToLocalStorage();
         }
 
         function changeFormat() {
@@ -1150,6 +1235,7 @@
                     }
                 }
                 
+                saveToLocalStorage();
                 showNotification('JSON imported successfully!');
             } catch (err) {
                 showNotification('Error parsing JSON: ' + err.message);
@@ -1334,6 +1420,7 @@
                 
                 // Update company info
                 updateCompanyInfo();
+                saveToLocalStorage();
                 
                 showNotification('Markdown imported successfully!');
             } catch (err) {
